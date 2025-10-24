@@ -233,7 +233,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const lng = localStorage.getItem("lng");
     const numero_cs = localStorage.getItem("numero_cs");
 
-    fotoTitulo.innerHTML = `<em style="color:#6c757d;">Guardando foto...</em>`;
+    fotoTitulo.innerHTML = `
+  <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
+  <em style="color:#6c757d; margin-left:6px;">Guardando foto...</em>`;
 
     fetch(API_URL, {
       method: "POST",

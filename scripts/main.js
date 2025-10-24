@@ -128,20 +128,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===========================================
-  // VALIDAR NÚMERO (con animación de carga)
+  // VALIDAR NÚMERO (spinner al lado del input)
   // ===========================================
   input.addEventListener("input", function () {
     const numero = input.value.trim();
 
     if (numero.length === 4) {
-      // Mostrar mensaje de validando
-      fotoTitulo.innerHTML = `<em style="color:#6c757d;">Validando usuario...</em>`;
+      // Mostrar mensaje de validando al lado del input
+      let validarMsg = document.getElementById("validarMsg");
+      if (!validarMsg) {
+        validarMsg = document.createElement("span");
+        validarMsg.id = "validarMsg";
+        validarMsg.style.marginLeft = "8px";
+        validarMsg.style.fontSize = "12px";
+        validarMsg.style.color = "#6c757d";
+        input.insertAdjacentElement("afterend", validarMsg);
+      }
+      validarMsg.innerHTML = `<span class="spinner-border spinner-border-sm text-primary" role="status"></span> Validando usuario...`;
 
       fetch(`${API_URL}?accion=validarUsuario&numero_cs=${numero}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.error) {
-            fotoTitulo.innerHTML = `<em style="color:#dc3545;">${data.error}</em>`;
+            validarMsg.textContent = "❌ Número inválido";
             input.value = "";
             infoUsuario.style.display = "none";
             fotoInput.disabled = true;
@@ -150,6 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           usuarioData = data;
+          validarMsg.textContent = "✔️ Usuario válido";
           errorMsg.textContent = "";
 
           document.getElementById("modalBody").innerHTML = `
@@ -175,18 +185,41 @@ document.addEventListener("DOMContentLoaded", () => {
           confirmModalEl.querySelector(".btn-secondary").onclick = function () {
             modal.hide();
             input.value = "";
+            validarMsg.textContent = "";
             fotoTitulo.innerHTML = `<em style="color:#6c757d;">Subir foto de asistencia…</em>`;
           };
         })
         .catch((err) => {
           console.error("Error validando usuario:", err);
-          fotoTitulo.innerHTML = `<em style="color:#dc3545;">Error al validar usuario ❌</em>`;
+          validarMsg.textContent = "⚠️ Error al validar usuario";
         });
     }
   });
 
   // ===========================================
-  // GUARDAR FOTO EN API (usa numero_cs)
+  // CONFIRMAR FOTO
+  // ===========================================
+  guardarFotoBtn.addEventListener("click", function () {
+    if (!fotoInput.files.length) {
+      alert("Debes seleccionar una foto primero 📸");
+      return;
+    }
+
+    const archivo = fotoInput.files[0];
+    const vistaPrevia = URL.createObjectURL(archivo);
+
+    document.getElementById("fotoModalBody").innerHTML = `
+      <p class="text-center fw-semibold mb-2">¿Estás seguro de guardar esta foto?</p>
+      <div class="d-flex justify-content-center">
+        <img src="${vistaPrevia}" alt="Vista previa" class="rounded shadow-sm"
+             style="max-height: 150px; max-width: 80%; object-fit: cover;">
+      </div>
+    `;
+    fotoModal.show();
+  });
+
+  // ===========================================
+  // GUARDAR FOTO EN API
   // ===========================================
   document.getElementById("confirmFotoBtn").onclick = function () {
     fotoModal.hide();
@@ -219,20 +252,17 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         console.log("Respuesta correcta del servidor:", data);
 
-        // Mostrar modal de éxito
         const successModal = new bootstrap.Modal(
           document.getElementById("successModal")
         );
         successModal.show();
         setTimeout(() => successModal.hide(), 2500);
 
-        // Cambiar título otra vez
         fotoTitulo.textContent =
           tipoFoto === "ENTRADA"
             ? "Subir foto de SALIDA📤"
             : "Asistencia registrada por hoy✅";
 
-        // Mostrar detalles
         const infoFoto = document.createElement("div");
         infoFoto.classList.add("mt-2", "text-center");
         infoFoto.innerHTML = `

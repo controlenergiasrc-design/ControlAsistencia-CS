@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fotoModal.show();
   });
 
-  // ===========================================
+    // ===========================================
   // GUARDAR FOTO EN API
   // ===========================================
   document.getElementById("confirmFotoBtn").onclick = function () {
@@ -233,9 +233,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const lng = localStorage.getItem("lng");
     const numero_cs = localStorage.getItem("numero_cs");
 
+    // Mostrar spinner mientras guarda
     fotoTitulo.innerHTML = `
-  <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
-  <em style="color:#6c757d; margin-left:6px;">Guardando foto...</em>`;
+      <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
+      <em style="color:#6c757d; margin-left:6px;">Guardando foto...</em>
+    `;
 
     fetch(API_URL, {
       method: "POST",
@@ -252,22 +254,25 @@ document.addEventListener("DOMContentLoaded", () => {
         return res.json();
       })
       .then((data) => {
-        console.log("Respuesta correcta del servidor:", data);
+        console.log("✅ Respuesta del servidor:", data);
 
+        // Mostrar modal de éxito
         const successModal = new bootstrap.Modal(
           document.getElementById("successModal")
         );
         successModal.show();
         setTimeout(() => successModal.hide(), 2500);
 
-        // Limpiar el input de foto después de guardar correctamente
+        // Limpiar el input file después de guardar
         fotoInput.value = "";
 
+        // Cambiar título según el tipo de foto
         fotoTitulo.textContent =
           tipoFoto === "ENTRADA"
             ? "Subir foto de SALIDA📤"
             : "Asistencia registrada por hoy✅";
 
+        // Mostrar detalles debajo
         const infoFoto = document.createElement("div");
         infoFoto.classList.add("mt-2", "text-center");
         infoFoto.innerHTML = `
@@ -279,6 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         fotoSection.appendChild(infoFoto);
 
+        // Guardar estado
         if (tipoFoto === "ENTRADA") {
           localStorage.setItem("entrada_fecha", fecha);
           localStorage.setItem("entrada_hora", hora);
@@ -304,5 +310,20 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("❌ Error guardando foto:", err);
         fotoTitulo.innerHTML = `<em style="color:#dc3545;">Error al guardar foto ❌</em>`;
       });
+  };
+
+  // ===========================================
+  // CANCELAR FOTO (limpia input y muestra alerta)
+  // ===========================================
+  fotoModalEl.querySelector(".btn-secondary").onclick = function () {
+    fotoModal.hide();
+    fotoInput.value = "";
+    console.log("Foto cancelada por el usuario.");
+
+    const msg = document.createElement("div");
+    msg.className = "alert alert-warning text-center mt-3";
+    msg.textContent = "Carga cancelada ❌";
+    fotoSection.appendChild(msg);
+    setTimeout(() => msg.remove(), 2000);
   };
 });

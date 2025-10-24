@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===========================================
   // CONFIGURACIÓN API
   // ===========================================
-const API_URL = "https://asistencia-proxy.kencyf01.workers.dev";
+  const API_URL = "https://asistencia-proxy.kencyf01.workers.dev";
 
   // ===========================================
   // ELEMENTOS PRINCIPALES
@@ -245,33 +245,41 @@ const API_URL = "https://asistencia-proxy.kencyf01.workers.dev";
     // Enviar a la API de Google Sheets
     fetch(API_URL, {
       method: "POST",
+      headers: { "Content-Type": "application/json" }, // ✅ encabezados primero
       body: JSON.stringify({
         usuario_id: usuarioIdHidden.value,
         tipo_foto: tipoFoto,
         lat: lat,
         lng: lng,
       }),
-      headers: { "Content-Type": "application/json" },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
+        console.log("Respuesta correcta del servidor:", data);
+
+        // Mostrar modal de éxito
         const successModal = new bootstrap.Modal(
           document.getElementById("successModal")
         );
         successModal.show();
         setTimeout(() => successModal.hide(), 2500);
 
+        // Mostrar detalles de la foto subida
         const infoFoto = document.createElement("div");
         infoFoto.classList.add("mt-2", "text-center");
         infoFoto.innerHTML = `
-          <small>Foto de <strong>${tipoFoto}</strong> registrada el 
-          <strong>${fecha}</strong> a las <strong>${hora}</strong> ⏰</small><br>
-          <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank">
-            Ver ubicación en Google Maps
-          </a>
-        `;
+        <small>Foto de <strong>${tipoFoto}</strong> registrada el 
+        <strong>${fecha}</strong> a las <strong>${hora}</strong> ⏰</small><br>
+        <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank">
+          Ver ubicación en Google Maps
+        </a>
+      `;
         fotoSection.appendChild(infoFoto);
 
+        // Guardar estado según tipo de foto
         if (tipoFoto === "ENTRADA") {
           localStorage.setItem("entrada_fecha", fecha);
           localStorage.setItem("entrada_hora", hora);
@@ -298,8 +306,14 @@ const API_URL = "https://asistencia-proxy.kencyf01.workers.dev";
         }
       })
       .catch((err) => {
-        console.error("Error guardando foto:", err);
-        alert("No se pudo guardar ❌");
+        console.error("❌ Error guardando foto:", err);
+
+        // Mostrar modal de error (más bonito que un alert)
+        const errorModal = new bootstrap.Modal(
+          document.getElementById("errorModal")
+        );
+        errorModal.show();
+        setTimeout(() => errorModal.hide(), 2500);
       });
   };
 

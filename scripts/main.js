@@ -260,6 +260,9 @@ document.addEventListener("DOMContentLoaded", () => {
         successModal.show();
         setTimeout(() => successModal.hide(), 2500);
 
+        // Limpiar el input de foto después de guardar correctamente
+        fotoInput.value = "";
+
         fotoTitulo.textContent =
           tipoFoto === "ENTRADA"
             ? "Subir foto de SALIDA📤"

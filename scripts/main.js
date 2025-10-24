@@ -4,8 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===========================================
   // CONFIGURACIÓN API
   // ===========================================
-  const API_URL =
-    "https://script.google.com/macros/s/AKfycbzxYVRe-JwG_3z-EiuH9k6tT9ZjXMRcV_ZVoufrJTTFPuW-ah_B-r9X5r_OsI3LjyiYQg/exec";
+const API_URL = "https://asistencia-proxy.kencyf01.workers.dev";
 
   // ===========================================
   // ELEMENTOS PRINCIPALES
@@ -300,7 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch((err) => {
         console.error("Error guardando foto:", err);
-        alert("No se pudo guardar el registro ❌");
+        alert("No se pudo guardar ❌");
       });
   };
 

@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
             (data.completed === true ||
               /completaste tu asistencia/i.test(data.message || ""))
           ) {
-            alert("✅Ya completaste tu asistencia por hoy.🕐");
+            alert("❌ Lo siento, no puedes subir mas fotos. Ya completaste asistencia hoy.");
             fotoTitulo.innerHTML = `<em style='color:#198754;'>Asistencia completada ✅</em>`;
 
             // limpiar y desactivar solo el input file y botón

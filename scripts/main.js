@@ -97,6 +97,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const numeroGuardado = localStorage.getItem("numero_cs");
   const estado = localStorage.getItem("estado");
 
+  // Si tenía estado "completado", verificar en la base si todavía existe
+  if (estado === "completado" && numeroGuardado) {
+    fetch(`${API_URL}?accion=validarUsuario&numero_cs=${numeroGuardado}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && !data.estado_hoy) {
+          // El usuario ya no tiene asistencia registrada → limpiar todo
+          console.log("🧹 Registro eliminado en BD, reiniciando app...");
+          localStorage.clear();
+          location.reload(); // recargar inicio
+        }
+      })
+      .catch((err) => console.warn("Error verificando estado:", err));
+  }
+
   if (numeroGuardado && estado === "espera") {
     localStorage.clear();
   } else if (numeroGuardado) {
@@ -165,7 +180,9 @@ document.addEventListener("DOMContentLoaded", () => {
             (data.completed === true ||
               /completaste tu asistencia/i.test(data.message || ""))
           ) {
-            alert("❌ Lo siento, no puedes subir mas fotos. Ya completaste asistencia hoy.");
+            alert(
+              "❌ Lo siento, no puedes subir mas fotos. Ya completaste asistencia hoy."
+            );
             fotoTitulo.innerHTML = `<em style='color:#198754;'>Asistencia completada ✅</em>`;
 
             // limpiar y desactivar solo el input file y botón
@@ -240,122 +257,130 @@ document.addEventListener("DOMContentLoaded", () => {
     fotoModal.show();
   });
 
-// ===========================================
-// GUARDAR FOTO EN API
-// ===========================================
-document.getElementById("confirmFotoBtn").onclick = function () {
-  fotoModal.hide();
+  // ===========================================
+  // GUARDAR FOTO EN API
+  // ===========================================
+  document.getElementById("confirmFotoBtn").onclick = function () {
+    fotoModal.hide();
 
-  const tipoFoto = fotoTitulo.textContent.includes("SALIDA")
-    ? "SALIDA"
-    : "ENTRADA";
-  const fecha = new Date().toLocaleDateString();
-  const hora = new Date().toLocaleTimeString();
-  const lat = localStorage.getItem("lat");
-  const lng = localStorage.getItem("lng");
-  const numero_cs = localStorage.getItem("numero_cs");
+    const tipoFoto = fotoTitulo.textContent.includes("SALIDA")
+      ? "SALIDA"
+      : "ENTRADA";
+    const fecha = new Date().toLocaleDateString();
+    const hora = new Date().toLocaleTimeString();
+    const lat = localStorage.getItem("lat");
+    const lng = localStorage.getItem("lng");
+    const numero_cs = localStorage.getItem("numero_cs");
 
-  if (!lat || !lng) {
-    alert("No se detectó tu ubicación 📍, por favor actívala antes de continuar.");
-    return;
-  }
+    if (!lat || !lng) {
+      alert(
+        "No se detectó tu ubicación 📍, por favor actívala antes de continuar."
+      );
+      return;
+    }
 
-  fotoTitulo.innerHTML = `
+    fotoTitulo.innerHTML = `
     <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
     <em style="color:#6c757d; margin-left:6px;">Guardando foto...</em>
   `;
 
-  fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      numero_cs: numero_cs,
-      tipo_usuario: localStorage.getItem("tipo_usuario"),
-      nombre_usuario: localStorage.getItem("nombre"),
-      sector: localStorage.getItem("sector"),
-      tipo_foto: tipoFoto,
-      lat: lat,
-      lng: lng,
-    }),
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
-      return res.json();
+    fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        numero_cs: numero_cs,
+        tipo_usuario: localStorage.getItem("tipo_usuario"),
+        nombre_usuario: localStorage.getItem("nombre"),
+        sector: localStorage.getItem("sector"),
+        tipo_foto: tipoFoto,
+        lat: lat,
+        lng: lng,
+      }),
     })
-    .then((data) => {
-      console.log("✅ Respuesta del servidor:", data);
+      .then((res) => {
+        if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        console.log("✅ Respuesta del servidor:", data);
 
-      // Caso: Día COMPLETADO (Entrada + Salida)
-      if (data && (data.completed === true || /completaste tu asistencia/i.test(data.message || ""))) {
-        alert("✅ Ya completaste tu asistencia por hoy.🕐");
+        // Caso: Día COMPLETADO (Entrada + Salida)
+        if (
+          data &&
+          (data.completed === true ||
+            /completaste tu asistencia/i.test(data.message || ""))
+        ) {
+          alert("✅ Ya completaste tu asistencia por hoy.🕐");
 
-        // Limpia interfaz
-        input.value = "";
-        input.disabled = false;
+          // Limpia interfaz
+          input.value = "";
+          input.disabled = false;
+          fotoInput.value = "";
+          fotoInput.disabled = true;
+          guardarFotoBtn.disabled = true;
+          fotoTitulo.innerHTML = `<em style="color:#6c757d;">Subir foto de asistencia…</em>`;
+          infoUsuario.style.display = "none";
+
+          // Limpia datos locales
+          localStorage.clear();
+
+          // Refresca la app (para mostrar vista inicial limpia)
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+
+          return; // cortar flujo
+        }
+
+        // Flujo normal (guardó ENTRADA o SALIDA)
+        const successModal = new bootstrap.Modal(
+          document.getElementById("successModal")
+        );
+        successModal.show();
+        setTimeout(() => successModal.hide(), 2500);
+
         fotoInput.value = "";
-        fotoInput.disabled = true;
-        guardarFotoBtn.disabled = true;
-        fotoTitulo.innerHTML = `<em style="color:#6c757d;">Subir foto de asistencia…</em>`;
-        infoUsuario.style.display = "none";
 
-        // Limpia datos locales
-        localStorage.clear();
+        fotoTitulo.textContent =
+          tipoFoto === "ENTRADA"
+            ? "Subir foto de SALIDA📤"
+            : "Asistencia registrada por hoy✅";
 
-        // Refresca la app (para mostrar vista inicial limpia)
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-
-        return; // cortar flujo
-      }
-
-      // Flujo normal (guardó ENTRADA o SALIDA)
-      const successModal = new bootstrap.Modal(document.getElementById("successModal"));
-      successModal.show();
-      setTimeout(() => successModal.hide(), 2500);
-
-      fotoInput.value = "";
-
-      fotoTitulo.textContent =
-        tipoFoto === "ENTRADA"
-          ? "Subir foto de SALIDA📤"
-          : "Asistencia registrada por hoy✅";
-
-      const infoFoto = document.createElement("div");
-      infoFoto.classList.add("mt-2", "text-center");
-      infoFoto.innerHTML = `
+        const infoFoto = document.createElement("div");
+        infoFoto.classList.add("mt-2", "text-center");
+        infoFoto.innerHTML = `
         <small>Foto de <strong>${tipoFoto}</strong> registrada el 
         <strong>${fecha}</strong> a las <strong>${hora}</strong> ⏰</small><br>
         <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank">
           Ver ubicación en Google Maps
         </a>
       `;
-      fotoSection.appendChild(infoFoto);
+        fotoSection.appendChild(infoFoto);
 
-      if (tipoFoto === "ENTRADA") {
-        localStorage.setItem("entrada_fecha", fecha);
-        localStorage.setItem("entrada_hora", hora);
-        localStorage.setItem("estado", "entrada");
-        input.disabled = true;
-      } else {
-        localStorage.setItem("salida_fecha", fecha);
-        localStorage.setItem("salida_hora", hora);
-        localStorage.setItem("estado", "completado");
-        muestraVistaFinal({
-          entrada_fecha: localStorage.getItem("entrada_fecha"),
-          entrada_hora: localStorage.getItem("entrada_hora"),
-          entrada_lat: lat,
-          entrada_lng: lng,
-          salida_fecha: fecha,
-          salida_hora: hora,
-          salida_lat: lat,
-          salida_lng: lng,
-        });
-      }
-    })
-    .catch((err) => {
-      console.error("❌ Error guardando foto:", err);
-      fotoTitulo.innerHTML = `<em style="color:#dc3545;">Error al guardar foto ❌</em>`;
-    });
-};
+        if (tipoFoto === "ENTRADA") {
+          localStorage.setItem("entrada_fecha", fecha);
+          localStorage.setItem("entrada_hora", hora);
+          localStorage.setItem("estado", "entrada");
+          input.disabled = true;
+        } else {
+          localStorage.setItem("salida_fecha", fecha);
+          localStorage.setItem("salida_hora", hora);
+          localStorage.setItem("estado", "completado");
+          muestraVistaFinal({
+            entrada_fecha: localStorage.getItem("entrada_fecha"),
+            entrada_hora: localStorage.getItem("entrada_hora"),
+            entrada_lat: lat,
+            entrada_lng: lng,
+            salida_fecha: fecha,
+            salida_hora: hora,
+            salida_lat: lat,
+            salida_lng: lng,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("❌ Error guardando foto:", err);
+        fotoTitulo.innerHTML = `<em style="color:#dc3545;">Error al guardar foto ❌</em>`;
+      });
+  };
 });

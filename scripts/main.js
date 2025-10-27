@@ -24,22 +24,21 @@ document.addEventListener("DOMContentLoaded", () => {
   let usuarioData = null;
 
   // ===========================================
-  // TEXTO INICIAL (EN CURSIVA)
+  // TEXTO INICIAL
   // ===========================================
   fotoTitulo.innerHTML = `<em style="color:#6c757d;">Subir foto de asistencia…</em>`;
 
   // ===========================================
-  // UBICACIÓN (solo una vez)
+  // UBICACIÓN
   // ===========================================
-  function obtenerUbicacion() {
+
+    function obtenerUbicacion() {
     const latInput = document.getElementById("lat");
     const lngInput = document.getElementById("lng");
 
-    if (localStorage.getItem("lat") && localStorage.getItem("lng")) {
-      latInput.value = localStorage.getItem("lat");
-      lngInput.value = localStorage.getItem("lng");
-      return;
-    }
+    // AHORAAA Siempre pedir la ubicación cada vez que el usuario suba foto
+    localStorage.removeItem("lat");
+    localStorage.removeItem("lng");
 
     if (!navigator.geolocation) return;
 
@@ -128,13 +127,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===========================================
-  // VALIDAR NÚMERO (spinner al lado del input)
+  // VALIDAR NÚMERO
   // ===========================================
   input.addEventListener("input", function () {
     const numero = input.value.trim();
 
     if (numero.length === 4) {
-      // Mostrar mensaje de validando al lado del input
       let validarMsg = document.getElementById("validarMsg");
       if (!validarMsg) {
         validarMsg = document.createElement("span");
@@ -174,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("numero_cs", data.numero_cs);
             localStorage.setItem("nombre", data.nombre);
             localStorage.setItem("tipo_usuario", data.tipo_usuario);
+            localStorage.setItem("sector", data.sector); // NUEVAA ACCION
             localStorage.setItem("estado", "espera");
 
             pintaInfoUsuario(data.numero_cs, data.nombre, data.tipo_usuario);
@@ -218,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fotoModal.show();
   });
 
-    // ===========================================
+  // ===========================================
   // GUARDAR FOTO EN API
   // ===========================================
   document.getElementById("confirmFotoBtn").onclick = function () {
@@ -233,7 +232,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const lng = localStorage.getItem("lng");
     const numero_cs = localStorage.getItem("numero_cs");
 
-    // Mostrar spinner mientras guarda
+    if (!lat || !lng) {
+      alert(
+        "No se detectó tu ubicación 📍, por favor actívala antes de continuar."
+      );
+      return;
+    }
+
     fotoTitulo.innerHTML = `
       <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
       <em style="color:#6c757d; margin-left:6px;">Guardando foto...</em>
@@ -244,6 +249,9 @@ document.addEventListener("DOMContentLoaded", () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         numero_cs: numero_cs,
+        tipo_usuario: localStorage.getItem("tipo_usuario"),
+        nombre_usuario: localStorage.getItem("nombre"),
+        sector: localStorage.getItem("sector"), // OTRA NUEVA ACCION
         tipo_foto: tipoFoto,
         lat: lat,
         lng: lng,
@@ -256,23 +264,19 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         console.log("✅ Respuesta del servidor:", data);
 
-        // Mostrar modal de éxito
         const successModal = new bootstrap.Modal(
           document.getElementById("successModal")
         );
         successModal.show();
         setTimeout(() => successModal.hide(), 2500);
 
-        // Limpiar el input file después de guardar
         fotoInput.value = "";
 
-        // Cambiar título según el tipo de foto
         fotoTitulo.textContent =
           tipoFoto === "ENTRADA"
             ? "Subir foto de SALIDA📤"
             : "Asistencia registrada por hoy✅";
 
-        // Mostrar detalles debajo
         const infoFoto = document.createElement("div");
         infoFoto.classList.add("mt-2", "text-center");
         infoFoto.innerHTML = `
@@ -284,7 +288,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         fotoSection.appendChild(infoFoto);
 
-        // Guardar estado
         if (tipoFoto === "ENTRADA") {
           localStorage.setItem("entrada_fecha", fecha);
           localStorage.setItem("entrada_hora", hora);
@@ -313,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ===========================================
-  // CANCELAR FOTO (limpia input y muestra alerta)
+  // CANCELAR FOTO
   // ===========================================
   fotoModalEl.querySelector(".btn-secondary").onclick = function () {
     fotoModal.hide();

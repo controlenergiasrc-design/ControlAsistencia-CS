@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // UBICACIÓN
   // ===========================================
 
-    function obtenerUbicacion() {
+  function obtenerUbicacion() {
     const latInput = document.getElementById("lat");
     const lngInput = document.getElementById("lng");
 
@@ -263,6 +263,15 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .then((data) => {
         console.log("✅ Respuesta del servidor:", data);
+
+        // NUEVO BLOQUE — Mostrar alerta si ya completó asistencia
+        if (data.completed) {
+          alert("⚠️ " + data.message);
+          fotoTitulo.innerHTML = `<em style="color:#dc3545;">${data.message}</em>`;
+          fotoInput.value = "";
+          guardarFotoBtn.disabled = true;
+          return;
+        }
 
         const successModal = new bootstrap.Modal(
           document.getElementById("successModal")

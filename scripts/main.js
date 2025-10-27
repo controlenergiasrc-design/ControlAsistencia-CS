@@ -288,19 +288,6 @@ document.getElementById("confirmFotoBtn").onclick = function () {
         return; // cortar flujo
       }
 
-      // Caso 2: Duplicó ENTRADA (ya existe ENTRADA hoy pero aún NO hay SALIDA)
-      if (data && data.success === false && /Ya registraste tu asistencia hoy/i.test(data.message || "")) {
-        alert("⚠️ Ya registraste una entrada hoy. Ahora debes subir tu foto de salida 📤");
-        // preparar UI para SALIDA sin guardar nada
-        input.disabled = true;
-        fotoInput.value = "";
-        fotoInput.disabled = false;
-        guardarFotoBtn.disabled = false;
-        fotoTitulo.textContent = "Subir foto de SALIDA📤";
-        localStorage.setItem("estado", "entrada");
-        return; // cortar flujo
-      }
-
       // Flujo normal (guardó ENTRADA o SALIDA)
       const successModal = new bootstrap.Modal(document.getElementById("successModal"));
       successModal.show();

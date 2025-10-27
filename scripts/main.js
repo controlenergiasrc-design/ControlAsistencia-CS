@@ -310,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
           (data.completed === true ||
             /completaste tu asistencia/i.test(data.message || ""))
         ) {
-          alert("✅ Ya completaste tu asistencia por hoy.🕐");
+          alert("❌ Lo siento, no puedes subir mas fotos. Ya completaste asistencia hoy.");
 
           // Limpia interfaz
           input.value = "";

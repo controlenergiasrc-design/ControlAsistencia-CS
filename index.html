@@ -221,6 +221,23 @@
     <!-- Archivo principal JS -->
     <script src="scripts/main.js"></script>
 
+        <!-- Script para redirigir al login -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const adminLink = document.getElementById("panelAdminLink");
+        if (adminLink) {
+          adminLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            console.log("Redirigiendo al login..."); // solo para probar
+            window.location.href = "login.html";
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
+
+
     <!-- FOOTER -->
     <footer
       class="bg-white text-center text-muted small py-3 shadow-sm mt-auto"

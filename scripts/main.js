@@ -282,6 +282,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // OBTENER la foto seleccionada aquí (dentro del mismo bloque)
+    const archivo = fotoInput.files[0];
+    if (!archivo) {
+      alert("Debes seleccionar una foto primero 📸");
+      return;
+    }
+
     //OPTIMIZAR LA FOTO SUBIDAAA
     const lector = new FileReader();
     lector.onload = function (e) {
@@ -289,13 +296,11 @@ document.addEventListener("DOMContentLoaded", () => {
       img.src = e.target.result;
 
       img.onload = function () {
-        // 1️. Crear un canvas temporal
         const canvas = document.createElement("canvas");
-        const maxSize = 800; // tamaño máximo (ajustable)
+        const maxSize = 800;
         let width = img.width;
         let height = img.height;
 
-        // 2️. Mantener proporciones
         if (width > height) {
           if (width > maxSize) {
             height *= maxSize / width;
@@ -308,13 +313,11 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
 
-        // 3️. Dibujar imagen comprimida
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, width, height);
 
-        // 4️. Convertir a Base64 con compresión (70% calidad)
         const fotoBase64 = canvas.toDataURL("image/jpeg", 0.7);
         enviarFoto(fotoBase64);
       };

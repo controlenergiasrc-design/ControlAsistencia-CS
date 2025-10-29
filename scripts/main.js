@@ -365,6 +365,18 @@ document.addEventListener("DOMContentLoaded", () => {
               ? "Subir foto de SALIDA 📤"
               : "Asistencia registrada por hoy ✅";
 
+          // Mostrar detalles de la foto subida
+          const infoFoto = document.createElement("div");
+          infoFoto.classList.add("mt-2", "text-center");
+          infoFoto.innerHTML = `
+        <small>Foto de <strong>${tipoFoto}</strong> registrada el 
+         <strong>${fecha}</strong> a las <strong>${hora}</strong> ⏰</small><br>
+          <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank">
+            Ver ubicación en Google Maps
+          </a>
+          `;
+          fotoSection.appendChild(infoFoto);
+
           if (tipoFoto === "ENTRADA") {
             localStorage.setItem("entrada_fecha", fecha);
             localStorage.setItem("entrada_hora", hora);

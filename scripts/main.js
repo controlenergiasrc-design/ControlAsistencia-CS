@@ -1,6 +1,37 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Script cargado correctamente");
 
+  // =====================================================
+  // LocalStorage con caducidad diaria (hasta las 12:00 AM)
+  // =====================================================
+
+  function guardarConExpiracion(clave, valor) {
+    const ahora = new Date();
+    const expira = new Date();
+    expira.setHours(24, 0, 0, 0); // medianoche del día actual
+
+    const item = {
+      valor: valor,
+      expira: expira.getTime(),
+    };
+    localStorage.setItem(clave, JSON.stringify(item));
+  }
+
+  function obtenerConExpiracion(clave) {
+    const itemStr = localStorage.getItem(clave);
+    if (!itemStr) return null;
+
+    const item = JSON.parse(itemStr);
+    const ahora = Date.now();
+
+    if (ahora > item.expira) {
+      console.log(`⏰ El dato "${clave}" expiró, se elimina.`);
+      localStorage.removeItem(clave);
+      return null;
+    }
+    return item.valor;
+  }
+
   // ===========================================
   // Restaurar vista final si ya estaba completado
   // ===========================================
@@ -62,8 +93,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const lngInput = document.getElementById("lng");
 
     // AHORAAA Siempre pedir la ubicación cada vez que el usuario suba foto
-    localStorage.removeItem("lat");
-    localStorage.removeItem("lng");
+    guardarConExpiracion("lat", lat);
+    guardarConExpiracion("lng", lng);
 
     if (!navigator.geolocation) return;
 
@@ -77,8 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("   Latitud:", lat);
         console.log("   Longitud:", lng);
 
-        localStorage.setItem("lat", lat);
-        localStorage.setItem("lng", lng);
+        guardarConExpiracion("lat", lat);
+        guardarConExpiracion("lng", lng);
+
         latInput.value = lat;
         lngInput.value = lng;
       },
@@ -92,13 +124,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===========================================
   // FUNCIONES DE INTERFAZ
   // ===========================================
-  function pintaInfoUsuario(numero, nombre, tipo) {
+  function pintaInfoUsuario(numero, nombre, tipo, sector) {
     infoUsuario.style.display = "block";
     infoUsuario.innerHTML = `
-      <strong>Número:</strong> ${numero} <br>
-      <strong>Nombre:</strong> ${nombre} <br>
-      <strong>Tipo:</strong> ${tipo}
-    `;
+    <strong>Número:</strong> ${numero} <br>
+    <strong>Nombre:</strong> ${nombre} <br>
+    <strong>Tipo:</strong> ${tipo} <br>
+    <strong>Sector:</strong> ${sector}
+  `;
   }
 
   function muestraVistaFinal(detalle) {
@@ -125,8 +158,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===========================================
   // SESIÓN LOCAL
   // ===========================================
-  const numeroGuardado = localStorage.getItem("numero_cs");
-  const estado = localStorage.getItem("estado");
+  const numeroGuardado = obtenerConExpiracion("numero_cs");
+  const estado = obtenerConExpiracion("estado");
 
   // Si tenía estado "completado", verificar en la base si todavía existe
   if (estado === "completado" && numeroGuardado) {
@@ -147,10 +180,14 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.clear();
   } else if (numeroGuardado) {
     pintaInfoUsuario(
-      localStorage.getItem("numero_cs"),
-      localStorage.getItem("nombre"),
-      localStorage.getItem("tipo_usuario")
+      obtenerConExpiracion("numero_cs"),
+      obtenerConExpiracion("nombre"),
+      obtenerConExpiracion("tipo_usuario"),
+      obtenerConExpiracion("sector")
     );
+
+    input.value = obtenerConExpiracion("numero_cs");
+
     input.value = localStorage.getItem("numero_cs");
 
     if (estado === "entrada") {
@@ -160,14 +197,14 @@ document.addEventListener("DOMContentLoaded", () => {
       guardarFotoBtn.disabled = false;
     } else if (estado === "completado") {
       muestraVistaFinal({
-        entrada_fecha: localStorage.getItem("entrada_fecha"),
-        entrada_hora: localStorage.getItem("entrada_hora"),
-        entrada_lat: localStorage.getItem("lat"),
-        entrada_lng: localStorage.getItem("lng"),
-        salida_fecha: localStorage.getItem("salida_fecha"),
-        salida_hora: localStorage.getItem("salida_hora"),
-        salida_lat: localStorage.getItem("lat"),
-        salida_lng: localStorage.getItem("lng"),
+        entrada_fecha: obtenerConExpiracion("entrada_fecha"),
+        entrada_hora: obtenerConExpiracion("entrada_hora"),
+        entrada_lat: obtenerConExpiracion("lat"),
+        entrada_lng: obtenerConExpiracion("lng"),
+        salida_fecha: obtenerConExpiracion("salida_fecha"),
+        salida_hora: obtenerConExpiracion("salida_hora"),
+        salida_lat: obtenerConExpiracion("lat"),
+        salida_lng: obtenerConExpiracion("lng"),
       });
     }
   }
@@ -240,13 +277,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
           document.getElementById("confirmBtn").onclick = function () {
             modal.hide();
-            localStorage.setItem("numero_cs", data.numero_cs);
-            localStorage.setItem("nombre", data.nombre);
-            localStorage.setItem("tipo_usuario", data.tipo_usuario);
-            localStorage.setItem("sector", data.sector); // NUEVAA ACCION
-            localStorage.setItem("estado", "espera");
+            guardarConExpiracion("numero_cs", data.numero_cs);
+            guardarConExpiracion("nombre", data.nombre);
+            guardarConExpiracion("tipo_usuario", data.tipo_usuario);
+            guardarConExpiracion("sector", data.sector);
+            guardarConExpiracion("estado", "espera");
 
-            pintaInfoUsuario(data.numero_cs, data.nombre, data.tipo_usuario);
+            pintaInfoUsuario(
+              data.numero_cs,
+              data.nombre,
+              data.tipo_usuario,
+              data.sector
+            );
             fotoInput.disabled = false;
             guardarFotoBtn.disabled = false;
             fotoTitulo.textContent = "Subir foto de ENTRADA📥";
@@ -362,7 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ) {
             alert("❌ Lo siento, ya completaste tu asistencia por hoy.");
 
-            // 🔹 Limpia interfaz
+            // Limpia interfaz
             input.value = "";
             input.disabled = false;
             fotoInput.value = "";
@@ -404,14 +446,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Actualiza estado local
           if (tipoFoto === "ENTRADA") {
-            localStorage.setItem("entrada_fecha", fecha);
-            localStorage.setItem("entrada_hora", hora);
-            localStorage.setItem("estado", "entrada");
+            guardarConExpiracion("entrada_fecha", fecha);
+            guardarConExpiracion("entrada_hora", hora);
+            guardarConExpiracion("estado", "entrada");
             input.disabled = true;
           } else {
-            localStorage.setItem("salida_fecha", fecha);
-            localStorage.setItem("salida_hora", hora);
-            localStorage.setItem("estado", "completado");
+            guardarConExpiracion("salida_fecha", fecha);
+            guardarConExpiracion("salida_hora", hora);
+            guardarConExpiracion("estado", "completado");
             muestraVistaFinal({
               entrada_fecha: localStorage.getItem("entrada_fecha"),
               entrada_hora: localStorage.getItem("entrada_hora"),
@@ -444,7 +486,11 @@ document.addEventListener("DOMContentLoaded", () => {
   siguienteDia.setHours(24, 0, 0, 0); // exacto a las 12:00 AM
   const msHastaMedianoche = siguienteDia - ahora;
 
-  console.log("Limpieza programada en", Math.round(msHastaMedianoche / 1000 / 60), "minutos");
+  console.log(
+    "Limpieza programada en",
+    Math.round(msHastaMedianoche / 1000 / 60),
+    "minutos"
+  );
 
   // Cuando llegue esa hora, limpia todo y recarga
   setTimeout(() => {

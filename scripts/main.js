@@ -2,60 +2,17 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("Script cargado correctamente");
 
   // =====================================================
-  // LocalStorage con caducidad diaria (hasta las 12:00 AM)
+  // Reinicio automático si cambió de día
   // =====================================================
+  const hoy = new Date().toISOString().split("T")[0]; // fecha actual YYYY-MM-DD
+  const ultimaFecha = localStorage.getItem("ultima_fecha");
 
-  function guardarConExpiracion(clave, valor) {
-    const ahora = new Date();
-    const expira = new Date();
-    expira.setHours(24, 0, 0, 0); // medianoche del día actual
-
-    const item = {
-      valor: valor,
-      expira: expira.getTime(),
-    };
-    localStorage.setItem(clave, JSON.stringify(item));
+  if (ultimaFecha && ultimaFecha !== hoy) {
+    console.log("Nuevo día detectado, limpiando localStorage...");
+    localStorage.clear();
   }
 
-  function obtenerConExpiracion(clave) {
-    const itemStr = localStorage.getItem(clave);
-    if (!itemStr) return null;
-
-    const item = JSON.parse(itemStr);
-    const ahora = Date.now();
-
-    if (ahora > item.expira) {
-      console.log(`⏰ El dato "${clave}" expiró, se elimina.`);
-      localStorage.removeItem(clave);
-      return null;
-    }
-    return item.valor;
-  }
-
-  // ===========================================
-  // Restaurar vista final si ya estaba completado
-  // ===========================================
-  const estadoGuardado = localStorage.getItem("estado");
-  if (estadoGuardado === "completado") {
-    const entrada_fecha = localStorage.getItem("entrada_fecha");
-    const entrada_hora = localStorage.getItem("entrada_hora");
-    const salida_fecha = localStorage.getItem("salida_fecha");
-    const salida_hora = localStorage.getItem("salida_hora");
-    const lat = localStorage.getItem("lat");
-    const lng = localStorage.getItem("lng");
-
-    muestraVistaFinal({
-      entrada_fecha,
-      entrada_hora,
-      entrada_lat: lat,
-      entrada_lng: lng,
-      salida_fecha,
-      salida_hora,
-      salida_lat: lat,
-      salida_lng: lng,
-    });
-    return; // detener el resto del flujo
-  }
+  localStorage.setItem("ultima_fecha", hoy);
 
   // ===========================================
   // CONFIGURACIÓN API
@@ -87,14 +44,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===========================================
   // UBICACIÓN
   // ===========================================
-
   function obtenerUbicacion() {
     const latInput = document.getElementById("lat");
     const lngInput = document.getElementById("lng");
 
-    // AHORAAA Siempre pedir la ubicación cada vez que el usuario suba foto
-    guardarConExpiracion("lat", lat);
-    guardarConExpiracion("lng", lng);
+    localStorage.removeItem("lat");
+    localStorage.removeItem("lng");
 
     if (!navigator.geolocation) return;
 
@@ -103,13 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const lat = pos.coords.latitude.toFixed(6);
         const lng = pos.coords.longitude.toFixed(6);
 
-        //Mostrar la ubicacion en la consola
         console.log("📍 Ubicación obtenida correctamente:");
         console.log("   Latitud:", lat);
         console.log("   Longitud:", lng);
 
-        guardarConExpiracion("lat", lat);
-        guardarConExpiracion("lng", lng);
+        localStorage.setItem("lat", lat);
+        localStorage.setItem("lng", lng);
 
         latInput.value = lat;
         lngInput.value = lng;
@@ -127,24 +81,24 @@ document.addEventListener("DOMContentLoaded", () => {
   function pintaInfoUsuario(numero, nombre, tipo, sector) {
     infoUsuario.style.display = "block";
     infoUsuario.innerHTML = `
-    <strong>Número:</strong> ${numero} <br>
-    <strong>Nombre:</strong> ${nombre} <br>
-    <strong>Tipo:</strong> ${tipo} <br>
-    <strong>Sector:</strong> ${sector}
-  `;
+      <strong>Número:</strong> ${numero} <br>
+      <strong>Nombre:</strong> ${nombre} <br>
+      <strong>Tipo:</strong> ${tipo} <br>
+      <strong>Sector:</strong> ${sector}
+    `;
   }
 
   function muestraVistaFinal(detalle) {
     document.querySelector(".container-fluid").innerHTML = `
       <div class="text-center mt-5">
-        <h4 class="text-success fw-bold mb-4">Asistencia registrada por hoy✅</h4>
+        <h4 class="text-success fw-bold mb-4">Asistencia registrada por hoy ✅</h4>
         <div>
           <hr>
-          <p class="mb-1"><strong>Entrada📥:</strong> ${detalle.entrada_fecha} a las ${detalle.entrada_hora}</p>
+          <p class="mb-1"><strong>Entrada 📥:</strong> ${detalle.entrada_fecha} a las ${detalle.entrada_hora}</p>
           <a href="https://www.google.com/maps?q=${detalle.entrada_lat},${detalle.entrada_lng}" target="_blank">
             Ver ubicación de entrada
           </a>
-          <p class="mb-1"><strong>Salida📤:</strong> ${detalle.salida_fecha} a las ${detalle.salida_hora}</p>
+          <p class="mb-1"><strong>Salida 📤:</strong> ${detalle.salida_fecha} a las ${detalle.salida_hora}</p>
           <a href="https://www.google.com/maps?q=${detalle.salida_lat},${detalle.salida_lng}" target="_blank">
             Ver ubicación de salida
           </a>
@@ -158,19 +112,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===========================================
   // SESIÓN LOCAL
   // ===========================================
-  const numeroGuardado = obtenerConExpiracion("numero_cs");
-  const estado = obtenerConExpiracion("estado");
+  const numeroGuardado = localStorage.getItem("numero_cs");
+  const estado = localStorage.getItem("estado");
 
-  // Si tenía estado "completado", verificar en la base si todavía existe
   if (estado === "completado" && numeroGuardado) {
     fetch(`${API_URL}?accion=validarUsuario&numero_cs=${numeroGuardado}`)
       .then((res) => res.json())
       .then((data) => {
         if (data && !data.estado_hoy) {
-          // El usuario ya no tiene asistencia registrada → limpiar todo
           console.log("🧹 Registro eliminado en BD, reiniciando app...");
           localStorage.clear();
-          location.reload(); // recargar inicio
+          location.reload();
         }
       })
       .catch((err) => console.warn("Error verificando estado:", err));
@@ -180,31 +132,28 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.clear();
   } else if (numeroGuardado) {
     pintaInfoUsuario(
-      obtenerConExpiracion("numero_cs"),
-      obtenerConExpiracion("nombre"),
-      obtenerConExpiracion("tipo_usuario"),
-      obtenerConExpiracion("sector")
+      localStorage.getItem("numero_cs"),
+      localStorage.getItem("nombre"),
+      localStorage.getItem("tipo_usuario"),
+      localStorage.getItem("sector")
     );
-
-    input.value = obtenerConExpiracion("numero_cs");
-
     input.value = localStorage.getItem("numero_cs");
 
     if (estado === "entrada") {
       input.disabled = true;
-      fotoTitulo.textContent = "Subir foto de SALIDA📤";
+      fotoTitulo.textContent = "Subir foto de SALIDA 📤";
       fotoInput.disabled = false;
       guardarFotoBtn.disabled = false;
     } else if (estado === "completado") {
       muestraVistaFinal({
-        entrada_fecha: obtenerConExpiracion("entrada_fecha"),
-        entrada_hora: obtenerConExpiracion("entrada_hora"),
-        entrada_lat: obtenerConExpiracion("lat"),
-        entrada_lng: obtenerConExpiracion("lng"),
-        salida_fecha: obtenerConExpiracion("salida_fecha"),
-        salida_hora: obtenerConExpiracion("salida_hora"),
-        salida_lat: obtenerConExpiracion("lat"),
-        salida_lng: obtenerConExpiracion("lng"),
+        entrada_fecha: localStorage.getItem("entrada_fecha"),
+        entrada_hora: localStorage.getItem("entrada_hora"),
+        entrada_lat: localStorage.getItem("lat"),
+        entrada_lng: localStorage.getItem("lng"),
+        salida_fecha: localStorage.getItem("salida_fecha"),
+        salida_hora: localStorage.getItem("salida_hora"),
+        salida_lat: localStorage.getItem("lat"),
+        salida_lng: localStorage.getItem("lng"),
       });
     }
   }
@@ -248,24 +197,10 @@ document.addEventListener("DOMContentLoaded", () => {
             (data.completed === true ||
               /completaste tu asistencia/i.test(data.message || ""))
           ) {
-            alert(
-              "❌ Lo siento, no puedes subir mas fotos. Ya completaste asistencia hoy."
-            );
+            alert("❌ Ya completaste asistencia hoy.");
             fotoTitulo.innerHTML = `<em style='color:#198754;'>Asistencia completada ✅</em>`;
-
-            // limpiar y desactivar solo el input file y botón
-            fotoInput.value = "";
-            fotoInput.disabled = false;
-            guardarFotoBtn.disabled = false;
-
-            // limpiar título para permitir otra lectura al validar otro usuario
-            input.value = "";
-            input.disabled = false;
-
-            // limpiar el estado local (por si cambian de usuario)
             localStorage.clear();
-
-            return; // detener flujo
+            return;
           }
 
           document.getElementById("modalBody").innerHTML = `
@@ -277,11 +212,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
           document.getElementById("confirmBtn").onclick = function () {
             modal.hide();
-            guardarConExpiracion("numero_cs", data.numero_cs);
-            guardarConExpiracion("nombre", data.nombre);
-            guardarConExpiracion("tipo_usuario", data.tipo_usuario);
-            guardarConExpiracion("sector", data.sector);
-            guardarConExpiracion("estado", "espera");
+            localStorage.setItem("numero_cs", data.numero_cs);
+            localStorage.setItem("nombre", data.nombre);
+            localStorage.setItem("tipo_usuario", data.tipo_usuario);
+            localStorage.setItem("sector", data.sector);
+            localStorage.setItem("estado", "espera");
 
             pintaInfoUsuario(
               data.numero_cs,
@@ -291,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
             fotoInput.disabled = false;
             guardarFotoBtn.disabled = false;
-            fotoTitulo.textContent = "Subir foto de ENTRADA📥";
+            fotoTitulo.textContent = "Subir foto de ENTRADA 📥";
           };
 
           confirmModalEl.querySelector(".btn-secondary").onclick = function () {
@@ -309,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ===========================================
-  // CONFIRMAR FOTO
+  // CONFIRMAR FOTO Y GUARDAR
   // ===========================================
   guardarFotoBtn.addEventListener("click", function () {
     if (!fotoInput.files.length) {
@@ -330,9 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fotoModal.show();
   });
 
-  // ===========================================
-  // GUARDAR FOTO EN API
-  // ===========================================
   document.getElementById("confirmFotoBtn").onclick = function () {
     fotoModal.hide();
 
@@ -346,34 +278,52 @@ document.addEventListener("DOMContentLoaded", () => {
     const numero_cs = localStorage.getItem("numero_cs");
 
     if (!lat || !lng) {
-      alert(
-        "No se detectó tu ubicación 📍, por favor actívala antes de continuar."
-      );
+      alert("No se detectó tu ubicación 📍");
       return;
     }
 
-    // Convertir la imagen seleccionada a Base64 antes de enviarla
-    const archivo = fotoInput.files[0];
-    if (!archivo) {
-      alert("Debes seleccionar una foto primero 📸");
-      return;
-    }
-
+    //OPTIMIZAR LA FOTO SUBIDAAA
     const lector = new FileReader();
     lector.onload = function (e) {
-      const fotoBase64 = e.target.result; // Imagen codificada en base64
-      enviarFoto(fotoBase64);
-    };
-    lector.readAsDataURL(archivo); // Inicia la conversión de la foto
+      const img = new Image();
+      img.src = e.target.result;
 
-    // ===========================================
-    // FUNCIÓN PARA ENVIAR FOTO A LA API
-    // ===========================================
+      img.onload = function () {
+        // 1️. Crear un canvas temporal
+        const canvas = document.createElement("canvas");
+        const maxSize = 800; // tamaño máximo (ajustable)
+        let width = img.width;
+        let height = img.height;
+
+        // 2️. Mantener proporciones
+        if (width > height) {
+          if (width > maxSize) {
+            height *= maxSize / width;
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width *= maxSize / height;
+            height = maxSize;
+          }
+        }
+
+        // 3️. Dibujar imagen comprimida
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // 4️. Convertir a Base64 con compresión (70% calidad)
+        const fotoBase64 = canvas.toDataURL("image/jpeg", 0.7);
+        enviarFoto(fotoBase64);
+      };
+    };
+    lector.readAsDataURL(archivo);
+
     function enviarFoto(fotoBase64) {
-      fotoTitulo.innerHTML = `
-      <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
-      <em style="color:#6c757d; margin-left:6px;">Guardando foto...</em>
-    `;
+      fotoTitulo.innerHTML = `<span class="spinner-border spinner-border-sm text-primary"></span>
+      <em style="color:#6c757d; margin-left:6px;">Guardando foto...</em>`;
 
       fetch(API_URL, {
         method: "POST",
@@ -386,40 +336,20 @@ document.addEventListener("DOMContentLoaded", () => {
           tipo_foto: tipoFoto,
           lat: lat,
           lng: lng,
-          fotoBase64: fotoBase64, // 💾 enviamos la imagen codificada
+          fotoBase64: fotoBase64,
         }),
       })
-        .then((res) => {
-          if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
-          return res.json();
-        })
+        .then((res) => res.json())
         .then((data) => {
           console.log("✅ Respuesta del servidor:", data);
 
-          // Caso: Día COMPLETADO (Entrada + Salida)
-          if (
-            data &&
-            (data.completed === true ||
-              /completaste tu asistencia/i.test(data.message || ""))
-          ) {
-            alert("❌ Lo siento, ya completaste tu asistencia por hoy.");
-
-            // Limpia interfaz
-            input.value = "";
-            input.disabled = false;
-            fotoInput.value = "";
-            fotoInput.disabled = true;
-            guardarFotoBtn.disabled = true;
-            fotoTitulo.innerHTML = `<em style="color:#6c757d;">Subir foto de asistencia…</em>`;
-            infoUsuario.style.display = "none";
-
-            // Limpia datos locales y recarga
+          if (data.completed === true) {
+            alert("❌ Ya completaste asistencia hoy.");
             localStorage.clear();
-            setTimeout(() => window.location.reload(), 1500);
+            window.location.reload();
             return;
           }
 
-          // Flujo normal (guardó ENTRADA o SALIDA)
           const successModal = new bootstrap.Modal(
             document.getElementById("successModal")
           );
@@ -429,31 +359,18 @@ document.addEventListener("DOMContentLoaded", () => {
           fotoInput.value = "";
           fotoTitulo.textContent =
             tipoFoto === "ENTRADA"
-              ? "Subir foto de SALIDA📤"
-              : "Asistencia registrada por hoy✅";
+              ? "Subir foto de SALIDA 📤"
+              : "Asistencia registrada por hoy ✅";
 
-          // Mostrar info de la foto guardada
-          const infoFoto = document.createElement("div");
-          infoFoto.classList.add("mt-2", "text-center");
-          infoFoto.innerHTML = `
-          <small>Foto de <strong>${tipoFoto}</strong> registrada el 
-          <strong>${fecha}</strong> a las <strong>${hora}</strong> ⏰</small><br>
-          <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank">
-            Ver ubicación en Google Maps
-          </a>
-        `;
-          fotoSection.appendChild(infoFoto);
-
-          // Actualiza estado local
           if (tipoFoto === "ENTRADA") {
-            guardarConExpiracion("entrada_fecha", fecha);
-            guardarConExpiracion("entrada_hora", hora);
-            guardarConExpiracion("estado", "entrada");
+            localStorage.setItem("entrada_fecha", fecha);
+            localStorage.setItem("entrada_hora", hora);
+            localStorage.setItem("estado", "entrada");
             input.disabled = true;
           } else {
-            guardarConExpiracion("salida_fecha", fecha);
-            guardarConExpiracion("salida_hora", hora);
-            guardarConExpiracion("estado", "completado");
+            localStorage.setItem("salida_fecha", fecha);
+            localStorage.setItem("salida_hora", hora);
+            localStorage.setItem("estado", "completado");
             muestraVistaFinal({
               entrada_fecha: localStorage.getItem("entrada_fecha"),
               entrada_hora: localStorage.getItem("entrada_hora"),
@@ -473,29 +390,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 });
-
-// =====================================================
-// REINICIO DIARIO A LAS 12:00 AM (UNA SOLA VEZ)
-// =====================================================
-
-(function programarLimpiezaDiaria() {
-  const ahora = new Date();
-
-  // Calculamos cuánto falta para la próxima medianoche
-  const siguienteDia = new Date(ahora);
-  siguienteDia.setHours(24, 0, 0, 0); // exacto a las 12:00 AM
-  const msHastaMedianoche = siguienteDia - ahora;
-
-  console.log(
-    "Limpieza programada en",
-    Math.round(msHastaMedianoche / 1000 / 60),
-    "minutos"
-  );
-
-  // Cuando llegue esa hora, limpia todo y recarga
-  setTimeout(() => {
-    console.log("Es medianoche — limpiando localStorage y reiniciando...");
-    localStorage.clear();
-    location.reload(); // recarga solo una vez
-  }, msHastaMedianoche);
-})();

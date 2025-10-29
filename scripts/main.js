@@ -283,7 +283,7 @@ if (estadoGuardado === "completado") {
     fotoModal.show();
   });
 
-  // ===========================================
+// ===========================================
 // GUARDAR FOTO EN API
 // ===========================================
 document.getElementById("confirmFotoBtn").onclick = function () {
@@ -364,7 +364,7 @@ document.getElementById("confirmFotoBtn").onclick = function () {
           fotoTitulo.innerHTML = `<em style="color:#6c757d;">Subir foto de asistencia…</em>`;
           infoUsuario.style.display = "none";
 
-          // 🔹 Limpia datos locales y recarga
+          // Limpia datos locales y recarga
           localStorage.clear();
           setTimeout(() => window.location.reload(), 1500);
           return;
@@ -424,3 +424,37 @@ document.getElementById("confirmFotoBtn").onclick = function () {
   }
 };
 });
+
+// ==============================
+// REINICIO AUTOMÁTICO A MEDIANOCHE
+// ==============================
+
+// Guardamos la fecha actual (solo el día)
+const hoy = new Date().toLocaleDateString();
+
+// Revisamos si ya se guardó una fecha anterior
+const ultimaFecha = localStorage.getItem("ultimaFecha");
+
+// Si no hay fecha guardada, la guardamos por primera vez
+if (!ultimaFecha) {
+  localStorage.setItem("ultimaFecha", hoy);
+} else {
+  // Si la fecha cambió (ya es otro día)
+  if (ultimaFecha !== hoy) {
+    console.log("Nuevo día detectado, reiniciando sistema...");
+    localStorage.clear(); // limpia todos los datos del día anterior
+    localStorage.setItem("ultimaFecha", hoy); // guarda la nueva fecha
+    location.reload(); // recarga la página
+  }
+}
+
+// Comprobar cada minuto si cambia la fecha (por si el usuario deja la web abierta toda la noche)
+setInterval(() => {
+  const fechaActual = new Date().toLocaleDateString();
+  if (fechaActual !== localStorage.getItem("ultimaFecha")) {
+    console.log("🕛 Medianoche alcanzada, reiniciando...");
+    localStorage.clear();
+    localStorage.setItem("ultimaFecha", fechaActual);
+    location.reload();
+  }
+}, 60000); // 60,000 ms = 1 minuto

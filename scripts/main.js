@@ -432,36 +432,24 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 });
 
-// ==============================
-// REINICIO AUTOMÁTICO A MEDIANOCHE
-// ==============================
+// =====================================================
+// REINICIO DIARIO A LAS 12:00 AM (UNA SOLA VEZ)
+// =====================================================
 
-// Guardamos la fecha actual (solo el día)
-const hoy = new Date().toLocaleDateString();
+(function programarLimpiezaDiaria() {
+  const ahora = new Date();
 
-// Revisamos si ya se guardó una fecha anterior
-const ultimaFecha = localStorage.getItem("ultimaFecha");
+  // Calculamos cuánto falta para la próxima medianoche
+  const siguienteDia = new Date(ahora);
+  siguienteDia.setHours(24, 0, 0, 0); // exacto a las 12:00 AM
+  const msHastaMedianoche = siguienteDia - ahora;
 
-// Si no hay fecha guardada, la guardamos por primera vez
-if (!ultimaFecha) {
-  localStorage.setItem("ultimaFecha", hoy);
-} else {
-  // Si la fecha cambió (ya es otro día)
-  if (ultimaFecha !== hoy) {
-    console.log("Nuevo día detectado, reiniciando sistema...");
-    localStorage.clear(); // limpia todos los datos del día anterior
-    localStorage.setItem("ultimaFecha", hoy); // guarda la nueva fecha
-    location.reload(); // recarga la página
-  }
-}
+  console.log("Limpieza programada en", Math.round(msHastaMedianoche / 1000 / 60), "minutos");
 
-// Comprobar cada minuto si cambia la fecha (por si el usuario deja la web abierta toda la noche)
-setInterval(() => {
-  const fechaActual = new Date().toLocaleDateString();
-  if (fechaActual !== localStorage.getItem("ultimaFecha")) {
-    console.log("🕛 Medianoche alcanzada, reiniciando...");
+  // Cuando llegue esa hora, limpia todo y recarga
+  setTimeout(() => {
+    console.log("Es medianoche — limpiando localStorage y reiniciando...");
     localStorage.clear();
-    localStorage.setItem("ultimaFecha", fechaActual);
-    location.reload();
-  }
-}, 60000); // 60,000 ms = 1 minuto
+    location.reload(); // recarga solo una vez
+  }, msHastaMedianoche);
+})();

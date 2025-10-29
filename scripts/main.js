@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const numeroGuardado = localStorage.getItem("numero_cs");
   const estado = localStorage.getItem("estado");
 
-  if (estado === "completado" && numeroGuardado) {
+ /* if (estado === "completado" && numeroGuardado) {
     fetch(`${API_URL}?accion=validarUsuario&numero_cs=${numeroGuardado}`)
       .then((res) => res.json())
       .then((data) => {
@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       })
       .catch((err) => console.warn("Error verificando estado:", err));
-  }
+  }*/
 
   if (numeroGuardado && estado === "espera") {
     localStorage.clear();

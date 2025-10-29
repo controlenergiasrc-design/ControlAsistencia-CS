@@ -36,6 +36,7 @@ if (form) {
 
       // Enviamos solicitud al Worker (que contacta a login.gs)
       const response = await fetch(url);
+      console.log("✅ Se envió solicitud al Worker:", url);
       const data = await response.json();
 
       if (data.success) {

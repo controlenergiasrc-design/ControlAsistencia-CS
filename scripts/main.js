@@ -14,6 +14,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   localStorage.setItem("ultima_fecha", hoy);
 
+  //================================================================
+  // Espera un momento para restaurar correctamente la vista final
+  //================================================================
+  setTimeout(() => {
+    const estadoGuardado = localStorage.getItem("estado");
+    if (estadoGuardado === "completado") {
+      const entrada_fecha = localStorage.getItem("entrada_fecha");
+      const entrada_hora = localStorage.getItem("entrada_hora");
+      const salida_fecha = localStorage.getItem("salida_fecha");
+      const salida_hora = localStorage.getItem("salida_hora");
+      const lat = localStorage.getItem("lat");
+      const lng = localStorage.getItem("lng");
+
+      muestraVistaFinal({
+        entrada_fecha,
+        entrada_hora,
+        entrada_lat: lat,
+        entrada_lng: lng,
+        salida_fecha,
+        salida_hora,
+        salida_lat: lat,
+        salida_lng: lng,
+      });
+    }
+  }, 500); // espera medio segundo antes de decidir qué mostrar
 
   //================================================================
   // Espera un momento para restaurar correctamente la vista final

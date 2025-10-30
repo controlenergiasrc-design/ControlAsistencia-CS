@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((res) => res.json())
       .then((data) => {
         if (data && !data.estado_hoy) {
-          console.log("🧹 Registro eliminado en BD, reiniciando app...");
+          console.log("🧹 Registro eliminado en BD, reiniciando app...");l´'
           localStorage.clear();
           location.reload();
         }

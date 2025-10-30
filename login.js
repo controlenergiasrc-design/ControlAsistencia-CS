@@ -38,9 +38,11 @@ if (form) {
       const response = await fetch(url);
       console.log("✅ Se envió solicitud al Worker:", url);
       const data = await response.json();
+      console.log("📦 Respuesta del servidor:", data);
+
 
       if (data.success) {
-        // ✅ Login correcto
+        // Login correcto
         const { nombre, rol } = data.admin;
         msg.textContent = `Bienvenido ${nombre} (${rol}) 🎉`;
         msg.classList.remove("d-none");
@@ -55,7 +57,7 @@ if (form) {
           window.location.href = "admin.html";
         }, 1500);
       } else {
-        // ❌ Login incorrecto
+        // Login incorrecto
         msg.textContent = data.mensaje || "Usuario o clave incorrectos ❌";
         msg.classList.remove("d-none");
         msg.classList.add("alert-danger");

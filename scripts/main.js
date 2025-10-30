@@ -69,7 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===========================================
   // CONFIGURACIÓN API
   // ===========================================
-  const API_URL = "https://asistencia-proxy.kencyf01.workers.dev";
+  //const API_URL = "https://asistencia-proxy.kencyf01.workers.dev"; proyecto anterior
+  const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
 
   // ===========================================
   // ELEMENTOS PRINCIPALES

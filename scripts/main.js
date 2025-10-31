@@ -300,6 +300,24 @@ document.addEventListener("DOMContentLoaded", () => {
   // CONFIRMAR FOTO Y GUARDAR
   // ===========================================
   guardarFotoBtn.addEventListener("click", function () {
+    // ===========================================
+    // Si el usuario cancela en el modal de foto
+    // ===========================================
+    const btnCancelar = fotoModalEl.querySelector(".btn-secondary");
+    btnCancelar.addEventListener("click", (e) => {
+      e.preventDefault(); // evita que Bootstrap lo cierre antes
+      fotoModal.hide(); // cierra el modal
+      fotoInput.value = ""; // limpia el input
+      console.log("Foto cancelada por el usuario.");
+
+      const msg = document.createElement("div");
+      msg.className = "alert alert-warning text-center mt-3";
+      msg.textContent = "Carga cancelada ❌";
+      fotoInput.insertAdjacentElement("afterend", msg); // justo debajo del input
+
+      setTimeout(() => msg.remove(), 2000); // la quita en 2 segundos
+    });
+
     if (!fotoInput.files.length) {
       alert("Debes seleccionar una foto primero 📸");
       return;
@@ -374,21 +392,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const fotoBase64 = canvas.toDataURL("image/jpeg", 0.7);
         enviarFoto(fotoBase64);
       };
-    };
-
-    // ===========================================
-    // Si el usuario cancela en el modal de foto
-    // ===========================================
-    fotoModalEl.querySelector(".btn-secondary").onclick = function () {
-      fotoModal.hide();
-      fotoInput.value = "";
-      console.log("Foto cancelada por el usuario.");
-
-      const msg = document.createElement("div");
-      msg.className = "alert alert-warning text-center mt-3";
-      msg.textContent = "Carga cancelada ❌";
-      fotoSection.appendChild(msg);
-      setTimeout(() => msg.remove(), 2000);
     };
 
     lector.readAsDataURL(archivo);

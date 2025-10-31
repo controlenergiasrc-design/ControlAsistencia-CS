@@ -299,28 +299,24 @@
         width: 100%;
         overflow: auto;
       }
-
-      /* === Hover individual (cada fila) === */
-      tr.par-1:hover,
-      tr.par-2:hover {
-        background-color: #f1f3f4;
+      /* Hover por fila (Bootstrap pinta los TD, no el TR) */
+      .table.table-hover tbody tr:hover > * {
+        background-color: #f1f3f4 !important;
         transition: background-color 0.25s ease;
       }
 
-      /* === Hover grupal (cuando el puntero está sobre el botón Auditar) === */
-      tr.hover-group,
-      tr.hover-group + tr {
+      /* Hover doble: cuando estamos sobre la celda combinada de Auditar */
+      .table.table-hover tbody tr.hover-group > *,
+      .table.table-hover tbody tr.hover-group + tr > * {
         background-color: #e6e9ec !important;
-        transition: background-color 0.25s ease;
       }
 
-      /* === Evitar sombreado en la celda del botón Auditar === */
-      td.audit-cell,
-      tr.par-1:hover td.audit-cell,
-      tr.par-2:hover td.audit-cell,
-      tr.hover-group td.audit-cell,
-      tr.hover-group + tr td.audit-cell {
-        background-color: #fff !important; /* fondo blanco limpio */
+      /* Nunca sombrear la celda del botón Auditar */
+      .table.table-hover tbody tr > td.audit-cell,
+      .table.table-hover tbody tr:hover > td.audit-cell,
+      .table.table-hover tbody tr.hover-group > td.audit-cell,
+      .table.table-hover tbody tr.hover-group + tr > td.audit-cell {
+        background-color: #fff !important;
       }
     </style>
   </head>
@@ -511,20 +507,23 @@
       });
     </script>
     <script>
-      // Detectar cuando el mouse entra/sale de la celda combinada (Auditar)
+      // Activa el sombreado doble cuando el puntero entra/sale de la celda combinada
       document.querySelectorAll(".audit-cell").forEach((cell) => {
-        cell.addEventListener("mouseenter", () => {
-          const row1 = cell.closest("tr"); // Fila superior (Entrada)
-          const row2 = row1.nextElementSibling; // Fila inferior (Salida)
-          row1.classList.add("hover-group");
-          if (row2) row2.classList.add("hover-group");
-        });
-        cell.addEventListener("mouseleave", () => {
-          const row1 = cell.closest("tr");
-          const row2 = row1.nextElementSibling;
-          row1.classList.remove("hover-group");
-          if (row2) row2.classList.remove("hover-group");
-        });
+        const row1 = cell.closest("tr"); // fila superior (Entrada)
+        const row2 = row1?.nextElementSibling; // fila inferior (Salida)
+
+        const enter = () => {
+          row1?.classList.add("hover-group");
+          row2?.classList.add("hover-group");
+        };
+        const leave = () => {
+          row1?.classList.remove("hover-group");
+          row2?.classList.remove("hover-group");
+        };
+
+        // Usa mouseover/mouseout para máxima compatibilidad (cubren niños dentro del TD)
+        cell.addEventListener("mouseover", enter);
+        cell.addEventListener("mouseout", leave);
       });
     </script>
   </body>

@@ -302,19 +302,19 @@
       /* Hover por fila (Bootstrap pinta los TD, no el TR) */
       /* ===== Hover limpio y uniforme ===== */
 
-      /* Hover individual: fila actual */
+      /* Hover individual: fila normal */
       .table.table-hover tbody tr:hover > * {
-        background-color: #e3e7ea !important; /* gris intermedio */
+        background-color: #e7eaed !important;
         transition: background-color 0.25s ease;
       }
 
-      /* Hover doble (al pasar sobre Auditar) */
+      /* Hover doble: al pasar sobre la celda combinada del botón Auditar */
       .table.table-hover tbody tr.hover-group > *,
       .table.table-hover tbody tr.hover-group + tr > * {
-        background-color: #e3e7ea !important; /* mismo tono */
+        background-color: #e7eaed !important; /* mismo tono */
       }
 
-      /* La celda del botón Auditar no se sombrea */
+      /* Evita que la celda del botón se pinte */
       .table.table-hover tbody tr > td.audit-cell,
       .table.table-hover tbody tr:hover > td.audit-cell,
       .table.table-hover tbody tr.hover-group > td.audit-cell,

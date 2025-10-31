@@ -221,23 +221,44 @@
         vertical-align: middle;
       }
 
-      /* Alternancia por par (dos filas por usuario) */
-      tr.par-1 {
-        background: var(--alt-1);
-      }
+      /* ===============================
+   TABLA LIMPIA CON COLORES ALTERNOS
+   =============================== */
+
+      /* Alternancia cada 2 filas (Entrada/Salida) */
+      tr.par-1,
       tr.par-2 {
-        background: var(--alt-2);
+        background-color: #f9f9f9; /* color 1 */
+      }
+      tr.par-2 + tr.par-1,
+      tr.par-2 + tr.par-2 {
+        background-color: #eef7ff; /* color 2 */
       }
 
-      /* Botones de opciones: siempre grises */
+      /* Botones grises por defecto */
       .btn-gray {
         background: var(--btn-gray);
         color: #212529;
         border: none;
+        transition: background-color 0.25s ease;
       }
+
+      /* Efecto hover naranja */
       .btn-gray:hover {
-        filter: brightness(0.95);
+        background-color: #ff9800;
+        color: #fff;
       }
+
+      /* Botón Auditar (rojo) */
+      .btn-audit {
+        background: #d93025;
+        color: #fff;
+        border: none;
+      }
+      .btn-audit:hover {
+        filter: brightness(0.9);
+      }
+/*==========================================*/
       .btn-gray:disabled {
         opacity: 0.55;
         cursor: not-allowed;
@@ -298,26 +319,6 @@
       .table-wrap {
         width: 100%;
         overflow: auto;
-      }
- 
-      /* ===============================
-   TABLA LIMPIA CON 2 COLORES
-   =============================== */
-
-      /* Sin efectos de hover */
-      .table.table-hover tbody tr:hover > * {
-        background-color: inherit !important;
-        transition: none !important;
-      }
-
-      /* Fila impar */
-      tbody tr:nth-child(odd) {
-        background-color: #f9f9f9; /* color 1 */
-      }
-
-      /* Fila par */
-      tbody tr:nth-child(even) {
-        background-color: #eef7ff; /* color 2 */
       }
     </style>
   </head>
@@ -505,26 +506,6 @@
       // Cerrar sidebar si se hace resize a escritorio
       window.addEventListener("resize", () => {
         if (window.innerWidth > 992) closeNav();
-      });
-    </script>
-    <script>
-      // Activa el sombreado doble cuando el puntero entra/sale de la celda combinada
-      document.querySelectorAll(".audit-cell").forEach((cell) => {
-        const row1 = cell.closest("tr"); // fila superior (Entrada)
-        const row2 = row1?.nextElementSibling; // fila inferior (Salida)
-
-        const enter = () => {
-          row1?.classList.add("hover-group");
-          row2?.classList.add("hover-group");
-        };
-        const leave = () => {
-          row1?.classList.remove("hover-group");
-          row2?.classList.remove("hover-group");
-        };
-
-        // Usa mouseover/mouseout para máxima compatibilidad (cubren niños dentro del TD)
-        cell.addEventListener("mouseover", enter);
-        cell.addEventListener("mouseout", leave);
       });
     </script>
   </body>

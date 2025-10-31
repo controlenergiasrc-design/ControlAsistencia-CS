@@ -22,24 +22,6 @@
     />
 
     <style>
-      /* Cuando paso el puntero sobre la celda combinada del botón Auditar,
-   se sombrean las DOS filas del par (Entrada + Salida) */
-      .audit-cell:hover,
-      .audit-cell:hover ~ tr.par-2,
-      .audit-cell:has(:hover),
-      .audit-cell:has(:hover) + tr.par-2 {
-        background-color: #e9ecef !important;
-        transition: background-color 0.25s ease;
-      }
-
-      /* Cuando paso el puntero sobre cualquiera de las filas, 
-   sólo se sombreará esa fila individual (como ya lo tienes) */
-      tr.par-1:hover,
-      tr.par-2:hover {
-        background-color: #f1f3f4;
-        transition: background-color 0.25s ease;
-      }
-
       :root {
         --isse-blue: #41b6e6;
         --isse-green: #4caf50;
@@ -267,7 +249,7 @@
         border: none;
       }
       .btn-audit:hover {
-        filter: brightness(0.95);
+        filter: brightness(0.150);
       }
       .btn-audit.done {
         background: #22c55e;
@@ -380,7 +362,7 @@
           <!-- Encabezado -->
           <div class="page-title">
             <div>
-              <h1>🩵 PANEL DE CONTROL ISSE</h1>
+              <h1>PANEL DE CONTROL ISSE</h1>
               <div class="page-sub">Bienvenid@ al sistema de asistencia</div>
             </div>
           </div>
@@ -412,7 +394,7 @@
             <div
               class="card-header d-flex align-items-center justify-content-between"
             >
-              <h2 class="card-title m-0">📋 Registros del día</h2>
+              <h2 class="card-title m-0">Registros del día</h2>
             </div>
             <div class="card-body">
               <div class="table-wrap">
@@ -430,6 +412,7 @@
                     </tr>
                   </thead>
                   <tbody>
+  
                     <!-- PAR 1: Antony (Entrada/Salida) -->
                     <tr class="par-1">
                       <td>5930</td>

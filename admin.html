@@ -25,11 +25,11 @@
       :root {
         --isse-blue: #41b6e6;
         --isse-green: #4caf50;
-        --sidebar-bg: #1e1e1e; /* gris oscuro casi negro */
+        --sidebar-bg: #1e1e1e;
         --sidebar-txt: #ffffff;
-        --alt-1: #f9f9f9; /* fondo fila 1 de par */
-        --alt-2: #eef7ff; /* fondo fila 2 de par */
-        --btn-gray: #bfbfbf; /* botones grises uniformes */
+        --alt-1: #f9f9f9;
+        --alt-2: #eef7ff;
+        --btn-gray: #bfbfbf;
       }
 
       html,
@@ -222,34 +222,30 @@
       }
 
       /* ===============================
-   TABLA LIMPIA CON COLORES ALTERNOS
-   =============================== */
-
-      /* Alternancia cada 2 filas (Entrada/Salida) */
-      tr.par-1,
-      tr.par-2 {
-        background-color: #f9f9f9; /* color 1 */
+         TABLA SIN SOMBREADOS - DOS COLORES POR CADA PAR
+      =============================== */
+      tbody tr:nth-child(4n-3),
+      tbody tr:nth-child(4n-2) {
+        background-color: #f9f9f9;
       }
-      tr.par-2 + tr.par-1,
-      tr.par-2 + tr.par-2 {
-        background-color: #eef7ff; /* color 2 */
+      tbody tr:nth-child(4n-1),
+      tbody tr:nth-child(4n) {
+        background-color: #eef7ff;
       }
 
-      /* Botones grises por defecto */
+      /* Botones grises */
       .btn-gray {
         background: var(--btn-gray);
         color: #212529;
         border: none;
         transition: background-color 0.25s ease;
       }
-
-      /* Efecto hover naranja */
       .btn-gray:hover {
         background-color: #ff9800;
         color: #fff;
       }
 
-      /* Botón Auditar (rojo) */
+      /* Botón Auditar */
       .btn-audit {
         background: #d93025;
         color: #fff;
@@ -258,25 +254,8 @@
       .btn-audit:hover {
         filter: brightness(0.9);
       }
-/*==========================================*/
-      .btn-gray:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-      }
 
-      .btn-audit {
-        background: #d93025;
-        color: #fff;
-        border: none;
-      }
-      .btn-audit:hover {
-        filter: brightness(0.15);
-      }
-      .btn-audit.done {
-        background: #22c55e;
-      }
-
-      /* ===== Responsive ===== */
+      /* Responsive */
       @media (max-width: 992px) {
         .sidebar {
           position: fixed;
@@ -315,7 +294,7 @@
         }
       }
 
-      /* Scroll tabla en móvil */
+      /* Scroll tabla móvil */
       .table-wrap {
         width: 100%;
         overflow: auto;
@@ -324,7 +303,6 @@
   </head>
   <body>
     <div class="app">
-      <!-- Sidebar -->
       <aside id="sidebar" class="sidebar">
         <div class="brand">
           <i class="fa-solid fa-bolt fa-lg"></i>
@@ -361,12 +339,9 @@
         </ul>
       </aside>
 
-      <!-- Dim overlay (móvil) -->
       <div id="navDim" class="nav-dim"></div>
 
-      <!-- Contenido -->
       <main class="content">
-        <!-- Topbar -->
         <div
           class="topbar py-2 px-3 d-flex align-items-center justify-content-between"
         >
@@ -380,7 +355,6 @@
         </div>
 
         <div class="page">
-          <!-- Encabezado -->
           <div class="page-title">
             <div>
               <h1>PANEL DE CONTROL ISSE</h1>
@@ -388,7 +362,6 @@
             </div>
           </div>
 
-          <!-- Tarjetas resumen (solo 2) -->
           <div class="cards">
             <div class="card-metric card-blue">
               <div class="meta">
@@ -410,7 +383,6 @@
             </div>
           </div>
 
-          <!-- Tabla principal -->
           <div class="card card-panel">
             <div
               class="card-header d-flex align-items-center justify-content-between"
@@ -419,7 +391,7 @@
             </div>
             <div class="card-body">
               <div class="table-wrap">
-                <table class="table table-hover align-middle">
+                <table class="table align-middle">
                   <thead>
                     <tr>
                       <th style="min-width: 80px">Numero C/S</th>
@@ -433,8 +405,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <!-- PAR 1: Antony (Entrada/Salida) -->
-                    <tr class="par-1">
+                    <tr>
                       <td>5930</td>
                       <td>Antony López</td>
                       <td>DISTRITO 1</td>
@@ -442,23 +413,20 @@
                       <td>2025-11-01</td>
                       <td>07:30:12</td>
                       <td class="text-nowrap">
-                        <button class="btn btn-sm btn-gray" disabled>
+                        <button class="btn btn-sm btn-gray">
                           <i class="fa-solid fa-camera"></i> Ver foto
                         </button>
-                        <button class="btn btn-sm btn-gray" disabled>
+                        <button class="btn btn-sm btn-gray">
                           <i class="fa-solid fa-broom"></i> Limpiar
                         </button>
                       </td>
-
-                      <!-- Celda combinada para el botón Auditar (ocupa las dos filas) -->
                       <td class="audit-cell" rowspan="2">
                         <button class="btn btn-sm btn-audit">
                           <i class="fa-solid fa-file-shield"></i> Auditar
                         </button>
                       </td>
                     </tr>
-
-                    <tr class="par-2">
+                    <tr>
                       <td></td>
                       <td></td>
                       <td>DISTRITO 1</td>
@@ -466,10 +434,10 @@
                       <td>—</td>
                       <td>—</td>
                       <td class="text-nowrap">
-                        <button class="btn btn-sm btn-gray" disabled>
+                        <button class="btn btn-sm btn-gray">
                           <i class="fa-solid fa-camera"></i> Ver foto
                         </button>
-                        <button class="btn btn-sm btn-gray" disabled>
+                        <button class="btn btn-sm btn-gray">
                           <i class="fa-solid fa-broom"></i> Limpiar
                         </button>
                       </td>
@@ -483,10 +451,8 @@
       </main>
     </div>
 
-    <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // Toggle sidebar en móvil
       const sidebar = document.getElementById("sidebar");
       const navDim = document.getElementById("navDim");
       const btnMenu = document.getElementById("btnMenu");
@@ -503,7 +469,6 @@
       btnMenu?.addEventListener("click", openNav);
       navDim?.addEventListener("click", closeNav);
 
-      // Cerrar sidebar si se hace resize a escritorio
       window.addEventListener("resize", () => {
         if (window.innerWidth > 992) closeNav();
       });

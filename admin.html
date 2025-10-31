@@ -249,7 +249,7 @@
         border: none;
       }
       .btn-audit:hover {
-        filter: brightness(0.150);
+        filter: brightness(0.15);
       }
       .btn-audit.done {
         background: #22c55e;
@@ -298,6 +298,25 @@
       .table-wrap {
         width: 100%;
         overflow: auto;
+      }
+
+      /* === Hover individual (cada fila) === */
+      tr.par-1:hover,
+      tr.par-2:hover {
+        background-color: #f1f3f4;
+        transition: background-color 0.25s ease;
+      }
+
+      /* === Hover grupal (cuando el puntero está sobre el botón Auditar) === */
+      tr.hover-group {
+        background-color: #e9ecef !important;
+      }
+
+      /* === Evitar sombreado en la última columna (botón Auditar) === */
+      tr.hover-group td:last-child,
+      tr.par-1:hover td:last-child,
+      tr.par-2:hover td:last-child {
+        background-color: transparent !important;
       }
     </style>
   </head>
@@ -412,7 +431,6 @@
                     </tr>
                   </thead>
                   <tbody>
-  
                     <!-- PAR 1: Antony (Entrada/Salida) -->
                     <tr class="par-1">
                       <td>5930</td>
@@ -486,6 +504,23 @@
       // Cerrar sidebar si se hace resize a escritorio
       window.addEventListener("resize", () => {
         if (window.innerWidth > 992) closeNav();
+      });
+    </script>
+    <script>
+      // Detectar cuando el mouse entra/sale de la celda combinada (Auditar)
+      document.querySelectorAll(".audit-cell").forEach((cell) => {
+        cell.addEventListener("mouseenter", () => {
+          const row1 = cell.closest("tr"); // Fila superior (Entrada)
+          const row2 = row1.nextElementSibling; // Fila inferior (Salida)
+          row1.classList.add("hover-group");
+          if (row2) row2.classList.add("hover-group");
+        });
+        cell.addEventListener("mouseleave", () => {
+          const row1 = cell.closest("tr");
+          const row2 = row1.nextElementSibling;
+          row1.classList.remove("hover-group");
+          if (row2) row2.classList.remove("hover-group");
+        });
       });
     </script>
   </body>

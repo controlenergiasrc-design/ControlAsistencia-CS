@@ -5,29 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Panel de Control ISSE</title>
 
-    <!-- Tipografía -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Tipografía (Poppins) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Bootstrap & FontAwesome -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
 
     <style>
       :root {
         --isse-blue: #41b6e6;
         --isse-green: #4caf50;
-        --sidebar-bg: #1e1e1e;
+        --sidebar-bg: #1e1e1e; /* gris oscuro casi negro */
         --sidebar-txt: #ffffff;
-        --btn-gray: #bfbfbf;
-        --alt1: #f9f9f9; /* bloque 1 */
-        --alt2: #eef7ff; /* bloque 2 */
+        --alt-1: #f9f9f9; /* fondo fila 1 de par */
+        --alt-2: #eef7ff; /* fondo fila 2 de par */
+        --btn-gray: #bfbfbf; /* botones grises uniformes */
       }
 
-      html, body {
+      html,
+      body {
         height: 100%;
         background: #f5f6f8;
-        font-family: "Poppins", sans-serif;
+        font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto,
+          Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans",
+          "Apple Color Emoji", "Segoe UI Emoji";
       }
 
+      /* ===== Layout base ===== */
       .app {
         display: flex;
         min-height: 100vh;
@@ -36,12 +50,15 @@
       /* ===== Sidebar ===== */
       .sidebar {
         width: 270px;
+        flex: 0 0 270px;
         background: var(--sidebar-bg);
         color: var(--sidebar-txt);
         display: flex;
         flex-direction: column;
+        position: sticky;
+        top: 0;
+        height: 100vh;
       }
-
       .sidebar .brand {
         padding: 18px 20px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -49,9 +66,12 @@
         align-items: center;
         gap: 10px;
       }
-
       .sidebar .brand i {
         color: var(--isse-blue);
+      }
+      .sidebar .brand .title {
+        font-weight: 600;
+        letter-spacing: 0.3px;
       }
 
       .nav-menu {
@@ -59,11 +79,9 @@
         margin: 0;
         padding: 12px;
       }
-
       .nav-item {
         margin: 6px 0;
       }
-
       .nav-link {
         display: flex;
         align-items: center;
@@ -74,16 +92,31 @@
         border-radius: 10px;
         transition: 0.15s ease-in-out;
       }
-
       .nav-link:hover,
       .nav-link.active {
         background: var(--isse-blue);
         color: #fff;
       }
+      .nav-link i {
+        width: 20px;
+        text-align: center;
+      }
 
       /* ===== Contenido ===== */
       .content {
         flex: 1;
+        min-width: 0;
+      }
+
+      .topbar {
+        background: #fff;
+        border-bottom: 1px solid #eceff3;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .topbar .btn-menu {
+        display: none;
       }
 
       .page {
@@ -92,29 +125,63 @@
         margin-inline: auto;
       }
 
+      .page-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 8px 0 18px;
+      }
+      .page-title h1 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin: 0;
+        color: #1f2937;
+      }
+      .page-sub {
+        color: #6b7280;
+        font-size: 0.95rem;
+      }
+
       /* ===== Tarjetas resumen ===== */
       .cards {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 16px;
         margin: 8px 0 22px;
       }
-
       .card-metric {
         color: #fff;
         border: 0;
         border-radius: 16px;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 18px;
+        padding: 18px 18px;
       }
-
+      .card-metric .meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .card-metric .meta .label {
+        opacity: 0.95;
+        font-weight: 500;
+      }
+      .card-metric .meta .value {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .card-metric .icon {
+        font-size: 34px;
+        opacity: 0.9;
+      }
       .card-blue {
         background: var(--isse-blue);
       }
-
       .card-green {
         background: var(--isse-green);
       }
@@ -126,50 +193,54 @@
         border-radius: 16px;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
       }
-
-      .card-header {
+      .card-panel .card-header {
         padding: 16px 18px;
         border-bottom: 1px solid #eef1f5;
         background: #fff;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+      }
+      .card-panel .card-title {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #334155;
       }
 
       .table {
         margin: 0;
-        border-collapse: collapse;
       }
-
       .table thead th {
         background: #fafafa;
         font-weight: 600;
         color: #475569;
         border-bottom: 1px solid #eef1f5;
       }
-
       .table td,
       .table th {
         vertical-align: middle;
       }
 
-      /* === Alternancia por cada 2 filas === */
-      tbody tr:nth-child(4n+1),
-      tbody tr:nth-child(4n+2) {
-        background-color: var(--alt1);
+      /* Alternancia por par (dos filas por usuario) */
+      tr.par-1 {
+        background: var(--alt-1);
+      }
+      tr.par-2 {
+        background: var(--alt-2);
       }
 
-      tbody tr:nth-child(4n+3),
-      tbody tr:nth-child(4n+4) {
-        background-color: var(--alt2);
-      }
-
-      /* Botones */
+      /* Botones de opciones: siempre grises */
       .btn-gray {
         background: var(--btn-gray);
         color: #212529;
         border: none;
       }
-
       .btn-gray:hover {
         filter: brightness(0.95);
+      }
+      .btn-gray:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
       }
 
       .btn-audit {
@@ -177,114 +248,230 @@
         color: #fff;
         border: none;
       }
-
       .btn-audit:hover {
-        filter: brightness(0.9);
+        filter: brightness(0.15);
+      }
+      .btn-audit.done {
+        background: #22c55e;
       }
 
+      /* ===== Responsive ===== */
+      @media (max-width: 992px) {
+        .sidebar {
+          position: fixed;
+          inset: 0 auto 0 0;
+          transform: translateX(-100%);
+          transition: transform 0.25s ease;
+          z-index: 1050;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .topbar .btn-menu {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .page {
+          padding: 16px;
+        }
+        .cards {
+          grid-template-columns: 1fr;
+        }
+        .nav-dim {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.25);
+          backdrop-filter: saturate(50%) blur(2px);
+          display: none;
+          z-index: 1040;
+        }
+        .nav-dim.show {
+          display: block;
+        }
+        .content {
+          width: 100%;
+        }
+      }
+
+      /* Scroll tabla en móvil */
       .table-wrap {
         width: 100%;
         overflow: auto;
       }
+ 
+      /* ===============================
+   TABLA LIMPIA CON 2 COLORES
+   =============================== */
+
+      /* Sin efectos de hover */
+      .table.table-hover tbody tr:hover > * {
+        background-color: inherit !important;
+        transition: none !important;
+      }
+
+      /* Fila impar */
+      tbody tr:nth-child(odd) {
+        background-color: #f9f9f9; /* color 1 */
+      }
+
+      /* Fila par */
+      tbody tr:nth-child(even) {
+        background-color: #eef7ff; /* color 2 */
+      }
     </style>
   </head>
-
   <body>
     <div class="app">
       <!-- Sidebar -->
-      <aside class="sidebar">
+      <aside id="sidebar" class="sidebar">
         <div class="brand">
           <i class="fa-solid fa-bolt fa-lg"></i>
           <div class="title">Control Asistencia</div>
         </div>
         <ul class="nav-menu">
-          <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-gauge"></i>Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fa-solid fa-users"></i>Usuarios</a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fa-solid fa-calendar-check"></i>Asistencias</a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fa-solid fa-gear"></i>Configuración</a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fa-solid fa-right-from-bracket"></i>Cerrar sesión</a></li>
+          <li class="nav-item">
+            <a class="nav-link active" href="#"
+              ><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-users"></i><span>Usuarios</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-calendar-check"></i
+              ><span>Asistencias</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-gear"></i><span>Configuración</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-right-from-bracket"></i
+              ><span>Cerrar sesión</span></a
+            >
+          </li>
         </ul>
       </aside>
 
+      <!-- Dim overlay (móvil) -->
+      <div id="navDim" class="nav-dim"></div>
+
       <!-- Contenido -->
       <main class="content">
+        <!-- Topbar -->
+        <div
+          class="topbar py-2 px-3 d-flex align-items-center justify-content-between"
+        >
+          <button
+            id="btnMenu"
+            class="btn btn-outline-secondary btn-sm btn-menu"
+          >
+            <i class="fa-solid fa-bars"></i> Menú
+          </button>
+          <div></div>
+        </div>
+
         <div class="page">
-          <h1>PANEL DE CONTROL ISSE</h1>
-
-          <div class="cards">
-            <div class="card-metric card-blue">
-              <div>
-                <div class="label"><i class="fa-solid fa-users me-2"></i>Usuarios registrados</div>
-                <div class="value">120</div>
-              </div>
-              <i class="fa-solid fa-user-group fa-2x"></i>
-            </div>
-
-            <div class="card-metric card-green">
-              <div>
-                <div class="label"><i class="fa-solid fa-camera me-2"></i>Fotos del día</div>
-                <div class="value">86</div>
-              </div>
-              <i class="fa-solid fa-camera-retro fa-2x"></i>
+          <!-- Encabezado -->
+          <div class="page-title">
+            <div>
+              <h1>PANEL DE CONTROL ISSE</h1>
+              <div class="page-sub">Bienvenid@ al sistema de asistencia</div>
             </div>
           </div>
 
-          <!-- Tabla -->
+          <!-- Tarjetas resumen (solo 2) -->
+          <div class="cards">
+            <div class="card-metric card-blue">
+              <div class="meta">
+                <div class="label">
+                  <i class="fa-solid fa-users me-2"></i>Usuarios registrados
+                </div>
+                <div class="value" id="metricUsuarios">120</div>
+              </div>
+              <div class="icon"><i class="fa-solid fa-user-group"></i></div>
+            </div>
+            <div class="card-metric card-green">
+              <div class="meta">
+                <div class="label">
+                  <i class="fa-solid fa-camera me-2"></i>Fotos del día
+                </div>
+                <div class="value" id="metricFotos">86</div>
+              </div>
+              <div class="icon"><i class="fa-solid fa-camera-retro"></i></div>
+            </div>
+          </div>
+
+          <!-- Tabla principal -->
           <div class="card card-panel">
-            <div class="card-header"><h2 class="card-title m-0">Registros del día</h2></div>
+            <div
+              class="card-header d-flex align-items-center justify-content-between"
+            >
+              <h2 class="card-title m-0">Registros del día</h2>
+            </div>
             <div class="card-body">
               <div class="table-wrap">
-                <table class="table align-middle">
+                <table class="table table-hover align-middle">
                   <thead>
                     <tr>
-                      <th>C/S</th>
-                      <th>Nombre</th>
-                      <th>Sector</th>
-                      <th>Tipo</th>
-                      <th>Fecha</th>
-                      <th>Hora</th>
-                      <th>Opciones</th>
+                      <th style="min-width: 80px">Numero C/S</th>
+                      <th style="min-width: 200px">Nombre</th>
+                      <th style="min-width: 160px">Sector</th>
+                      <th style="min-width: 120px">Tipo</th>
+                      <th style="min-width: 140px">Fecha</th>
+                      <th style="min-width: 120px">Hora</th>
+                      <th style="min-width: 260px">Opciones</th>
                       <th></th>
                     </tr>
                   </thead>
                   <tbody>
-                    <!-- Antony -->
-                    <tr>
-                      <td>5930</td><td>Antony López</td><td>DISTRITO 1</td><td>Entrada</td><td>2025-11-01</td><td>07:30:12</td>
-                      <td><button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Ver foto</button>
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-broom"></i> Limpiar</button></td>
-                      <td rowspan="2"><button class="btn btn-sm btn-audit"><i class="fa-solid fa-file-shield"></i> Auditar</button></td>
-                    </tr>
-                    <tr>
-                      <td></td><td></td><td>DISTRITO 1</td><td>Salida</td><td>—</td><td>—</td>
-                      <td><button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Ver foto</button>
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-broom"></i> Limpiar</button></td>
+                    <!-- PAR 1: Antony (Entrada/Salida) -->
+                    <tr class="par-1">
+                      <td>5930</td>
+                      <td>Antony López</td>
+                      <td>DISTRITO 1</td>
+                      <td>Entrada</td>
+                      <td>2025-11-01</td>
+                      <td>07:30:12</td>
+                      <td class="text-nowrap">
+                        <button class="btn btn-sm btn-gray" disabled>
+                          <i class="fa-solid fa-camera"></i> Ver foto
+                        </button>
+                        <button class="btn btn-sm btn-gray" disabled>
+                          <i class="fa-solid fa-broom"></i> Limpiar
+                        </button>
+                      </td>
+
+                      <!-- Celda combinada para el botón Auditar (ocupa las dos filas) -->
+                      <td class="audit-cell" rowspan="2">
+                        <button class="btn btn-sm btn-audit">
+                          <i class="fa-solid fa-file-shield"></i> Auditar
+                        </button>
+                      </td>
                     </tr>
 
-                    <!-- Carla -->
-                    <tr>
-                      <td>6041</td><td>Carla Pérez</td><td>DISTRITO 2</td><td>Entrada</td><td>2025-11-01</td><td>07:45:22</td>
-                      <td><button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Ver foto</button>
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-broom"></i> Limpiar</button></td>
-                      <td rowspan="2"><button class="btn btn-sm btn-audit"><i class="fa-solid fa-file-shield"></i> Auditar</button></td>
-                    </tr>
-                    <tr>
-                      <td></td><td></td><td>DISTRITO 2</td><td>Salida</td><td>—</td><td>—</td>
-                      <td><button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Ver foto</button>
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-broom"></i> Limpiar</button></td>
-                    </tr>
-
-                    <!-- María -->
-                    <tr>
-                      <td>6188</td><td>María Torres</td><td>DISTRITO 3</td><td>Entrada</td><td>2025-11-01</td><td>07:50:45</td>
-                      <td><button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Ver foto</button>
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-broom"></i> Limpiar</button></td>
-                      <td rowspan="2"><button class="btn btn-sm btn-audit"><i class="fa-solid fa-file-shield"></i> Auditar</button></td>
-                    </tr>
-                    <tr>
-                      <td></td><td></td><td>DISTRITO 3</td><td>Salida</td><td>—</td><td>—</td>
-                      <td><button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Ver foto</button>
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-broom"></i> Limpiar</button></td>
+                    <tr class="par-2">
+                      <td></td>
+                      <td></td>
+                      <td>DISTRITO 1</td>
+                      <td>Salida</td>
+                      <td>—</td>
+                      <td>—</td>
+                      <td class="text-nowrap">
+                        <button class="btn btn-sm btn-gray" disabled>
+                          <i class="fa-solid fa-camera"></i> Ver foto
+                        </button>
+                        <button class="btn btn-sm btn-gray" disabled>
+                          <i class="fa-solid fa-broom"></i> Limpiar
+                        </button>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -294,5 +481,51 @@
         </div>
       </main>
     </div>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Toggle sidebar en móvil
+      const sidebar = document.getElementById("sidebar");
+      const navDim = document.getElementById("navDim");
+      const btnMenu = document.getElementById("btnMenu");
+
+      function openNav() {
+        sidebar.classList.add("open");
+        navDim.classList.add("show");
+      }
+      function closeNav() {
+        sidebar.classList.remove("open");
+        navDim.classList.remove("show");
+      }
+
+      btnMenu?.addEventListener("click", openNav);
+      navDim?.addEventListener("click", closeNav);
+
+      // Cerrar sidebar si se hace resize a escritorio
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 992) closeNav();
+      });
+    </script>
+    <script>
+      // Activa el sombreado doble cuando el puntero entra/sale de la celda combinada
+      document.querySelectorAll(".audit-cell").forEach((cell) => {
+        const row1 = cell.closest("tr"); // fila superior (Entrada)
+        const row2 = row1?.nextElementSibling; // fila inferior (Salida)
+
+        const enter = () => {
+          row1?.classList.add("hover-group");
+          row2?.classList.add("hover-group");
+        };
+        const leave = () => {
+          row1?.classList.remove("hover-group");
+          row2?.classList.remove("hover-group");
+        };
+
+        // Usa mouseover/mouseout para máxima compatibilidad (cubren niños dentro del TD)
+        cell.addEventListener("mouseover", enter);
+        cell.addEventListener("mouseout", leave);
+      });
+    </script>
   </body>
 </html>

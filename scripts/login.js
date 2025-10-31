@@ -6,8 +6,8 @@ const form = document.getElementById("loginForm");
 const msg = document.getElementById("msg");
 
 // URL de tu Worker (intermediario)
-const loginScriptUrl = "https://proxy-asistencia.control-energiasrc.workers.dev";
-
+const loginScriptUrl =
+  "https://proxy-asistencia.control-energiasrc.workers.dev";
 
 if (form) {
   form.addEventListener("submit", async (e) => {
@@ -30,8 +30,7 @@ if (form) {
     const clave = document.getElementById("password").value.trim();
 
     try {
-      // Construimos la URL completa para el login
-      const url = `${WORKER_URL}?accion=loginAdmin&admin_usuario=${encodeURIComponent(
+      const url = `${loginScriptUrl}?accion=loginAdmin&admin_usuario=${encodeURIComponent(
         admin_usuario
       )}&clave=${encodeURIComponent(clave)}`;
 
@@ -40,7 +39,6 @@ if (form) {
       console.log("✅ Se envió solicitud al Worker:", url);
       const data = await response.json();
       console.log("📦 Respuesta del servidor:", data);
-
 
       if (data.success) {
         // Login correcto

@@ -375,6 +375,22 @@ document.addEventListener("DOMContentLoaded", () => {
         enviarFoto(fotoBase64);
       };
     };
+
+    // ===========================================
+    // Si el usuario cancela en el modal de foto
+    // ===========================================
+    fotoModalEl.querySelector(".btn-secondary").onclick = function () {
+      fotoModal.hide();
+      fotoInput.value = "";
+      console.log("Foto cancelada por el usuario.");
+
+      const msg = document.createElement("div");
+      msg.className = "alert alert-warning text-center mt-3";
+      msg.textContent = "Carga cancelada ❌";
+      fotoSection.appendChild(msg);
+      setTimeout(() => msg.remove(), 2000);
+    };
+
     lector.readAsDataURL(archivo);
 
     function enviarFoto(fotoBase64) {
@@ -439,9 +455,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Bloquear nuevamente el input y el botón después de la ENTRADA
             fotoInput.disabled = true;
             guardarFotoBtn.disabled = true;
-            console.log(
-              "Entrada registrada. Bloqueando hasta las 4:30 p.m."
-            );
+            console.log("Entrada registrada. Bloqueando hasta las 4:30 p.m.");
 
             const ahora = new Date();
             const horaActual = ahora.getHours();
@@ -451,9 +465,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (horaActual > 16 || (horaActual === 16 && minutoActual >= 30)) {
               fotoInput.disabled = false;
               guardarFotoBtn.disabled = false;
-              console.log(
-                "Ya son las 4:30 p.m., botón habilitado para salida"
-              );
+              console.log("Ya son las 4:30 p.m., botón habilitado para salida");
             } else {
               // Si aún no, revisa cada minuto hasta que llegue la hora
               const revisar = setInterval(() => {

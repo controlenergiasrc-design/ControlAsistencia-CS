@@ -300,18 +300,21 @@
         overflow: auto;
       }
       /* Hover por fila (Bootstrap pinta los TD, no el TR) */
+      /* ===== Hover limpio y uniforme ===== */
+
+      /* Hover individual: fila actual */
       .table.table-hover tbody tr:hover > * {
-        background-color: #f1f3f4 !important;
+        background-color: #e3e7ea !important; /* gris intermedio */
         transition: background-color 0.25s ease;
       }
 
-      /* Hover doble: cuando estamos sobre la celda combinada de Auditar */
+      /* Hover doble (al pasar sobre Auditar) */
       .table.table-hover tbody tr.hover-group > *,
       .table.table-hover tbody tr.hover-group + tr > * {
-        background-color: #e6e9ec !important;
+        background-color: #e3e7ea !important; /* mismo tono */
       }
 
-      /* Nunca sombrear la celda del botón Auditar */
+      /* La celda del botón Auditar no se sombrea */
       .table.table-hover tbody tr > td.audit-cell,
       .table.table-hover tbody tr:hover > td.audit-cell,
       .table.table-hover tbody tr.hover-group > td.audit-cell,

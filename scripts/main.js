@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===========================================
   // CONFIGURACIÓN API
   // ===========================================
-  //const API_URL = "https://asistencia-proxy.kencyf01.workers.dev"; proyecto anterior
+  //const API_URL = "https://asistencia-proxy.kencyf01.workers.dev"; API ANTERIOR DEL PROYECTO
   const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
 
   // ===========================================
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const numeroGuardado = localStorage.getItem("numero_cs");
   const estado = localStorage.getItem("estado");
 
- /* if (estado === "completado" && numeroGuardado) {
+  /* if (estado === "completado" && numeroGuardado) {
     fetch(`${API_URL}?accion=validarUsuario&numero_cs=${numeroGuardado}`)
       .then((res) => res.json())
       .then((data) => {
@@ -435,6 +435,41 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("entrada_hora", hora);
             localStorage.setItem("estado", "entrada");
             input.disabled = true;
+
+            // Bloquear nuevamente el input y el botón después de la ENTRADA
+            fotoInput.disabled = true;
+            guardarFotoBtn.disabled = true;
+            console.log(
+              "Entrada registrada. Bloqueando hasta las 4:30 p.m."
+            );
+
+            const ahora = new Date();
+            const horaActual = ahora.getHours();
+            const minutoActual = ahora.getMinutes();
+
+            // Si ya son las 4:30 p.m. o más, habilita inmediatamente
+            if (horaActual > 16 || (horaActual === 16 && minutoActual >= 30)) {
+              fotoInput.disabled = false;
+              guardarFotoBtn.disabled = false;
+              console.log(
+                "Ya son las 4:30 p.m., botón habilitado para salida"
+              );
+            } else {
+              // Si aún no, revisa cada minuto hasta que llegue la hora
+              const revisar = setInterval(() => {
+                const ahora = new Date();
+                const h = ahora.getHours();
+                const m = ahora.getMinutes();
+                if (h > 16 || (h === 16 && m >= 30)) {
+                  fotoInput.disabled = false;
+                  guardarFotoBtn.disabled = false;
+                  clearInterval(revisar);
+                  console.log(
+                    "Son las 4:30 p.m., botón habilitado automáticamente"
+                  );
+                }
+              }, 60000); // cada 60 segundos
+            }
           } else {
             localStorage.setItem("salida_fecha", fecha);
             localStorage.setItem("salida_hora", hora);

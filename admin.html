@@ -302,23 +302,32 @@
       /* Hover por fila (Bootstrap pinta los TD, no el TR) */
       /* ===== Hover limpio y uniforme ===== */
 
-      /* Hover individual: fila normal */
-      .table.table-hover tbody tr:hover > * {
-        background-color: #e7eaed !important;
-        transition: background-color 0.25s ease;
-      }
+      /* ==============================
+   SOMBREADO UNIFORME REAL
+   ============================== */
 
-      /* Hover doble: al pasar sobre la celda combinada del botón Auditar */
+      /* Quita cualquier hover viejo */
+      .table.table-hover tbody tr:hover > *,
       .table.table-hover tbody tr.hover-group > *,
       .table.table-hover tbody tr.hover-group + tr > * {
-        background-color: #e7eaed !important; /* mismo tono */
+        background-color: transparent !important;
       }
 
-      /* Evita que la celda del botón se pinte */
-      .table.table-hover tbody tr > td.audit-cell,
-      .table.table-hover tbody tr:hover > td.audit-cell,
-      .table.table-hover tbody tr.hover-group > td.audit-cell,
-      .table.table-hover tbody tr.hover-group + tr > td.audit-cell {
+      /* Color base cuando el mouse entra en la celda combinada (ambas filas) */
+      tr.hover-group,
+      tr.hover-group + tr {
+        background-color: #e0e4e7 !important; /* gris parejito */
+        transition: background-color 0.2s ease;
+      }
+
+      /* Hover individual para cualquier otra fila */
+      tr.par-1:hover > *,
+      tr.par-2:hover > * {
+        background-color: #e0e4e7 !important;
+      }
+
+      /* La celda del botón no cambia */
+      td.audit-cell {
         background-color: #fff !important;
       }
     </style>

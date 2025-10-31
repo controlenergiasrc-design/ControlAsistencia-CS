@@ -1,276 +1,550 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PanelAdmin - Control de Asistencia</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Panel de Control ISSE</title>
 
+    <!-- Tipografía (Poppins) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Bootstrap & FontAwesome -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <!-- Bootstrap & FontAwesome -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
 
-  <style>
-    :root{
-      --isse-blue:#41B6E6;
-      --isse-green:#4CAF50;
-      --sidebar-bg:#1E1E1E; /* gris oscuro casi negro */
-      --sidebar-txt:#FFFFFF;
-      --alt-1:#f9f9f9; /* fondo fila 1 de par */
-      --alt-2:#eef7ff; /* fondo fila 2 de par */
-      --btn-gray:#bfbfbf; /* botones grises uniformes */
-    }
+    <style>
+      :root {
+        --isse-blue: #41b6e6;
+        --isse-green: #4caf50;
+        --sidebar-bg: #1e1e1e; /* gris oscuro casi negro */
+        --sidebar-txt: #ffffff;
+        --alt-1: #f9f9f9; /* fondo fila 1 de par */
+        --alt-2: #eef7ff; /* fondo fila 2 de par */
+        --btn-gray: #bfbfbf; /* botones grises uniformes */
+      }
 
-    html, body{ height:100%; background:#f5f6f8; font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+      html,
+      body {
+        height: 100%;
+        background: #f5f6f8;
+        font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto,
+          Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans",
+          "Apple Color Emoji", "Segoe UI Emoji";
+      }
 
-    /* ===== Layout base ===== */
-    .app{ display:flex; min-height:100vh; }
+      /* ===== Layout base ===== */
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
 
-    /* ===== Sidebar ===== */
-    .sidebar{
-      width:270px; flex:0 0 270px; background:var(--sidebar-bg); color:var(--sidebar-txt);
-      display:flex; flex-direction:column; position:sticky; top:0; height:100vh;
-    }
-    .sidebar .brand{ padding:18px 20px; border-bottom:1px solid rgba(255,255,255,.06); display:flex; align-items:center; gap:10px; }
-    .sidebar .brand i{ color:var(--isse-blue); }
-    .sidebar .brand .title{ font-weight:600; letter-spacing:.3px; }
+      /* ===== Sidebar ===== */
+      .sidebar {
+        width: 270px;
+        flex: 0 0 270px;
+        background: var(--sidebar-bg);
+        color: var(--sidebar-txt);
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+      .sidebar .brand {
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sidebar .brand i {
+        color: var(--isse-blue);
+      }
+      .sidebar .brand .title {
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
 
-    .nav-menu{ list-style:none; margin:0; padding:12px; }
-    .nav-item{ margin:6px 0; }
-    .nav-link{
-      display:flex; align-items:center; gap:12px; color:var(--sidebar-txt); text-decoration:none;
-      padding:10px 12px; border-radius:10px; transition:.15s ease-in-out;
-    }
-    .nav-link:hover, .nav-link.active{ background:var(--isse-blue); color:#fff; }
-    .nav-link i{ width:20px; text-align:center; }
+      .nav-menu {
+        list-style: none;
+        margin: 0;
+        padding: 12px;
+      }
+      .nav-item {
+        margin: 6px 0;
+      }
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--sidebar-txt);
+        text-decoration: none;
+        padding: 10px 12px;
+        border-radius: 10px;
+        transition: 0.15s ease-in-out;
+      }
+      .nav-link:hover,
+      .nav-link.active {
+        background: var(--isse-blue);
+        color: #fff;
+      }
+      .nav-link i {
+        width: 20px;
+        text-align: center;
+      }
 
-    /* ===== Contenido ===== */
-    .content{ flex:1; min-width:0; }
+      /* ===== Contenido ===== */
+      .content {
+        flex: 1;
+        min-width: 0;
+      }
 
-    .topbar{ background:#fff; border-bottom:1px solid #eceff3; position:sticky; top:0; z-index:20; }
-    .topbar .btn-menu{ display:none; }
+      .topbar {
+        background: #fff;
+        border-bottom: 1px solid #eceff3;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .topbar .btn-menu {
+        display: none;
+      }
 
-    .page{ padding:20px; max-width:1400px; margin-inline:auto; }
+      .page {
+        padding: 20px;
+        max-width: 1400px;
+        margin-inline: auto;
+      }
 
-    .page-title{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:8px 0 18px; }
-    .page-title h1{ font-size:1.4rem; font-weight:600; margin:0; color:#1f2937; }
-    .page-sub{ color:#6b7280; font-size:.95rem; }
+      .page-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 8px 0 18px;
+      }
+      .page-title h1 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin: 0;
+        color: #1f2937;
+      }
+      .page-sub {
+        color: #6b7280;
+        font-size: 0.95rem;
+      }
 
-    /* ===== Tarjetas resumen ===== */
-    .cards{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; margin:8px 0 22px; }
-    .card-metric{ color:#fff; border:0; border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,.08); overflow:hidden; display:flex; align-items:center; justify-content:space-between; padding:18px 18px; }
-    .card-metric .meta{ display:flex; flex-direction:column; gap:4px; }
-    .card-metric .meta .label{ opacity:.95; font-weight:500; }
-    .card-metric .meta .value{ font-size:2rem; font-weight:700; line-height:1; }
-    .card-metric .icon{ font-size:34px; opacity:.9; }
-    .card-blue{ background:var(--isse-blue); }
-    .card-green{ background:var(--isse-green); }
+      /* ===== Tarjetas resumen ===== */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin: 8px 0 22px;
+      }
+      .card-metric {
+        color: #fff;
+        border: 0;
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 18px;
+      }
+      .card-metric .meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .card-metric .meta .label {
+        opacity: 0.95;
+        font-weight: 500;
+      }
+      .card-metric .meta .value {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .card-metric .icon {
+        font-size: 34px;
+        opacity: 0.9;
+      }
+      .card-blue {
+        background: var(--isse-blue);
+      }
+      .card-green {
+        background: var(--isse-green);
+      }
 
-    /* ===== Tabla ===== */
-    .card-panel{ background:#fff; border:0; border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,.06); }
-    .card-panel .card-header{ padding:16px 18px; border-bottom:1px solid #eef1f5; background:#fff; border-top-left-radius:16px; border-top-right-radius:16px; }
-    .card-panel .card-title{ margin:0; font-size:1.05rem; font-weight:600; color:#334155; }
+      /* ===== Tabla ===== */
+      .card-panel {
+        background: #fff;
+        border: 0;
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      }
+      .card-panel .card-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid #eef1f5;
+        background: #fff;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+      }
+      .card-panel .card-title {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #334155;
+      }
 
-    .table { margin:0; }
-    .table thead th{ background:#fafafa; font-weight:600; color:#475569; border-bottom:1px solid #eef1f5; }
-    .table td, .table th{ vertical-align:middle; }
+      .table {
+        margin: 0;
+      }
+      .table thead th {
+        background: #fafafa;
+        font-weight: 600;
+        color: #475569;
+        border-bottom: 1px solid #eef1f5;
+      }
+      .table td,
+      .table th {
+        vertical-align: middle;
+      }
 
-    /* Alternancia por par (dos filas por usuario) */
-    tr.par-1{ background:var(--alt-1); }
-    tr.par-2{ background:var(--alt-2); }
+      /* Alternancia por par (dos filas por usuario) */
+      tr.par-1 {
+        background: var(--alt-1);
+      }
+      tr.par-2 {
+        background: var(--alt-2);
+      }
 
-    /* Botones de opciones: siempre grises */
-    .btn-gray{ background:var(--btn-gray); color:#212529; border:none; }
-    .btn-gray:hover{ filter:brightness(.95); }
-    .btn-gray:disabled{ opacity:.55; cursor:not-allowed; }
+      /* Botones de opciones: siempre grises */
+      .btn-gray {
+        background: var(--btn-gray);
+        color: #212529;
+        border: none;
+      }
+      .btn-gray:hover {
+        filter: brightness(0.95);
+      }
+      .btn-gray:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
 
-    .btn-audit{ background:#d93025; color:#fff; border:none; }
-    .btn-audit:hover{ filter:brightness(.95); }
-    .btn-audit.done{ background:#22c55e; }
+      .btn-audit {
+        background: #d93025;
+        color: #fff;
+        border: none;
+      }
+      .btn-audit:hover {
+        filter: brightness(0.95);
+      }
+      .btn-audit.done {
+        background: #22c55e;
+      }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 992px){
-      .sidebar{ position:fixed; inset:0 auto 0 0; transform:translateX(-100%); transition:transform .25s ease; z-index:1050; }
-      .sidebar.open{ transform:translateX(0); }
-      .topbar .btn-menu{ display:inline-flex; align-items:center; gap:8px; }
-      .page{ padding:16px; }
-      .cards{ grid-template-columns:1fr; }
-      .nav-dim{ position:fixed; inset:0; background:rgba(0,0,0,.25); backdrop-filter:saturate(50%) blur(2px); display:none; z-index:1040; }
-      .nav-dim.show{ display:block; }
-      .content{ width:100%; }
-    }
+      /* ===== Responsive ===== */
+      @media (max-width: 992px) {
+        .sidebar {
+          position: fixed;
+          inset: 0 auto 0 0;
+          transform: translateX(-100%);
+          transition: transform 0.25s ease;
+          z-index: 1050;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .topbar .btn-menu {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .page {
+          padding: 16px;
+        }
+        .cards {
+          grid-template-columns: 1fr;
+        }
+        .nav-dim {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.25);
+          backdrop-filter: saturate(50%) blur(2px);
+          display: none;
+          z-index: 1040;
+        }
+        .nav-dim.show {
+          display: block;
+        }
+        .content {
+          width: 100%;
+        }
+      }
 
-    /* Scroll tabla en móvil */
-    .table-wrap{ width:100%; overflow:auto; }
-  </style>
-</head>
-<body>
-  <div class="app">
-    <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar">
-      <div class="brand">
-        <i class="fa-solid fa-bolt fa-lg"></i>
-        <div class="title">Control Asistencia</div>
-      </div>
-      <ul class="nav-menu">
-        <li class="nav-item"><a class="nav-link active" href="#"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="#"><i class="fa-solid fa-users"></i><span>Usuarios</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="#"><i class="fa-solid fa-calendar-check"></i><span>Asistencias</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="#"><i class="fa-solid fa-gear"></i><span>Configuración</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="#"><i class="fa-solid fa-right-from-bracket"></i><span>Cerrar sesión</span></a></li>
-      </ul>
-    </aside>
+      /* Scroll tabla en móvil */
+      .table-wrap {
+        width: 100%;
+        overflow: auto;
+      }
+      /* Celda combinada para el botón Auditar */
+      .audit-cell {
+        vertical-align: middle !important;
+        text-align: center;
+      }
+      /* Efecto hover: resalta las dos filas del grupo solo al pasar sobre la celda combinada o el botón */
+      .audit-cell:hover,
+      .audit-cell:hover ~ tr.par-2,
+      .audit-cell:has(:hover),
+      .audit-cell:has(:hover) + tr.par-2 {
+        background-color: #dee2e6; /* gris más visible pero elegante */
+        transition: background-color 0.25s ease;
+      }
 
-    <!-- Dim overlay (móvil) -->
-    <div id="navDim" class="nav-dim"></div>
+      /* Ajuste extra: mantiene ambos tonos igualados mientras el cursor esté dentro de la celda */
+      tr.par-1:hover + tr.par-2,
+      tr.par-2:hover,
+      .audit-cell:hover + tr.par-2 {
+        background-color: #dee2e6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <!-- Sidebar -->
+      <aside id="sidebar" class="sidebar">
+        <div class="brand">
+          <i class="fa-solid fa-bolt fa-lg"></i>
+          <div class="title">Control Asistencia</div>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a class="nav-link active" href="#"
+              ><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-users"></i><span>Usuarios</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-calendar-check"></i
+              ><span>Asistencias</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-gear"></i><span>Configuración</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-right-from-bracket"></i
+              ><span>Cerrar sesión</span></a
+            >
+          </li>
+        </ul>
+      </aside>
 
-    <!-- Contenido -->
-    <main class="content">
-      <!-- Topbar -->
-      <div class="topbar py-2 px-3 d-flex align-items-center justify-content-between">
-        <button id="btnMenu" class="btn btn-outline-secondary btn-sm btn-menu">
-          <i class="fa-solid fa-bars"></i> Menú
-        </button>
-        <div></div>
-      </div>
+      <!-- Dim overlay (móvil) -->
+      <div id="navDim" class="nav-dim"></div>
 
-      <div class="page">
-        <!-- Encabezado -->
-        <div class="page-title">
-          <div>
-            <h1>PANEL DE CONTROL ISSE</h1>
-            <div class="page-sub">Bienvenid@ al sistema de asistencia</div>
-          </div>
+      <!-- Contenido -->
+      <main class="content">
+        <!-- Topbar -->
+        <div
+          class="topbar py-2 px-3 d-flex align-items-center justify-content-between"
+        >
+          <button
+            id="btnMenu"
+            class="btn btn-outline-secondary btn-sm btn-menu"
+          >
+            <i class="fa-solid fa-bars"></i> Menú
+          </button>
+          <div></div>
         </div>
 
-        <!-- Tarjetas resumen (solo 2) -->
-        <div class="cards">
-          <div class="card-metric card-blue">
-            <div class="meta">
-              <div class="label"><i class="fa-solid fa-users me-2"></i>Usuarios registrados</div>
-              <div class="value" id="metricUsuarios">120</div>
+        <div class="page">
+          <!-- Encabezado -->
+          <div class="page-title">
+            <div>
+              <h1>PANEL DE CONTROL ISSE</h1>
+              <div class="page-sub">Bienvenid@ al sistema de asistencia</div>
             </div>
-            <div class="icon"><i class="fa-solid fa-user-group"></i></div>
           </div>
-          <div class="card-metric card-green">
-            <div class="meta">
-              <div class="label"><i class="fa-solid fa-camera me-2"></i>Fotos del día</div>
-              <div class="value" id="metricFotos">86</div>
+
+          <!-- Tarjetas resumen (solo 2) -->
+          <div class="cards">
+            <div class="card-metric card-blue">
+              <div class="meta">
+                <div class="label">
+                  <i class="fa-solid fa-users me-2"></i>Usuarios registrados
+                </div>
+                <div class="value" id="metricUsuarios">120</div>
+              </div>
+              <div class="icon"><i class="fa-solid fa-user-group"></i></div>
             </div>
-            <div class="icon"><i class="fa-solid fa-camera-retro"></i></div>
+            <div class="card-metric card-green">
+              <div class="meta">
+                <div class="label">
+                  <i class="fa-solid fa-camera me-2"></i>Fotos del día
+                </div>
+                <div class="value" id="metricFotos">86</div>
+              </div>
+              <div class="icon"><i class="fa-solid fa-camera-retro"></i></div>
+            </div>
+          </div>
+
+          <!-- Tabla principal -->
+          <div class="card card-panel">
+            <div
+              class="card-header d-flex align-items-center justify-content-between"
+            >
+              <h2 class="card-title m-0">Registros del día</h2>
+            </div>
+            <div class="card-body">
+              <div class="table-wrap">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th style="min-width: 80px">c/s</th>
+                      <th style="min-width: 200px">Nombre</th>
+                      <th style="min-width: 160px">Sector</th>
+                      <th style="min-width: 120px">Tipo</th>
+                      <th style="min-width: 140px">Fecha</th>
+                      <th style="min-width: 120px">Hora</th>
+                      <th style="min-width: 260px">Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- PAR 1: Antony (Entrada/Salida) -->
+                    <tr class="par-1">
+                      <td>5930</td>
+                      <td>Antony López</td>
+                      <td>DISTRITO 1</td>
+                      <td>Entrada</td>
+                      <td>2025-11-01</td>
+                      <td>07:30:12</td>
+                      <!-- Celda combinada para AUDITAR (rowspan=2) -->
+                      <td class="audit-cell" rowspan="2">
+                        <button class="btn btn-sm btn-audit">
+                          <i class="fa-solid fa-file-shield"></i> Auditar
+                        </button>
+                      </td>
+                    </tr>
+                    <tr class="par-2">
+                      <td></td>
+                      <td></td>
+                      <td>DISTRITO 1</td>
+                      <td>Salida</td>
+                      <td>—</td>
+                      <td>—</td>
+                    </tr>
+
+                    <!-- Acciones por fila (Ver foto / Limpiar) -->
+                    <!-- NOTA: se mantienen en la columna de opciones de cada fila si se requieren por registro.
+                       Si los querés por fila además del botón Auditar único, podemos moverlos a una columna separada.
+                       Por ahora, quedan fuera para cumplir tu pedido de un solo botón "Auditar" centrado. -->
+
+                    <!-- PAR 2: Carla (Entrada/Salida) -->
+                    <tr class="par-1">
+                      <td>6041</td>
+                      <td>Carla Pérez</td>
+                      <td>DISTRITO 2</td>
+                      <td>Entrada</td>
+                      <td>2025-11-01</td>
+                      <td>07:45:22</td>
+                      <td class="audit-cell" rowspan="2">
+                        <button class="btn btn-sm btn-audit">
+                          <i class="fa-solid fa-file-shield"></i> Auditar
+                        </button>
+                      </td>
+                    </tr>
+                    <tr class="par-2">
+                      <td></td>
+                      <td></td>
+                      <td>DISTRITO 2</td>
+                      <td>Salida</td>
+                      <td>—</td>
+                      <td>—</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- Paginación (placeholder visual) -->
+                <nav class="mt-3" aria-label="Paginación de registros">
+                  <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item disabled">
+                      <a class="page-link" href="#">Anterior</a>
+                    </li>
+                    <li class="page-item active" aria-current="page">
+                      <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="#">3</a>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href="#">Siguiente</a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
           </div>
         </div>
+        <!-- FOOTER -->
+        <footer
+          class="bg-white text-center text-muted small py-3 shadow-sm mt-auto"
+        >
+          Sistema de Control de Asistencia · ENEE-UTCD © 2025
+          <br />
+          <span class="text-secondary" style="font-size: 8px"
+            >Developed by <strong>Kency Fernández</strong></span
+          >
+        </footer>
+      </main>
+    </div>
 
-        <!-- Tabla principal -->
-        <div class="card card-panel">
-          <div class="card-header d-flex align-items-center justify-content-between">
-            <h2 class="card-title m-0">Registros del día</h2>
-          </div>
-          <div class="card-body">
-            <div class="table-wrap">
-              <table class="table table-hover align-middle">
-                <thead>
-                  <tr>
-                    <th style="min-width:80px">c/s</th>
-                    <th style="min-width:200px">Nombre</th>
-                    <th style="min-width:160px">Sector</th>
-                    <th style="min-width:120px">Tipo</th>
-                    <th style="min-width:140px">Fecha</th>
-                    <th style="min-width:120px">Hora</th>
-                    <th style="min-width:260px">Opciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- PAR 1: Antony (Entrada/Salida) -->
-                  <tr class="par-1">
-                    <td>5930</td>
-                    <td>Antony López</td>
-                    <td>DISTRITO 1</td>
-                    <td>Entrada</td>
-                    <td>2025-11-01</td>
-                    <td>07:30:12</td>
-                    <td class="text-nowrap">
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Ver foto</button>
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-broom"></i> Limpiar</button>
-                      <button class="btn btn-sm btn-audit"><i class="fa-solid fa-file-shield"></i> Auditar</button>
-                    </td>
-                  </tr>
-                  <tr class="par-2">
-                    <td></td>
-                    <td></td>
-                    <td>DISTRITO 1</td>
-                    <td>Salida</td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td class="text-nowrap">
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Ver foto</button>
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-broom"></i> Limpiar</button>
-                      <button class="btn btn-sm btn-audit"><i class="fa-solid fa-file-shield"></i> Auditar</button>
-                    </td>
-                  </tr>
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Toggle sidebar en móvil
+      const sidebar = document.getElementById("sidebar");
+      const navDim = document.getElementById("navDim");
+      const btnMenu = document.getElementById("btnMenu");
 
-                  <!-- PAR 2: Carla (Entrada/Salida) -->
-                  <tr class="par-1">
-                    <td>6041</td>
-                    <td>Carla Pérez</td>
-                    <td>DISTRITO 2</td>
-                    <td>Entrada</td>
-                    <td>2025-11-01</td>
-                    <td>07:45:22</td>
-                    <td class="text-nowrap">
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Ver foto</button>
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-broom"></i> Limpiar</button>
-                      <button class="btn btn-sm btn-audit"><i class="fa-solid fa-file-shield"></i> Auditar</button>
-                    </td>
-                  </tr>
-                  <tr class="par-2">
-                    <td></td>
-                    <td></td>
-                    <td>DISTRITO 2</td>
-                    <td>Salida</td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td class="text-nowrap">
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Ver foto</button>
-                      <button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-broom"></i> Limpiar</button>
-                      <button class="btn btn-sm btn-audit"><i class="fa-solid fa-file-shield"></i> Auditar</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
+      function openNav() {
+        sidebar.classList.add("open");
+        navDim.classList.add("show");
+      }
+      function closeNav() {
+        sidebar.classList.remove("open");
+        navDim.classList.remove("show");
+      }
 
-  <!-- JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Toggle sidebar en móvil
-    const sidebar = document.getElementById('sidebar');
-    const navDim = document.getElementById('navDim');
-    const btnMenu = document.getElementById('btnMenu');
+      btnMenu?.addEventListener("click", openNav);
+      navDim?.addEventListener("click", closeNav);
 
-    function openNav(){ sidebar.classList.add('open'); navDim.classList.add('show'); }
-    function closeNav(){ sidebar.classList.remove('open'); navDim.classList.remove('show'); }
-
-    btnMenu?.addEventListener('click', openNav);
-    navDim?.addEventListener('click', closeNav);
-
-    // Cerrar sidebar si se hace resize a escritorio
-    window.addEventListener('resize', () => { if(window.innerWidth > 992) closeNav(); });
-  </script>
-      <!-- FOOTER -->
-    <footer
-      class="bg-white text-center text-muted small py-3 shadow-sm mt-auto"
-    >
-      Sistema de Control de Asistencia · ENEE-UTCD © 2025
-      <br />
-      <span class="text-secondary" style="font-size: 8px">
-        Developed by <strong>Kency Fernández</strong>
-      </span>
-    </footer>
-</body>
+      // Cerrar sidebar si se hace resize a escritorio
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 992) closeNav();
+      });
+    </script>
+  </body>
 </html>

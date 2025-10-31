@@ -2,8 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
   const msg = document.getElementById("msg");
 
-  // URL del script de Apps Script publicado como Web App
-  const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
+  // URL del Worker (proxy)
+  const loginScriptUrl = "https://proxy-asistencia.control-energiasrc.workers.dev";
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -19,13 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
       // Construir la URL con los parámetros
       const url = `${loginScriptUrl}?accion=loginAdmin&admin_usuario=${encodeURIComponent(usuario)}&clave=${encodeURIComponent(clave)}`;
 
-      // Enviar la solicitud al Apps Script
+      // Enviar la solicitud al Worker
       const response = await fetch(url);
       const data = await response.json();
       console.log("Respuesta del servidor:", data);
 
       if (data.success) {
-        // Guardar los datos del usuario en localStorage
+        // ✅ Guardar los datos del usuario en localStorage
         localStorage.setItem("adminData", JSON.stringify(data.admin));
 
         // Redirigir al panel principal

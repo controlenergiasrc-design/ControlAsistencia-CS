@@ -22,6 +22,25 @@
     />
 
     <style>
+      /* Tamaño más amplio para la tabla */
+      .table-container {
+        max-height: none; /* quita límite */
+        height: auto;
+        padding: 0;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .table {
+        font-size: 14px; /* texto más legible */
+        width: 100%;
+      }
+
+      .card-body.table-responsive {
+        max-height: 900px; /* permite ver unas 20 filas cómodas */
+        overflow-y: auto; /* agrega scroll si hay más */
+      }
+
       :root {
         --isse-blue: #41b6e6;
         --isse-green: #4caf50;
@@ -388,6 +407,8 @@
           </div>
 
           <!-- Tarjetas resumen (solo 2) -->
+           <div class="card-body table-responsive table-container">
+
           <div class="cards">
             <div class="card-metric card-blue">
               <div class="meta">
@@ -428,6 +449,8 @@
                       <th style="min-width: 140px">Fecha</th>
                       <th style="min-width: 120px">Hora</th>
                       <th style="min-width: 260px">Opciones</th>
+                      <th></th>
+                      <!--Para botones-->
                     </tr>
                   </thead>
                   <tbody>
@@ -439,6 +462,12 @@
                       <td>Entrada</td>
                       <td>2025-11-01</td>
                       <td>07:30:12</td>
+                      <button class="btn btn-outline-secondary btn-sm">
+                        Ver foto
+                      </button>
+                      <button class="btn btn-outline-warning btn-sm">
+                        Limpiar
+                      </button>
                       <!-- Celda combinada para AUDITAR (rowspan=2) -->
                       <td class="audit-cell" rowspan="2">
                         <button class="btn btn-sm btn-audit">
@@ -468,6 +497,12 @@
                       <td>Entrada</td>
                       <td>2025-11-01</td>
                       <td>07:45:22</td>
+                      <button class="btn btn-outline-secondary btn-sm">
+                        Ver foto
+                      </button>
+                      <button class="btn btn-outline-warning btn-sm">
+                        Limpiar
+                      </button>
                       <td class="audit-cell" rowspan="2">
                         <button class="btn btn-sm btn-audit">
                           <i class="fa-solid fa-file-shield"></i> Auditar

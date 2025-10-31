@@ -6,7 +6,8 @@ const form = document.getElementById("loginForm");
 const msg = document.getElementById("msg");
 
 // URL de tu Worker (intermediario)
-const WORKER_URL = "https://asistencia-proxy.kencyf01.workers.dev/";
+const loginScriptUrl = "https://proxy-asistencia.control-energiasrc.workers.dev";
+
 
 if (form) {
   form.addEventListener("submit", async (e) => {

@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("adminData", JSON.stringify(data.admin));
 
         // Redirigir al panel principal
-        window.location.href = "panel.html"; // puedes cambiarlo por tu vista real
+        window.location.href = "admin.html";
       } else {
         // ❌ Credenciales incorrectas
         msg.textContent = "Usuario o clave incorrectos ❌";

@@ -448,11 +448,23 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((data) => {
           console.log("✅ Respuesta del servidor:", data);
 
+          //Caso 1 — ya completó asistencia
           if (data.completed === true) {
             alert("❌ Ya completaste asistencia hoy.");
             localStorage.clear();
             window.location.reload();
             return;
+          }
+
+          // Caso 2 — ya registró entrada pero aún no salida
+          if (
+            data.success === false &&
+            /registraste/i.test(data.message || "")
+          ) {
+            alert("⚠️ Ya registraste foto hoy.");
+            localStorage.clear();
+            window.location.reload();
+            return; //detiene el flujo
           }
 
           const successModal = new bootstrap.Modal(

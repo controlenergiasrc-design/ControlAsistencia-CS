@@ -391,96 +391,155 @@
             </div>
             <div class="card-body">
               <div class="table-wrap">
-                <table class="table align-middle">
-                  <thead>
-                    <tr>
-                      <th style="min-width: 80px">Numero C/S</th>
-                      <th style="min-width: 200px">Nombre</th>
-                      <th style="min-width: 160px">Sector</th>
-                      <th style="min-width: 120px">Tipo</th>
-                      <th style="min-width: 140px">Fecha</th>
-                      <th style="min-width: 120px">Hora</th>
-                      <th style="min-width: 260px">Opciones</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>5930</td>
-                      <td>Antony López</td>
-                      <td>DISTRITO 1</td>
-                      <td>Entrada</td>
-                      <td>2025-11-01</td>
-                      <td>07:30:12</td>
-                      <td class="text-nowrap">
-                        <button class="btn btn-sm btn-gray">
-                          <i class="fa-solid fa-camera"></i> Ver foto
-                        </button>
-                        <button class="btn btn-sm btn-gray">
-                          <i class="fa-solid fa-broom"></i> Limpiar
-                        </button>
-                      </td>
-                      <td class="audit-cell" rowspan="2">
-                        <button class="btn btn-sm btn-audit">
-                          <i class="fa-solid fa-file-shield"></i> Auditar
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td>DISTRITO 1</td>
-                      <td>Salida</td>
-                      <td>—</td>
-                      <td>—</td>
-                      <td class="text-nowrap">
-                        <button class="btn btn-sm btn-gray">
-                          <i class="fa-solid fa-camera"></i> Ver foto
-                        </button>
-                        <button class="btn btn-sm btn-gray">
-                          <i class="fa-solid fa-broom"></i> Limpiar
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>5930</td>
-                      <td>Kency Fernández</td>
-                      <td>DISTRITO 1</td>
-                      <td>Entrada</td>
-                      <td>2025-11-01</td>
-                      <td>07:30:12</td>
-                      <td class="text-nowrap">
-                        <button class="btn btn-sm btn-gray">
-                          <i class="fa-solid fa-camera"></i> Ver foto
-                        </button>
-                        <button class="btn btn-sm btn-gray">
-                          <i class="fa-solid fa-broom"></i> Limpiar
-                        </button>
-                      </td>
-                      <td class="audit-cell" rowspan="2">
-                        <button class="btn btn-sm btn-audit">
-                          <i class="fa-solid fa-file-shield"></i> Auditar
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td>DISTRITO 1</td>
-                      <td>Salida</td>
-                      <td>—</td>
-                      <td>—</td>
-                      <td class="text-nowrap">
-                        <button class="btn btn-sm btn-gray">
-                          <i class="fa-solid fa-camera"></i> Ver foto
-                        </button>
-                        <button class="btn btn-sm btn-gray">
-                          <i class="fa-solid fa-broom"></i> Limpiar
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <table class="table">
+        <thead>
+          <tr>
+            <th style="min-width: 80px">Número C/S</th>
+            <th style="min-width: 200px">Nombre</th>
+            <th style="min-width: 160px">Sector</th>
+            <th style="min-width: 120px">Tipo</th>
+            <th style="min-width: 140px">Fecha</th>
+            <th style="min-width: 120px">Hora</th>
+            <th style="min-width: 260px">Opciones</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Usuario 1: Antony -->
+          <tr>
+            <td>5930</td>
+            <td>Antony López</td>
+            <td>DISTRITO 1</td>
+            <td>Entrada</td>
+            <td>2025-11-01</td>
+            <td>07:30:12</td>
+            <td class="text-nowrap">
+              <button class="btn btn-sm btn-gray">
+                <i class="fa-solid fa-camera"></i> Ver foto
+              </button>
+              <button class="btn btn-sm btn-gray">
+                <i class="fa-solid fa-broom"></i> Limpiar
+              </button>
+            </td>
+            <td rowspan="2">
+              <button class="btn btn-sm btn-audit">
+                <i class="fa-solid fa-file-shield"></i> Auditar
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>DISTRITO 1</td>
+            <td>Salida</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="text-nowrap">
+              <button class="btn btn-sm btn-gray">
+                <i class="fa-solid fa-camera"></i> Ver foto
+              </button>
+              <button class="btn btn-sm btn-gray">
+                <i class="fa-solid fa-broom"></i> Limpiar
+              </button>
+            </td>
+          </tr>
+
+          <!-- Usuario 2: Kency -->
+          <tr>
+            <td>6041</td>
+            <td>Kency Fernández</td>
+            <td>DISTRITO 2</td>
+            <td>Entrada</td>
+            <td>2025-11-01</td>
+            <td>07:45:22</td>
+            <td class="text-nowrap">
+              <button class="btn btn-sm btn-gray">
+                <i class="fa-solid fa-camera"></i> Ver foto
+              </button>
+              <button class="btn btn-sm btn-gray">
+                <i class="fa-solid fa-broom"></i> Limpiar
+              </button>
+            </td>
+            <td rowspan="2">
+              <button class="btn btn-sm btn-audit">
+                <i class="fa-solid fa-file-shield"></i> Auditar
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>DISTRITO 2</td>
+            <td>Salida</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="text-nowrap">
+              <button class="btn btn-sm btn-gray">
+                <i class="fa-solid fa-camera"></i> Ver foto
+              </button>
+              <button class="btn btn-sm btn-gray">
+                <i class="fa-solid fa-broom"></i> Limpiar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <style>
+  .table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #d1d5db;
+  }
+
+  .table th,
+  .table td {
+    border: 1px solid #d1d5db;
+    vertical-align: middle;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .table thead th {
+    background: #fafafa;
+    color: #475569;
+    font-weight: 600;
+  }
+
+  /* Alternancia cada 2 filas (Entrada/Salida) */
+  tbody tr:nth-child(4n-3),
+  tbody tr:nth-child(4n-2) {
+    background-color: #f9f9f9;
+  }
+
+  tbody tr:nth-child(4n-1),
+  tbody tr:nth-child(4n) {
+    background-color: #eef7ff;
+  }
+
+  .btn-gray {
+    background: #bfbfbf;
+    color: #212529;
+    border: none;
+    transition: background-color 0.25s ease;
+  }
+
+  .btn-gray:hover {
+    background-color: #ff9800;
+    color: #fff;
+  }
+
+  .btn-audit {
+    background: #d93025;
+    color: #fff;
+    border: none;
+  }
+
+  .btn-audit:hover {
+    filter: brightness(0.9);
+  }
+</style>
+
               </div>
             </div>
           </div>

@@ -453,7 +453,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("❌ Ya completaste asistencia hoy.");
             localStorage.clear();
             window.location.reload();
-            return;
+            return; //detiene el flujo
           }
 
           // Caso 2 — ya registró entrada pero aún no salida
@@ -461,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
             data.success === false &&
             /registraste/i.test(data.message || "")
           ) {
-            alert("⚠️ Ya registraste foto hoy.");
+            alert("⚠️ Ya registraste foto en otro dispositivo.");
             localStorage.clear();
             window.location.reload();
             return; //detiene el flujo

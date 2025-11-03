@@ -2,17 +2,35 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("Script cargado correctamente");
 
   // =====================================================
-  // Reinicio automático si cambió de día
+  // Reinicio automático si cambió de día + Device ID Diario
   // =====================================================
-  const hoy = new Date().toISOString().split("T")[0]; // fecha actual YYYY-MM-DD
+  const hoy = new Date().toISOString().split("T")[0]; // Fecha actual YYYY-MM-DD
   const ultimaFecha = localStorage.getItem("ultima_fecha");
 
   if (ultimaFecha && ultimaFecha !== hoy) {
-    console.log("Nuevo día detectado, limpiando localStorage...");
+    console.log(
+      "Nuevo día detectado — limpiando localStorage y regenerando ID..."
+    );
     localStorage.clear();
   }
 
+  // Guardar la fecha actual
   localStorage.setItem("ultima_fecha", hoy);
+
+  // =====================================================
+  // Generar Device ID por día (único por dispositivo)
+  // =====================================================
+  if (
+    !localStorage.getItem("device_id") ||
+    localStorage.getItem("device_dia") !== hoy
+  ) {
+    const nuevoId = crypto.randomUUID();
+    localStorage.setItem("device_id", nuevoId);
+    localStorage.setItem("device_dia", hoy);
+    console.log("Device ID generado para hoy:", nuevoId);
+  } else {
+    console.log("Device ID vigente:", localStorage.getItem("device_id"));
+  }
 
   // =====================================================
   // Refuerzo: si la app quedó abierta de un día a otro
@@ -423,6 +441,7 @@ document.addEventListener("DOMContentLoaded", () => {
           lat: lat,
           lng: lng,
           fotoBase64: fotoBase64,
+          device_id: localStorage.getItem("device_id"),
         }),
       })
         .then((res) => res.json())

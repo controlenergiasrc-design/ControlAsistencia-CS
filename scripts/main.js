@@ -14,6 +14,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   localStorage.setItem("ultima_fecha", hoy);
 
+  // =====================================================
+  // Refuerzo: si la app quedó abierta de un día a otro
+  // =====================================================
+  const hoyFecha = new Date().toISOString().split("T")[0];
+  const ultimaGuardada = localStorage.getItem("ultima_fecha");
+
+  if (ultimaGuardada && ultimaGuardada !== hoyFecha) {
+    console.log("Nuevo día detectado — limpiando vista final");
+    localStorage.clear();
+    localStorage.setItem("ultima_fecha", hoyFecha);
+    location.reload(); // recarga para empezar desde cero
+  }
+
   //================================================================
   // Espera un momento para restaurar correctamente la vista final
   //================================================================
@@ -300,7 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // CONFIRMAR FOTO Y GUARDAR
   // ===========================================
   guardarFotoBtn.addEventListener("click", function () {
-
     // Si el usuario cancela en el modal de fot
     const btnCancelar = fotoModalEl.querySelector(".btn-secondary");
     btnCancelar.addEventListener("click", (e) => {

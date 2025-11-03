@@ -461,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
             data.success === false &&
             /registraste/i.test(data.message || "")
           ) {
-            alert("⚠️ Ya registraste foto en otro dispositivo.");
+            alert("⚠️ Ya registraste foto con otro dispositivo.");
             localStorage.clear();
             window.location.reload();
             return; //detiene el flujo

@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Nuevo día detectado — limpiando vista final");
     localStorage.clear();
     localStorage.setItem("ultima_fecha", hoyFecha);
-    location.reload(); // recarga para empezar desde cero
+    location.reload(); // recarga para empezar desde ceroooo
   }
 
   //================================================================

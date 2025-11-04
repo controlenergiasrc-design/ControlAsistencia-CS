@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Script cargado correctamente");
 
-  // =====================================================
-  // Reinicio automático si cambió de día + Device ID Diario
-  // =====================================================
+  // =====================================
+  // Reinicio automático si cambió de día 
+  // ====================================
   const hoy = new Date().toISOString().split("T")[0]; // Fecha actual YYYY-MM-DD
   const ultimaFecha = localStorage.getItem("ultima_fecha");
 
@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "Nuevo día detectado — limpiando localStorage y regenerando ID..."
     );
     localStorage.clear();
+    location.reload(); // recarga para empezar desde ceroooo
   }
 
   // Guardar la fecha actual
@@ -30,19 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Device ID generado para hoy:", nuevoId);
   } else {
     console.log("Device ID vigente:", localStorage.getItem("device_id"));
-  }
-
-  // =====================================================
-  // Refuerzo: si la app quedó abierta de un día a otro
-  // =====================================================
-  const hoyFecha = new Date().toISOString().split("T")[0];
-  const ultimaGuardada = localStorage.getItem("ultima_fecha");
-
-  if (ultimaGuardada && ultimaGuardada !== hoyFecha) {
-    console.log("Nuevo día detectado — limpiando vista final");
-    localStorage.clear();
-    localStorage.setItem("ultima_fecha", hoyFecha);
-    location.reload(); // recarga para empezar desde ceroooo
   }
 
   //================================================================

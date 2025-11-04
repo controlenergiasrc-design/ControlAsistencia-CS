@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(
       "Nuevo día detectado — limpiando localStorage y regenerando ID..."
     );
-    localStorage.clear();
+    localStorage.clear();// limpia todo
+    location.reload(); // recarga para empezar desde ceroooo
   }
 
   // Guardar la fecha actual

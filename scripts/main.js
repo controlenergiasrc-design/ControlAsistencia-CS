@@ -449,7 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
             data.success === false &&
             /registraste/i.test(data.message || "")
           ) {
-            alert("⚠️ Ya registraste foto de entrada en otro dispositivo (debes continuar con el mismo dispositivo).");
+            alert("⚠️ Ya tienes foto de Entrada hoy. (debes registrar foto de Salida con el mismo dispositivo que registraste la entrada).");
             localStorage.clear();
             window.location.reload();
             return; //detiene el flujo

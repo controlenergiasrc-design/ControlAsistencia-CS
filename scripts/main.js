@@ -200,19 +200,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const numeroGuardado = localStorage.getItem("numero_cs");
   const estado = localStorage.getItem("estado");
 
-  /* if (estado === "completado" && numeroGuardado) {
-    fetch(`${API_URL}?accion=validarUsuario&numero_cs=${numeroGuardado}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && !data.estado_hoy) {
-          console.log("🧹 Registro eliminado en BD, reiniciando app...");l´'
-          localStorage.clear();
-          location.reload();
-        }
-      })
-      .catch((err) => console.warn("Error verificando estado:", err));
-  }*/
-
   if (numeroGuardado && estado === "espera") {
     localStorage.clear();
   } else if (numeroGuardado) {
@@ -451,7 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           //Caso 1 — ya completó asistencia
           if (data.completed === true) {
-            alert("❌ Ya completaste asistencia hoy.");
+            alert("🚫 No puedes subir mas fotos, ya completaste asistencia hoy.");
             localStorage.clear();
             window.location.reload();
             return; //detiene el flujo
@@ -462,7 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
             data.success === false &&
             /registraste/i.test(data.message || "")
           ) {
-            alert("⚠️ Ya registraste foto con otro dispositivo.");
+            alert("⚠️ Ya registraste foto de entrada en otro dispositivo (debes continuar con el mismo dispositivo).");
             localStorage.clear();
             window.location.reload();
             return; //detiene el flujo

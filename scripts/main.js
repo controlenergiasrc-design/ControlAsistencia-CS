@@ -19,21 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   localStorage.setItem("ultima_fecha", hoy);
 
   // =====================================================
-  // Generar Device ID por día (único por dispositivo)
-  // =====================================================
-  if (
-    !localStorage.getItem("device_id") ||
-    localStorage.getItem("device_dia") !== hoy
-  ) {
-    const nuevoId = crypto.randomUUID();
-    localStorage.setItem("device_id", nuevoId);
-    localStorage.setItem("device_dia", hoy);
-    console.log("Device ID generado para hoy:", nuevoId);
-  } else {
-    console.log("Device ID vigente:", localStorage.getItem("device_id"));
-  }
-
-  // =====================================================
   // Refuerzo: si la app quedó abierta de un día a otro
   // =====================================================
   const hoyFecha = new Date().toISOString().split("T")[0];

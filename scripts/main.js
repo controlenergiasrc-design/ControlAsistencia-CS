@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(
       "Nuevo día detectado — limpiando localStorage y regenerando ID..."
     );
-    localStorage.clear();// limpia todo
+    localStorage.clear(); // limpia todo
     location.reload(); // recarga para empezar desde ceroooo
   }
 
@@ -421,20 +421,40 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((data) => {
           console.log("✅ Respuesta del servidor:", data);
 
-          //Caso 1 — ya completó asistencia
-          if (data.completed === true) {
-            alert("🚫 No puedes subir mas fotos, ya completaste asistencia hoy.");
-            localStorage.clear();
-            window.location.reload();
-            return; //detiene el flujo
+          // Caso nuevo — ya tiene entrada, pasar a modo SALIDA
+          if (data.success === true && data.next === "SALIDA") {
+            alert(data.message);
+
+            // Cambiar la interfaz automáticamente a modo SALIDA 📤
+            fotoTitulo.textContent = "Subir foto de SALIDA 📤";
+            input.disabled = true;
+            fotoInput.disabled = false;
+            guardarFotoBtn.disabled = false;
+
+            // Guardar el estado local para continuar con salida
+            localStorage.setItem("estado", "entrada");
+            localStorage.setItem(
+              "numero_cs",
+              localStorage.getItem("numero_cs") || numero_cs
+            );
+            localStorage.setItem("nombre", localStorage.getItem("nombre"));
+            localStorage.setItem(
+              "tipo_usuario",
+              localStorage.getItem("tipo_usuario")
+            );
+            localStorage.setItem("sector", localStorage.getItem("sector"));
+
+            console.log(
+              "⚠️ Entrada ya registrada — cambiando automáticamente a SALIDA"
+            );
+            return; // detener flujo aquí (no se guarda otra entrada)
           }
 
-          // Caso 2 — ya registró entrada pero aún no salida
-          if (
-            data.success === false &&
-            /registraste/i.test(data.message || "")
-          ) {
-            alert("⚠️ Ya tienes foto de Entrada hoy. (debes registrar foto de Salida con el mismo dispositivo que registraste la entrada).");
+          //Caso 1 — ya completó asistencia
+          if (data.completed === true) {
+            alert(
+              "🚫 No puedes subir mas fotos con este numero de C/S, ya completaste asistencia hoy."
+            );
             localStorage.clear();
             window.location.reload();
             return; //detiene el flujo

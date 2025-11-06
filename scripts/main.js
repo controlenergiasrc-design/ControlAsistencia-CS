@@ -306,18 +306,22 @@ document.addEventListener("DOMContentLoaded", () => {
   guardarFotoBtn.addEventListener("click", function () {
     // Si el usuario cancela en el modal de fot
     const btnCancelar = fotoModalEl.querySelector(".btn-secondary");
+    btnCancelar.onclick = null; // evita acumulaciones carga cancelada jsjs
     btnCancelar.addEventListener("click", (e) => {
-      e.preventDefault(); // evita que Bootstrap lo cierre antes
-      fotoModal.hide(); // cierra el modal
-      fotoInput.value = ""; // limpia el input
+      e.preventDefault();
+      fotoModal.hide();
+      fotoInput.value = "";
       console.log("Foto cancelada por el usuario.");
+
+      // Elimina alertas previas si existían
+      document.querySelectorAll(".alert-warning").forEach((el) => el.remove());
 
       const msg = document.createElement("div");
       msg.className = "alert alert-warning text-center mt-3";
       msg.textContent = "Carga cancelada ❌";
-      guardarFotoBtn.insertAdjacentElement("afterend", msg); // justo debajo del botón
+      guardarFotoBtn.insertAdjacentElement("afterend", msg);
 
-      setTimeout(() => msg.remove(), 2000); // la quita en 2 segundos
+      setTimeout(() => msg.remove(), 2000);
     });
 
     if (!fotoInput.files.length) {

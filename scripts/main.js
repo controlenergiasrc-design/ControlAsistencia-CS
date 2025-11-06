@@ -2,45 +2,21 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("Script cargado correctamente");
 
   // =====================================================
-  // Reinicio automático diario
+  // Reinicio automático al ingresar en un nuevo día
   // =====================================================
-  (function verificarReinicioDiario() {
-    const hoy = new Date();
-    const diaActual = hoy.toISOString().split("T")[0]; // Ej: "2025-11-06"
+  (function () {
+    const hoy = new Date().toLocaleDateString("es-ES"); // Fecha del dispositivo (formato local)
     const ultimaFecha = localStorage.getItem("ultima_fecha");
 
-    // Paso 1 — si nunca se guardó fecha, la guardamos ahora
-    if (!ultimaFecha) {
-      localStorage.setItem("ultima_fecha", diaActual);
-      console.log("Primera vez iniciando — fecha guardada:", diaActual);
-      return;
+    // Si es la primera vez que entra o si la fecha cambió
+    if (!ultimaFecha || ultimaFecha !== hoy) {
+      console.log("Nuevo día detectado — limpiando almacenamiento local...");
+      localStorage.clear(); // Limpia todo lo del día anterior
+      localStorage.setItem("ultima_fecha", hoy); // Guarda la nueva fecha base
+      setTimeout(() => location.reload(), 500); // Recarga automáticamente
+    } else {
+      console.log("Mismo día detectado — sin reinicio.");
     }
-
-    // Paso 2 — si el día cambió, limpiamos todo
-    if (ultimaFecha !== diaActual) {
-      console.log("Nuevo día detectado — limpiando datos antiguos...");
-      localStorage.clear();
-      localStorage.setItem("ultima_fecha", diaActual);
-      setTimeout(() => location.reload(), 500); // espera medio segundo antes de recargar
-      return;
-    }
-
-    // Paso 3 — guardamos la fecha si no cambió, para mantener consistencia
-    localStorage.setItem("ultima_fecha", diaActual);
-
-    // Paso 4 — comprobación constante (por si dejan la app abierta toda la noche)
-    setInterval(() => {
-      const ahora = new Date().toISOString().split("T")[0];
-      const ultima = localStorage.getItem("ultima_fecha");
-      if (ultima && ultima !== ahora) {
-        console.log(
-          "Cambio de día detectado — reiniciando automáticamente..."
-        );
-        localStorage.clear();
-        localStorage.setItem("ultima_fecha", ahora);
-        location.reload();
-      }
-    }, 60000); // cada 60 segundos
   })();
 
   /*//================================================================

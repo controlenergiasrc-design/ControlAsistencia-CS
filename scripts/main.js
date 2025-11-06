@@ -2,36 +2,48 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("Script cargado correctamente");
 
   // =====================================================
-  // Reinicio automático si cambió de día + Device ID Diario
+  // Reinicio automático diario
   // =====================================================
-  const hoy = new Date().toISOString().split("T")[0]; // Fecha actual YYYY-MM-DD
-  const ultimaFecha = localStorage.getItem("ultima_fecha");
+  (function verificarReinicioDiario() {
+    const hoy = new Date();
+    const diaActual = hoy.toISOString().split("T")[0]; // Ej: "2025-11-06"
+    const ultimaFecha = localStorage.getItem("ultima_fecha");
 
-  if (ultimaFecha && ultimaFecha !== hoy) {
-    console.log(
-      "Nuevo día detectado — limpiando localStorage y regenerando ID..."
-    );
-    localStorage.clear(); // limpia todo
-    location.reload(); // recarga para empezar desde ceroooo
-  }
+    // Paso 1 — si nunca se guardó fecha, la guardamos ahora
+    if (!ultimaFecha) {
+      localStorage.setItem("ultima_fecha", diaActual);
+      console.log("Primera vez iniciando — fecha guardada:", diaActual);
+      return;
+    }
 
-  // Guardar la fecha actual
-  localStorage.setItem("ultima_fecha", hoy);
+    // Paso 2 — si el día cambió, limpiamos todo
+    if (ultimaFecha !== diaActual) {
+      console.log("Nuevo día detectado — limpiando datos antiguos...");
+      localStorage.clear();
+      localStorage.setItem("ultima_fecha", diaActual);
+      setTimeout(() => location.reload(), 500); // espera medio segundo antes de recargar
+      return;
+    }
 
-  // =====================================================
-  // Refuerzo: si la app quedó abierta de un día a otro
-  // =====================================================
-  const hoyFecha = new Date().toISOString().split("T")[0];
-  const ultimaGuardada = localStorage.getItem("ultima_fecha");
+    // Paso 3 — guardamos la fecha si no cambió, para mantener consistencia
+    localStorage.setItem("ultima_fecha", diaActual);
 
-  if (ultimaGuardada && ultimaGuardada !== hoyFecha) {
-    console.log("Nuevo día detectado — limpiando vista final");
-    localStorage.clear();
-    localStorage.setItem("ultima_fecha", hoyFecha);
-    location.reload(); // recarga para empezar desde ceroooo
-  }
+    // Paso 4 — comprobación constante (por si dejan la app abierta toda la noche)
+    setInterval(() => {
+      const ahora = new Date().toISOString().split("T")[0];
+      const ultima = localStorage.getItem("ultima_fecha");
+      if (ultima && ultima !== ahora) {
+        console.log(
+          "Cambio de día detectado — reiniciando automáticamente..."
+        );
+        localStorage.clear();
+        localStorage.setItem("ultima_fecha", ahora);
+        location.reload();
+      }
+    }, 60000); // cada 60 segundos
+  })();
 
-  //================================================================
+  /*//================================================================
   // Espera un momento para restaurar correctamente la vista final
   //================================================================
   setTimeout(() => {
@@ -55,33 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         salida_lng: lng,
       });
     }
-  }, 500); // espera medio segundo antes de decidir qué mostrar
-
-  //================================================================
-  // Espera un momento para restaurar correctamente la vista final
-  //================================================================
-  setTimeout(() => {
-    const estadoGuardado = localStorage.getItem("estado");
-    if (estadoGuardado === "completado") {
-      const entrada_fecha = localStorage.getItem("entrada_fecha");
-      const entrada_hora = localStorage.getItem("entrada_hora");
-      const salida_fecha = localStorage.getItem("salida_fecha");
-      const salida_hora = localStorage.getItem("salida_hora");
-      const lat = localStorage.getItem("lat");
-      const lng = localStorage.getItem("lng");
-
-      muestraVistaFinal({
-        entrada_fecha,
-        entrada_hora,
-        entrada_lat: lat,
-        entrada_lng: lng,
-        salida_fecha,
-        salida_hora,
-        salida_lat: lat,
-        salida_lng: lng,
-      });
-    }
-  }, 500); // espera medio segundo antes de decidir qué mostrar
+  }, 500); // espera medio segundo antes de decidir qué mostrar*/
 
   // ===========================================
   // CONFIGURACIÓN API

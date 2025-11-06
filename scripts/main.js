@@ -428,6 +428,9 @@ document.addEventListener("DOMContentLoaded", () => {
           // Caso nuevo — ya tiene entrada, pasar a modo SALIDA
           if (data.success === true && data.next === "SALIDA") {
             alert(data.message);
+            
+            // Limpiar el input de foto al confirmar
+            fotoInput.value = "";
 
             // Cambiar la interfaz automáticamente a modo SALIDA 📤
             fotoTitulo.textContent = "Subir foto de SALIDA 📤";

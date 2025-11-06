@@ -406,6 +406,10 @@ document.addEventListener("DOMContentLoaded", () => {
       fotoTitulo.innerHTML = `<span class="spinner-border spinner-border-sm text-primary"></span>
       <em style="color:#6c757d; margin-left:6px;">Guardando foto...</em>`;
 
+      // Bloquear temporalmente el botón mientras se guarda
+      guardarFotoBtn.disabled = true;
+      fotoInput.disabled = true;
+
       fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -425,10 +429,14 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((data) => {
           console.log("✅ Respuesta del servidor:", data);
 
+          // Rehabilitar botones siempre que termine la respuesta
+          guardarFotoBtn.disabled = false;
+          fotoInput.disabled = false;
+
           // Caso nuevo — ya tiene entrada, pasar a modo SALIDA
           if (data.success === true && data.next === "SALIDA") {
             alert(data.message);
-            
+
             // Limpiar el input de foto al confirmar
             fotoInput.value = "";
 
@@ -546,6 +554,10 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch((err) => {
           console.error("❌ Error guardando foto:", err);
           fotoTitulo.innerHTML = `<em style="color:#dc3545;">Error al guardar foto ❌</em>`;
+
+          // También reactivar los botones si hubo error
+          guardarFotoBtn.disabled = false;
+          fotoInput.disabled = false;
         });
     }
   };

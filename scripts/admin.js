@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch(`${API_URL}?accion=registrosHoy`)
     .then((res) => res.json())
     .then((data) => {
-      console.log("📦 Datos recibidos:", data);
+      console.log("Datos recibidos:", data);
 
       tablaBody.innerHTML = "";
 

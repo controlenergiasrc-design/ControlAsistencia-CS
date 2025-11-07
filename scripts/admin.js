@@ -17,7 +17,7 @@ async function obtenerRegistrosHoy() {
   try {
     const res = await fetch(`${API_URL}?accion=registrosHoy`);
     const data = await res.json();
-    console.log("📦 Datos recibidos:", data);
+    console.log("Datos recibidos:", data);
 
     if (data && data.registros) {
       renderizarTabla(data.registros);
@@ -42,34 +42,33 @@ function renderizarTabla(registros) {
   }
 
   registros.forEach((r) => {
-    // ============================
-    // Fila ENTRADA
-    // ============================
-    const filaEntrada = `
+    const tipo = r.tipo?.toUpperCase() || "—";
+
+    const fila = `
       <tr>
         <td>${r.numero_cs || "-"}</td>
         <td>${r.nombre || "-"}</td>
         <td>${r.sector || "-"}</td>
-        <td>ENTRADA</td>
-        <td>${r.entrada.fecha || "-"}</td>
-        <td>${r.entrada.hora || "-"}</td>
-        <td>${r.entrada.lat || "-"}</td>
-        <td>${r.entrada.lng || "-"}</td>
+        <td>${tipo}</td>
+        <td>${r.fecha || "-"}</td>
+        <td>${r.hora || "-"}</td>
+        <td>${r.lat || "-"}</td>
+        <td>${r.lng || "-"}</td>
         <td>
           ${
-            r.entrada.enlace
-              ? `<a href="${r.entrada.enlace}" target="_blank" class="btn btn-sm btn-gray">
-                   <i class="fa-solid fa-camera"></i> Ver foto
-                 </a>`
+            r.enlace
+              ? `<a href="${r.enlace}" target="_blank" class="btn btn-sm btn-gray">
+                  <i class="fa-solid fa-camera"></i> Ver foto
+                </a>`
               : `<button class="btn btn-sm btn-gray" disabled>
-                   <i class="fa-solid fa-camera"></i> Sin foto
-                 </button>`
+                  <i class="fa-solid fa-camera"></i> Sin foto
+                </button>`
           }
-          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${r.numero_cs}', 'ENTRADA')">
+          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${r.numero_cs}', '${tipo}')">
             <i class="fa-solid fa-broom"></i> Limpiar
           </button>
         </td>
-        <td rowspan="2">
+        <td>
           <button class="btn btn-sm btn-audit">
             <i class="fa-solid fa-file-shield"></i> Auditar
           </button>
@@ -77,37 +76,6 @@ function renderizarTabla(registros) {
       </tr>
     `;
 
-    // ============================
-    // Fila SALIDA
-    // ============================
-    const filaSalida = `
-      <tr>
-        <td>${r.numero_cs || "-"}</td>
-        <td>${r.nombre || "-"}</td>
-        <td>${r.sector || "-"}</td>
-        <td>SALIDA</td>
-        <td>${r.salida.fecha || "-"}</td>
-        <td>${r.salida.hora || "-"}</td>
-        <td>${r.salida.lat || "-"}</td>
-        <td>${r.salida.lng || "-"}</td>
-        <td>
-          ${
-            r.salida.enlace
-              ? `<a href="${r.salida.enlace}" target="_blank" class="btn btn-sm btn-gray">
-                   <i class="fa-solid fa-camera"></i> Ver foto
-                 </a>`
-              : `<button class="btn btn-sm btn-gray" disabled>
-                   <i class="fa-solid fa-camera"></i> Sin foto
-                 </button>`
-          }
-          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${r.numero_cs}', 'SALIDA')">
-            <i class="fa-solid fa-broom"></i> Limpiar
-          </button>
-        </td>
-      </tr>
-    `;
-
-    // Insertar ambas filas
-    tbody.insertAdjacentHTML("beforeend", filaEntrada + filaSalida);
+    tbody.insertAdjacentHTML("beforeend", fila);
   });
 }

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PanelAdmin - ControlAsistencia</title>
 
-    <!-- Tipografía -->
+    <!-- Tipografía (Poppins) -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
@@ -24,25 +24,31 @@
     <style>
       :root {
         --isse-blue: #41b6e6;
-        --isse-orange: #fd7e14;
+        --isse-green: #4caf50;
         --sidebar-bg: #1e1e1e;
         --sidebar-txt: #ffffff;
+        --alt-1: #f9f9f9;
+        --alt-2: #eef7ff;
         --btn-gray: #bfbfbf;
+        --isse-orange: #fd7e14;
       }
 
       html,
       body {
         height: 100%;
         background: #f5f6f8;
-        font-family: "Poppins", sans-serif;
+        font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto,
+          Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans",
+          "Apple Color Emoji", "Segoe UI Emoji";
       }
 
+      /* ===== Layout base ===== */
       .app {
         display: flex;
         min-height: 100vh;
       }
 
-      /* === SIDEBAR (NO TOCAR) === */
+      /* ===== Sidebar ===== */
       .sidebar {
         width: 270px;
         flex: 0 0 270px;
@@ -54,32 +60,125 @@
         top: 0;
         height: 100vh;
       }
+      .sidebar .brand {
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sidebar .brand i {
+        color: var(--isse-blue);
+      }
+      .sidebar .brand .title {
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
 
-      /* === CONTENIDO AJUSTADO === */
+      .nav-menu {
+        list-style: none;
+        margin: 0;
+        padding: 12px;
+      }
+      .nav-item {
+        margin: 6px 0;
+      }
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--sidebar-txt);
+        text-decoration: none;
+        padding: 10px 12px;
+        border-radius: 10px;
+        transition: 0.15s ease-in-out;
+      }
+      .nav-link:hover,
+      .nav-link.active {
+        background: var(--isse-blue);
+        color: #fff;
+      }
+      .nav-link i {
+        width: 20px;
+        text-align: center;
+      }
+
+      /* ===== Contenido ===== */
       .content {
         flex: 1;
         min-width: 0;
-        padding: 20px;
-        margin-left: 270px; /* ← deja espacio para la sidebar */
-        overflow-x: auto;
       }
 
-      /* Tarjetas */
+      .topbar {
+        background: #fff;
+        border-bottom: 1px solid #eceff3;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .topbar .btn-menu {
+        display: none;
+      }
+
+      .page {
+        padding: 20px;
+        max-width: 1400px;
+        margin-inline: auto;
+      }
+
+      .page-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 8px 0 18px;
+      }
+      .page-title h1 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin: 0;
+        color: #1f2937;
+      }
+      .page-sub {
+        color: #6b7280;
+        font-size: 0.95rem;
+      }
+
+      /* ===== Tarjetas resumen ===== */
       .cards {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 16px;
         margin: 8px 0 22px;
       }
-
       .card-metric {
         color: #fff;
+        border: 0;
         border-radius: 16px;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-        padding: 18px;
+        overflow: hidden;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
+        padding: 18px 18px;
+      }
+      .card-metric .meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .card-metric .meta .label {
+        opacity: 0.95;
+        font-weight: 500;
+      }
+      .card-metric .meta .value {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .card-metric .icon {
+        font-size: 34px;
+        opacity: 0.9;
       }
       .card-blue {
         background: var(--isse-blue);
@@ -88,45 +187,54 @@
         background: var(--isse-orange);
       }
 
-      /* === TABLA === */
+      /* ===== Tabla ===== */
       .card-panel {
         background: #fff;
+        border: 0;
         border-radius: 16px;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
       }
+      .card-panel .card-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid #eef1f5;
+        background: #fff;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+      }
+      .card-panel .card-title {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #334155;
+      }
 
       .table {
-        border-collapse: collapse;
-        width: 100%;
+        margin: 0;
       }
-
       .table thead th {
         background: #fafafa;
-        color: #475569;
         font-weight: 600;
-        text-align: center;
+        color: #475569;
         border-bottom: 1px solid #eef1f5;
       }
-
       .table td,
       .table th {
-        border: 1px solid #d1d5db;
         vertical-align: middle;
-        text-align: center;
-        padding: 10px;
       }
 
-      /* Alternancia cada 2 filas (Entrada/Salida) */
+      /* ===============================
+         TABLA SIN SOMBREADOS - DOS COLORES POR CADA PAR
+      =============================== */
       tbody tr:nth-child(4n-3),
       tbody tr:nth-child(4n-2) {
-        background-color: #f9f9f9;
+        background-color: #c2e8ff !important;
       }
       tbody tr:nth-child(4n-1),
       tbody tr:nth-child(4n) {
-        background-color: #eef7ff;
+        background-color: #ffddc5 !important;
       }
 
-      /* Botones */
+      /* Botones grises */
       .btn-gray {
         background: var(--btn-gray);
         color: #212529;
@@ -137,6 +245,8 @@
         background-color: #ff9800;
         color: #fff;
       }
+
+      /* Botón Auditar */
       .btn-audit {
         background: #d93025;
         color: #fff;
@@ -146,55 +256,138 @@
         filter: brightness(0.9);
       }
 
-      /* Scroll horizontal en móviles */
+      /* Responsive */
+      @media (max-width: 992px) {
+        .sidebar {
+          position: fixed;
+          inset: 0 auto 0 0;
+          transform: translateX(-100%);
+          transition: transform 0.25s ease;
+          z-index: 1050;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .topbar .btn-menu {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .page {
+          padding: 16px;
+        }
+        .cards {
+          grid-template-columns: 1fr;
+        }
+        .nav-dim {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.25);
+          backdrop-filter: saturate(50%) blur(2px);
+          display: none;
+          z-index: 1040;
+        }
+        .nav-dim.show {
+          display: block;
+        }
+        .content {
+          width: 100%;
+        }
+      }
+
+      /* Scroll tabla móvil */
       .table-wrap {
-        overflow-x: auto;
         width: 100%;
+        overflow: auto;
       }
     </style>
   </head>
-
   <body>
     <div class="app">
-      <aside class="sidebar">
-        <div class="brand p-3 d-flex align-items-center gap-2 border-bottom border-secondary">
-          <i class="fa-solid fa-bolt fa-lg text-info"></i>
-          <div class="title fw-semibold">Control Asistencia</div>
+      <aside id="sidebar" class="sidebar">
+        <div class="brand">
+          <i class="fa-solid fa-bolt fa-lg"></i>
+          <div class="title">Control Asistencia</div>
         </div>
-
-        <ul class="nav-menu list-unstyled p-3">
-          <li><a class="nav-link active text-white d-flex align-items-center gap-2" href="#"><i class="fa-solid fa-gauge"></i>Dashboard</a></li>
-          <li><a class="nav-link text-white d-flex align-items-center gap-2" href="#"><i class="fa-solid fa-users"></i>Usuarios</a></li>
-          <li><a class="nav-link text-white d-flex align-items-center gap-2" href="#"><i class="fa-solid fa-calendar-check"></i>Asistencias diarias</a></li>
-          <li><a class="nav-link text-white d-flex align-items-center gap-2" href="#"><i class="fa-solid fa-gear"></i>Configuración</a></li>
-          <li><a class="nav-link text-white d-flex align-items-center gap-2" href="#"><i class="fa-solid fa-right-from-bracket"></i>Cerrar sesión</a></li>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a class="nav-link active" href="#"
+              ><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-users"></i><span>Usuarios</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-calendar-check"></i
+              ><span>Asistencias diarias</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-gear"></i><span>Configuración</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"
+              ><i class="fa-solid fa-right-from-bracket"></i
+              ><span>Cerrar sesión</span></a
+            >
+          </li>
         </ul>
       </aside>
 
-      <main class="content">
-        <div class="page">
-          <h1 class="fs-5 fw-semibold mb-1">Panel Administrador del Sistema de control de asistencia</h1>
-          <p class="text-secondary mb-4">Bienvenido Edgar Rivera</p>
+      <div id="navDim" class="nav-dim"></div>
 
-          <div class="cards">
-            <div class="card-metric card-blue">
-              <div>
-                <div><i class="fa-solid fa-users me-2"></i>Usuarios registrados</div>
-                <div class="fs-2 fw-bold" id="metricUsuarios">120</div>
-              </div>
-              <i class="fa-solid fa-user-group fa-2xl opacity-75"></i>
-            </div>
-            <div class="card-metric card-orange">
-              <div>
-                <div><i class="fa-solid fa-camera me-2"></i>Fotos del día</div>
-                <div class="fs-2 fw-bold" id="metricFotos">86</div>
-              </div>
-              <i class="fa-solid fa-camera-retro fa-2xl opacity-75"></i>
+      <main class="content">
+        <div
+          class="topbar py-2 px-3 d-flex align-items-center justify-content-between"
+        >
+          <button
+            id="btnMenu"
+            class="btn btn-outline-secondary btn-sm btn-menu"
+          >
+            <i class="fa-solid fa-bars"></i> Menú
+          </button>
+          <div></div>
+        </div>
+
+        <div class="page">
+          <div class="page-title">
+            <div>
+              <h1>Panel Administrador del Sistema de control de asistencia"</h1>
+              <div class="page-sub">Bienvenido Edgar Rivera</div>
             </div>
           </div>
 
-          <div class="card card-panel mt-3">
-            <div class="card-header">
+          <div class="cards">
+            <div class="card-metric card-blue">
+              <div class="meta">
+                <div class="label">
+                  <i class="fa-solid fa-users me-2"></i>Usuarios registrados
+                </div>
+                <div class="value" id="metricUsuarios">120</div>
+              </div>
+              <div class="icon"><i class="fa-solid fa-user-group"></i></div>
+            </div>
+            <div class="card-metric card-orange">
+              <div class="meta">
+                <div class="label">
+                  <i class="fa-solid fa-camera me-2"></i>Fotos del día
+                </div>
+                <div class="value" id="metricFotos">86</div>
+              </div>
+              <div class="icon"><i class="fa-solid fa-camera-retro"></i></div>
+            </div>
+          </div>
+
+          <div class="card card-panel">
+            <div
+              class="card-header d-flex align-items-center justify-content-between"
+            >
               <h2 class="card-title m-0">Registros del día</h2>
             </div>
             <div class="card-body">
@@ -202,18 +395,74 @@
                 <table class="table">
                   <thead>
                     <tr>
-                      <th>Número C/S</th>
-                      <th>Nombre</th>
-                      <th>Sector</th>
-                      <th>Tipo</th>
-                      <th>Fecha</th>
-                      <th>Hora</th>
-                      <th>Opciones</th>
-                      <th>Auditoría</th>
+                     <thead>
+                      <th style="min-width: 80px">Número C/S</th>
+                      <th style="min-width: 200px">Nombre</th>
+                      <th style="min-width: 140px">Sector</th>
+                      <th style="min-width: 110px">Tipo</th>
+                      <th style="min-width: 130px">Fecha</th>
+                      <th style="min-width: 120px">Hora</th>
+                      <th style="min-width: 200px">Opciones</th>
+                      <th style="min-width: 130px">Auditoría</th>
                     </tr>
                   </thead>
-                  <tbody id="tablaRegistros"></tbody>
+                    <tbody id="tablaRegistros"></tbody>
                 </table>
+
+                <style>
+                  .table {
+                    border-collapse: collapse;
+                    width: 100%;
+                    border: 1px solid #d1d5db;
+                  }
+
+                  .table th,
+                  .table td {
+                    border: 1px solid #d1d5db;
+                    vertical-align: middle;
+                    text-align: center;
+                    padding: 10px;
+                  }
+
+                  .table thead th {
+                    background: #fafafa;
+                    color: #475569;
+                    font-weight: 600;
+                  }
+
+                  /* Alternancia cada 2 filas (Entrada/Salida) */
+                  tbody tr:nth-child(4n-3),
+                  tbody tr:nth-child(4n-2) {
+                    background-color: #f9f9f9;
+                  }
+
+                  tbody tr:nth-child(4n-1),
+                  tbody tr:nth-child(4n) {
+                    background-color: #eef7ff;
+                  }
+
+                  .btn-gray {
+                    background: #bfbfbf;
+                    color: #212529;
+                    border: none;
+                    transition: background-color 0.25s ease;
+                  }
+
+                  .btn-gray:hover {
+                    background-color: #ff9800;
+                    color: #fff;
+                  }
+
+                  .btn-audit {
+                    background: #d93025;
+                    color: #fff;
+                    border: none;
+                  }
+
+                  .btn-audit:hover {
+                    filter: brightness(0.9);
+                  }
+                </style>
               </div>
             </div>
           </div>
@@ -222,6 +471,27 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const sidebar = document.getElementById("sidebar");
+      const navDim = document.getElementById("navDim");
+      const btnMenu = document.getElementById("btnMenu");
+
+      function openNav() {
+        sidebar.classList.add("open");
+        navDim.classList.add("show");
+      }
+      function closeNav() {
+        sidebar.classList.remove("open");
+        navDim.classList.remove("show");
+      }
+
+      btnMenu?.addEventListener("click", openNav);
+      navDim?.addEventListener("click", closeNav);
+
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 992) closeNav();
+      });
+    </script>
     <script src="/scripts/admin.js"></script>
   </body>
 </html>

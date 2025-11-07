@@ -1,7 +1,7 @@
 // =======================================
 // CONFIGURACIÓN BASE
 // =======================================
-  const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
+const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
 
 // =======================================
 // AL CARGAR LA PÁGINA
@@ -45,36 +45,31 @@ function renderizarTabla(registros) {
     const tipo = r.tipo?.toUpperCase() || "—";
 
     const fila = `
-      <tr>
-        <td>${r.numero_cs || "-"}</td>
-        <td>${r.nombre || "-"}</td>
-        <td>${r.sector || "-"}</td>
-        <td>${tipo}</td>
-        <td>${r.fecha || "-"}</td>
-        <td>${r.hora || "-"}</td>
-        <td>${r.lat || "-"}</td>
-        <td>${r.lng || "-"}</td>
-        <td>
-          ${
-            r.enlace
-              ? `<a href="${r.enlace}" target="_blank" class="btn btn-sm btn-gray">
-                  <i class="fa-solid fa-camera"></i> Ver foto
-                </a>`
-              : `<button class="btn btn-sm btn-gray" disabled>
-                  <i class="fa-solid fa-camera"></i> Sin foto
-                </button>`
-          }
-          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${r.numero_cs}', '${tipo}')">
-            <i class="fa-solid fa-broom"></i> Limpiar
-          </button>
-        </td>
-        <td>
-          <button class="btn btn-sm btn-audit">
-            <i class="fa-solid fa-file-shield"></i> Auditar
-          </button>
-        </td>
-      </tr>
-    `;
+  <tr>
+    <td>${r.numero_cs || "-"}</td>
+    <td>${r.nombre || "-"}</td>
+    <td>${r.sector || "-"}</td>
+    <td>${tipo}</td>
+    <td>${r.fecha || "-"}</td>
+    <td>${r.hora || "-"}</td>
+    <td>
+      ${
+        r.enlace
+          ? `<a href="${r.enlace}" target="_blank" class="btn btn-sm btn-gray">
+              <i class="fa-solid fa-camera"></i> Ver foto
+            </a>`
+          : `<button class="btn btn-sm btn-gray" disabled>
+              <i class="fa-solid fa-camera"></i> Sin foto
+            </button>`
+      }
+      <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${
+        r.numero_cs
+      }', '${tipo}')">
+        <i class="fa-solid fa-broom"></i> Limpiar
+      </button>
+    </td>
+  </tr>
+`;
 
     tbody.insertAdjacentHTML("beforeend", fila);
   });

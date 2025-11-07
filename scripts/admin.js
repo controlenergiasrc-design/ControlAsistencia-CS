@@ -52,22 +52,26 @@ function renderizarTabla(registros) {
     <td>${tipo}</td>
     <td>${r.fecha || "-"}</td>
     <td>${r.hora || "-"}</td>
-    <td>
-      ${
-        r.enlace
-          ? `<a href="${r.enlace}" target="_blank" class="btn btn-sm btn-gray">
-              <i class="fa-solid fa-camera"></i> Ver foto
-            </a>`
-          : `<button class="btn btn-sm btn-gray" disabled>
-              <i class="fa-solid fa-camera"></i> Sin foto
-            </button>`
-      }
-      <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${
-        r.numero_cs
-      }', '${tipo}')">
-        <i class="fa-solid fa-broom"></i> Limpiar
-      </button>
-    </td>
+<td>
+  ${
+    r.enlace
+      ? `<a href="${r.enlace}" target="_blank" class="btn btn-sm btn-gray">
+          <i class="fa-solid fa-camera"></i> Ver foto
+        </a>`
+      : `<button class="btn btn-sm btn-gray" disabled>
+          <i class="fa-solid fa-camera"></i> Sin foto
+        </button>`
+  }
+  <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${
+    r.numero_cs
+  }', '${tipo}')">
+    <i class="fa-solid fa-broom"></i> Limpiar
+  </button>
+  <button class="btn btn-sm btn-audit">
+    <i class="fa-solid fa-file-shield"></i> Auditar
+  </button>
+</td>
+
   </tr>
 `;
 

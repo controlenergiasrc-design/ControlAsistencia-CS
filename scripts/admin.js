@@ -1,105 +1,113 @@
-document.addEventListener("DOMContentLoaded", () => {
+// =======================================
+// CONFIGURACIÓN BASE
+// =======================================
   const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
-  const tablaBody = document.getElementById("tablaRegistros");
-  const metricFotos = document.getElementById("metricFotos");
-  const metricUsuarios = document.getElementById("metricUsuarios");
 
-  // Mostrar spinner inicial
-  tablaBody.innerHTML = `
-    <tr><td colspan="8" class="text-center text-muted py-3">
-      <div class="spinner-border text-primary spinner-border-sm"></div>
-      Cargando registros de hoy...
-    </td></tr>
-  `;
-
-  fetch(`${API_URL}?accion=registrosHoy`)
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("Datos recibidos:", data);
-
-      tablaBody.innerHTML = "";
-
-      if (!data || !data.registros || data.registros.length === 0) {
-        tablaBody.innerHTML = `
-          <tr><td colspan="8" class="text-center text-muted py-3">
-            No hay registros del día de hoy 💤
-          </td></tr>`;
-        return;
-      }
-
-      // Métricas
-      const usuariosUnicos = new Set(data.registros.map((r) => r.numero_cs));
-      metricUsuarios.textContent = usuariosUnicos.size;
-      metricFotos.textContent = data.registros.length * 2; // entrada + salida posibles
-
-      // Generar dos filas por usuario
-      data.registros.forEach((r) => {
-        const e = r.entrada || {};
-        const s = r.salida || {};
-
-        const filaEntrada = `
-          <tr>
-            <td>${r.numero_cs || "—"}</td>
-            <td>${r.nombre || "—"}</td>
-            <td>${r.sector || "—"}</td>
-            <td>${e.tipo || "Entrada"}</td>
-            <td>${e.fecha || "—"}</td>
-            <td>${e.hora || "—"}</td>
-            <td class="text-nowrap">
-              ${
-                e.enlace
-                  ? `<a href="${e.enlace}" target="_blank" class="btn btn-sm btn-gray">
-                      <i class="fa-solid fa-camera"></i> Ver foto
-                    </a>`
-                  : `<button class="btn btn-sm btn-secondary" disabled>
-                      <i class="fa-solid fa-ban"></i> Sin foto
-                    </button>`
-              }
-              <button class="btn btn-sm btn-gray">
-                <i class="fa-solid fa-broom"></i> Limpiar
-              </button>
-            </td>
-            <td rowspan="2">
-              <button class="btn btn-sm btn-audit">
-                <i class="fa-solid fa-file-shield"></i> Auditar
-              </button>
-            </td>
-          </tr>
-        `;
-
-        const filaSalida = `
-          <tr>
-            <td></td>
-            <td></td>
-            <td>${r.sector || "—"}</td>
-            <td>${s.tipo || "Salida"}</td>
-            <td>${s.fecha || "—"}</td>
-            <td>${s.hora || "—"}</td>
-            <td class="text-nowrap">
-              ${
-                s.enlace
-                  ? `<a href="${s.enlace}" target="_blank" class="btn btn-sm btn-gray">
-                      <i class="fa-solid fa-camera"></i> Ver foto
-                    </a>`
-                  : `<button class="btn btn-sm btn-secondary" disabled>
-                      <i class="fa-solid fa-ban"></i> Sin foto
-                    </button>`
-              }
-              <button class="btn btn-sm btn-gray">
-                <i class="fa-solid fa-broom"></i> Limpiar
-              </button>
-            </td>
-          </tr>
-        `;
-
-        tablaBody.insertAdjacentHTML("beforeend", filaEntrada + filaSalida);
-      });
-    })
-    .catch((err) => {
-      console.error("❌ Error cargando registros:", err);
-      tablaBody.innerHTML = `
-        <tr><td colspan="8" class="text-center text-danger py-3">
-          Error al cargar registros 😭
-        </td></tr>`;
-    });
+// =======================================
+// AL CARGAR LA PÁGINA
+// =======================================
+document.addEventListener("DOMContentLoaded", () => {
+  obtenerRegistrosHoy();
 });
+
+// =======================================
+// OBTENER REGISTROS DEL DÍA
+// =======================================
+async function obtenerRegistrosHoy() {
+  try {
+    const res = await fetch(`${API_URL}?accion=registrosHoy`);
+    const data = await res.json();
+    console.log("📦 Datos recibidos:", data);
+
+    if (data && data.registros) {
+      renderizarTabla(data.registros);
+    } else {
+      renderizarTabla([]);
+    }
+  } catch (err) {
+    console.error("❌ Error al obtener registros:", err);
+  }
+}
+
+// =======================================
+// RENDERIZAR TABLA COMPLETA (ENTRADA/SALIDA)
+// =======================================
+function renderizarTabla(registros) {
+  const tbody = document.getElementById("tablaRegistros");
+  tbody.innerHTML = "";
+
+  if (!registros.length) {
+    tbody.innerHTML = `<tr><td colspan="12" class="text-center text-muted">No hay registros del día de hoy 🕒</td></tr>`;
+    return;
+  }
+
+  registros.forEach((r) => {
+    // ============================
+    // Fila ENTRADA
+    // ============================
+    const filaEntrada = `
+      <tr>
+        <td>${r.numero_cs || "-"}</td>
+        <td>${r.nombre || "-"}</td>
+        <td>${r.sector || "-"}</td>
+        <td>ENTRADA</td>
+        <td>${r.entrada.fecha || "-"}</td>
+        <td>${r.entrada.hora || "-"}</td>
+        <td>${r.entrada.lat || "-"}</td>
+        <td>${r.entrada.lng || "-"}</td>
+        <td>
+          ${
+            r.entrada.enlace
+              ? `<a href="${r.entrada.enlace}" target="_blank" class="btn btn-sm btn-gray">
+                   <i class="fa-solid fa-camera"></i> Ver foto
+                 </a>`
+              : `<button class="btn btn-sm btn-gray" disabled>
+                   <i class="fa-solid fa-camera"></i> Sin foto
+                 </button>`
+          }
+          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${r.numero_cs}', 'ENTRADA')">
+            <i class="fa-solid fa-broom"></i> Limpiar
+          </button>
+        </td>
+        <td rowspan="2">
+          <button class="btn btn-sm btn-audit">
+            <i class="fa-solid fa-file-shield"></i> Auditar
+          </button>
+        </td>
+      </tr>
+    `;
+
+    // ============================
+    // Fila SALIDA
+    // ============================
+    const filaSalida = `
+      <tr>
+        <td>${r.numero_cs || "-"}</td>
+        <td>${r.nombre || "-"}</td>
+        <td>${r.sector || "-"}</td>
+        <td>SALIDA</td>
+        <td>${r.salida.fecha || "-"}</td>
+        <td>${r.salida.hora || "-"}</td>
+        <td>${r.salida.lat || "-"}</td>
+        <td>${r.salida.lng || "-"}</td>
+        <td>
+          ${
+            r.salida.enlace
+              ? `<a href="${r.salida.enlace}" target="_blank" class="btn btn-sm btn-gray">
+                   <i class="fa-solid fa-camera"></i> Ver foto
+                 </a>`
+              : `<button class="btn btn-sm btn-gray" disabled>
+                   <i class="fa-solid fa-camera"></i> Sin foto
+                 </button>`
+          }
+          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${r.numero_cs}', 'SALIDA')">
+            <i class="fa-solid fa-broom"></i> Limpiar
+          </button>
+        </td>
+      </tr>
+    `;
+
+    // Insertar ambas filas
+    tbody.insertAdjacentHTML("beforeend", filaEntrada + filaSalida);
+  });
+}

@@ -1,62 +1,54 @@
-
 document.addEventListener("DOMContentLoaded", () => {
-
   const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
-  
   const tablaBody = document.getElementById("tablaRegistros");
   const metricFotos = document.getElementById("metricFotos");
   const metricUsuarios = document.getElementById("metricUsuarios");
 
+  // Mostrar spinner inicial
   tablaBody.innerHTML = `
     <tr><td colspan="8" class="text-center text-muted py-3">
-      <div class="spinner-border text-primary spinner-border-sm"></div> Cargando registros de hoy...
+      <div class="spinner-border text-primary spinner-border-sm"></div>
+      Cargando registros de hoy...
     </td></tr>
   `;
 
   fetch(`${API_URL}?accion=registrosHoy`)
     .then((res) => res.json())
     .then((data) => {
+      console.log("📦 Datos recibidos:", data);
+
       tablaBody.innerHTML = "";
 
       if (!data || !data.registros || data.registros.length === 0) {
         tablaBody.innerHTML = `
           <tr><td colspan="8" class="text-center text-muted py-3">
             No hay registros del día de hoy 💤
-          </td></tr>
-        `;
+          </td></tr>`;
         return;
       }
 
-      // Calcular métricas
+      // Métricas
       const usuariosUnicos = new Set(data.registros.map((r) => r.numero_cs));
       metricUsuarios.textContent = usuariosUnicos.size;
-      metricFotos.textContent = data.registros.filter((r) => r.enlace_foto).length;
-
-      // Agrupar registros por usuario
-      const agrupado = {};
-      data.registros.forEach((r) => {
-        if (!agrupado[r.numero_cs]) agrupado[r.numero_cs] = { entrada: null, salida: null };
-        if (r.tipo === "Entrada") agrupado[r.numero_cs].entrada = r;
-        else if (r.tipo === "Salida") agrupado[r.numero_cs].salida = r;
-      });
+      metricFotos.textContent = data.registros.length * 2; // entrada + salida posibles
 
       // Generar dos filas por usuario
-      Object.values(agrupado).forEach(({ entrada, salida }) => {
-        const e = entrada || {};
-        const s = salida || {};
+      data.registros.forEach((r) => {
+        const e = r.entrada || {};
+        const s = r.salida || {};
 
         const filaEntrada = `
           <tr>
-            <td>${e.numero_cs || "—"}</td>
-            <td>${e.nombre_usuario || "—"}</td>
-            <td>${e.sector || "—"}</td>
-            <td>Entrada</td>
+            <td>${r.numero_cs || "—"}</td>
+            <td>${r.nombre || "—"}</td>
+            <td>${r.sector || "—"}</td>
+            <td>${e.tipo || "Entrada"}</td>
             <td>${e.fecha || "—"}</td>
             <td>${e.hora || "—"}</td>
             <td class="text-nowrap">
               ${
-                e.enlace_foto
-                  ? `<a href="${e.enlace_foto}" target="_blank" class="btn btn-sm btn-gray">
+                e.enlace
+                  ? `<a href="${e.enlace}" target="_blank" class="btn btn-sm btn-gray">
                       <i class="fa-solid fa-camera"></i> Ver foto
                     </a>`
                   : `<button class="btn btn-sm btn-secondary" disabled>
@@ -79,14 +71,14 @@ document.addEventListener("DOMContentLoaded", () => {
           <tr>
             <td></td>
             <td></td>
-            <td>${s.sector || e.sector || "—"}</td>
-            <td>Salida</td>
+            <td>${r.sector || "—"}</td>
+            <td>${s.tipo || "Salida"}</td>
             <td>${s.fecha || "—"}</td>
             <td>${s.hora || "—"}</td>
             <td class="text-nowrap">
               ${
-                s.enlace_foto
-                  ? `<a href="${s.enlace_foto}" target="_blank" class="btn btn-sm btn-gray">
+                s.enlace
+                  ? `<a href="${s.enlace}" target="_blank" class="btn btn-sm btn-gray">
                       <i class="fa-solid fa-camera"></i> Ver foto
                     </a>`
                   : `<button class="btn btn-sm btn-secondary" disabled>
@@ -104,11 +96,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     })
     .catch((err) => {
-      console.error("Error cargando registros:", err);
+      console.error("❌ Error cargando registros:", err);
       tablaBody.innerHTML = `
         <tr><td colspan="8" class="text-center text-danger py-3">
-          ❌ Error al cargar registros
-        </td></tr>
-      `;
+          Error al cargar registros 😭
+        </td></tr>`;
     });
 });

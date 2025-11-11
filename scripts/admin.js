@@ -11,6 +11,23 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // =======================================
+// MOSTRAR NOMBRE DEL USUARIO ACTUAL
+// =======================================
+function mostrarNombreUsuario() {
+  const nombre = localStorage.getItem("nombreUsuario");
+  const rol = localStorage.getItem("rolUsuario");
+  const span = document.getElementById("nombreUsuario");
+
+  if (span && nombre && rol) {
+    // Formato: "Bienvenido Edgar Rivera, SuperAdmin"
+    span.textContent = `${nombre}, ${rol}`;
+  } else if (span && nombre) {
+    span.textContent = `${nombre}`;
+  } else if (span) {
+    span.textContent = "Administrador";
+  }
+}
+
 // =======================================
 // OBTENER REGISTROS DEL DÍA
 // =======================================

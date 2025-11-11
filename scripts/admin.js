@@ -7,6 +7,7 @@ const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
 // AL CARGAR LA PÁGINA
 // =======================================
 document.addEventListener("DOMContentLoaded", () => {
+  mostrarNombreUsuario();
   obtenerRegistrosHoy();
 });
 

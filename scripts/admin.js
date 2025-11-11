@@ -109,9 +109,8 @@ function renderizarTabla(registros) {
               ? `<a href="${entrada.enlace}" target="_blank" class="btn btn-sm btn-gray"><i class="fa-solid fa-camera"></i> Ver foto</a>`
               : `<button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Sin foto</button>`
           }
-          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${
-            entrada.numero_cs || salida.numero_cs
-          }', 'Entrada')">
+          <button class="btn btn-sm btn-gray"
+            onclick="limpiarRegistro('${entrada.numero_cs || salida.numero_cs}', 'Entrada', '${entrada.sector || salida.sector}')">
             <i class="fa-solid fa-broom"></i> Limpiar
           </button>
         </td>
@@ -135,9 +134,8 @@ function renderizarTabla(registros) {
               ? `<a href="${salida.enlace}" target="_blank" class="btn btn-sm btn-gray"><i class="fa-solid fa-camera"></i> Ver foto</a>`
               : `<button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Sin foto</button>`
           }
-          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${
-            entrada.numero_cs || salida.numero_cs
-          }', 'Salida')">
+          <button class="btn btn-sm btn-gray"
+            onclick="limpiarRegistro('${entrada.numero_cs || salida.numero_cs}', 'Salida', '${entrada.sector || salida.sector}')">
             <i class="fa-solid fa-broom"></i> Limpiar
           </button>
         </td>
@@ -146,4 +144,28 @@ function renderizarTabla(registros) {
 
     tbody.insertAdjacentHTML("beforeend", filaHTML);
   });
+}
+
+// =======================================
+// LIMPIAR REGISTRO (Frontend)
+// =======================================
+async function limpiarRegistro(numero_cs, tipo, sector) {
+  const confirmar = confirm(`¿Seguro que deseas limpiar el registro de ${tipo} del usuario ${numero_cs}?`);
+  if (!confirmar) return;
+
+  try {
+    const hoy = new Date().toISOString().split("T")[0]; // yyyy-MM-dd
+    const res = await fetch(`${API_URL}?accion=limpiarRegistro&numero_cs=${numero_cs}&tipo=${tipo}&sector=${sector}&fecha=${hoy}`);
+    const data = await res.json();
+
+    if (data.success) {
+      alert(`✅ ${data.mensaje}`);
+      obtenerRegistrosHoy(); // recarga la tabla para ver cambios
+    } else {
+      alert(`⚠️ ${data.mensaje}`);
+    }
+  } catch (err) {
+    console.error("❌ Error al limpiar registro:", err);
+    alert("Error al intentar limpiar el registro. Verifica la conexión o la API.");
+  }
 }

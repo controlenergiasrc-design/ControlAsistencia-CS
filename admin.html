@@ -356,7 +356,8 @@
           <div></div>
         </div>
 
-        <div class="page">
+        <!-- ======== MÓDULO 1: ASISTENCIA DIARIA ======== -->
+        <div id="mod-asistencia" class="page visible">
           <div class="page-title">
             <div>
               <h1>Panel Administrador - Sistema de Control de Asistencia"</h1>
@@ -472,6 +473,147 @@
                   }
                 </style>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!--Modulo de usuarios-->
+        <div id="mod-usuarios" class="page d-none">
+          <div class="page-title">
+            <h1>Gestión de usuarios</h1>
+            <div class="page-sub">
+              Cuadrillas, supervisores y estados activos
+            </div>
+          </div>
+
+          <div class="card card-panel">
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+            >
+              <h2 class="card-title m-0">Usuarios registrados</h2>
+              <button class="btn btn-primary btn-sm" id="btnAgregarUsuario">
+                <i class="fa-solid fa-user-plus"></i> Nuevo usuario
+              </button>
+            </div>
+
+            <div class="card-body">
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Número C/S</th>
+                      <th>Nombre</th>
+                      <th>Tipo</th>
+                      <th>Sector</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tablaUsuarios">
+                    <tr>
+                      <td colspan="6" class="text-center text-muted">
+                        Sin registros cargados 💤
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--Modulo de historial-->
+        <div id="mod-historial" class="page d-none">
+          <div class="page-title">
+            <h1>Historial de Asistencias</h1>
+            <div class="page-sub">
+              Consulta registros anteriores por fecha o sector
+            </div>
+          </div>
+
+          <div class="card card-panel">
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+            >
+              <h2 class="card-title m-0">Registros históricos</h2>
+              <input
+                type="date"
+                id="filtroFecha"
+                class="form-control form-control-sm"
+                style="width: 200px"
+              />
+            </div>
+
+            <div class="card-body">
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Número C/S</th>
+                      <th>Nombre</th>
+                      <th>Sector</th>
+                      <th>Tipo</th>
+                      <th>Hora</th>
+                      <th>Foto</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tablaHistorial">
+                    <tr>
+                      <td colspan="7" class="text-center text-muted">
+                        Sin datos para mostrar 📅
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--Modulo de configuracions-->
+        <div id="mod-config" class="page d-none">
+          <div class="page-title">
+            <h1>Configuración del usuario</h1>
+            <div class="page-sub">Opciones personales</div>
+          </div>
+
+          <div class="card card-panel">
+            <div class="card-header">
+              <h2 class="card-title m-0">Cambio de contraseña</h2>
+            </div>
+            <div class="card-body col-md-6">
+              <form id="formPassword">
+                <div class="mb-3">
+                  <label class="form-label">Contraseña actual</label>
+                  <input
+                    type="password"
+                    id="passActual"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Nueva contraseña</label>
+                  <input
+                    type="password"
+                    id="passNueva"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Confirmar contraseña</label>
+                  <input
+                    type="password"
+                    id="passConfirm"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  Guardar cambios
+                </button>
+              </form>
             </div>
           </div>
         </div>

@@ -110,7 +110,9 @@ function renderizarTabla(registros) {
               : `<button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Sin foto</button>`
           }
           <button class="btn btn-sm btn-gray"
-            onclick="limpiarRegistro('${entrada.numero_cs || salida.numero_cs}', 'Entrada', '${entrada.sector || salida.sector}')">
+            onclick="limpiarRegistro('${
+              entrada.numero_cs || salida.numero_cs
+            }', 'Entrada', '${entrada.sector || salida.sector}')">
             <i class="fa-solid fa-broom"></i> Limpiar
           </button>
         </td>
@@ -135,7 +137,9 @@ function renderizarTabla(registros) {
               : `<button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Sin foto</button>`
           }
           <button class="btn btn-sm btn-gray"
-            onclick="limpiarRegistro('${entrada.numero_cs || salida.numero_cs}', 'Salida', '${entrada.sector || salida.sector}')">
+            onclick="limpiarRegistro('${
+              entrada.numero_cs || salida.numero_cs
+            }', 'Salida', '${entrada.sector || salida.sector}')">
             <i class="fa-solid fa-broom"></i> Limpiar
           </button>
         </td>
@@ -150,12 +154,16 @@ function renderizarTabla(registros) {
 // LIMPIAR REGISTRO (Frontend)
 // =======================================
 async function limpiarRegistro(numero_cs, tipo, sector) {
-  const confirmar = confirm(`¿Seguro que deseas limpiar el registro de ${tipo} del usuario ${numero_cs}?`);
+  const confirmar = confirm(
+    `¿Seguro que deseas limpiar el registro de ${tipo} del usuario ${numero_cs}?`
+  );
   if (!confirmar) return;
 
   try {
     const hoy = new Date().toISOString().split("T")[0]; // yyyy-MM-dd
-    const res = await fetch(`${API_URL}?accion=limpiarRegistro&numero_cs=${numero_cs}&tipo=${tipo}&sector=${sector}&fecha=${hoy}`);
+    const res = await fetch(
+      `${API_URL}?accion=limpiarRegistro&numero_cs=${numero_cs}&tipo=${tipo}&sector=${sector}&fecha=${hoy}`
+    );
     const data = await res.json();
 
     if (data.success) {
@@ -166,6 +174,44 @@ async function limpiarRegistro(numero_cs, tipo, sector) {
     }
   } catch (err) {
     console.error("❌ Error al limpiar registro:", err);
-    alert("Error al intentar limpiar el registro. Verifica la conexión o la API.");
+    alert(
+      "Error al intentar limpiar el registro. Verifica la conexión o la API."
+    );
   }
 }
+// Alternar módulos al hacer clic en el menú lateral
+document.querySelectorAll(".nav-link").forEach((link) => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    // Evitar conflicto con "Cerrar sesión"
+    if (link.innerText.includes("Cerrar")) {
+      const confirmar = confirm("¿Seguro que deseas cerrar sesión?");
+      if (!confirmar) return;
+      localStorage.clear();
+      window.location.href = "index.html"; // tu login
+      return; // detiene el resto del código
+    }
+
+    // Quitar activo del resto
+    document
+      .querySelectorAll(".nav-link")
+      .forEach((l) => l.classList.remove("active"));
+    link.classList.add("active");
+
+    // Ocultar todas las páginas
+    document
+      .querySelectorAll(".page")
+      .forEach((p) => p.classList.add("d-none"));
+
+    // Mostrar la correspondiente
+    if (link.innerText.includes("Asistencia"))
+      document.getElementById("mod-asistencia").classList.remove("d-none");
+    if (link.innerText.includes("Usuarios"))
+      document.getElementById("mod-usuarios").classList.remove("d-none");
+    if (link.innerText.includes("Historial"))
+      document.getElementById("mod-historial").classList.remove("d-none");
+    if (link.innerText.includes("Configuración"))
+      document.getElementById("mod-config").classList.remove("d-none");
+  });
+});

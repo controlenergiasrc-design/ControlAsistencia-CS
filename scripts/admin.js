@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   obtenerRegistrosHoy();
 });
 
-
+// =======================================
 // =======================================
 // OBTENER REGISTROS DEL DÍA
 // =======================================
@@ -21,18 +21,44 @@ async function obtenerRegistrosHoy() {
     console.log("Datos recibidos:", data);
 
     if (data && data.registros) {
-      // Calcular fotos de entrada y salida
+      // Filtrar solo registros con foto (enlace existente)
       const entradas = data.registros.filter(
-        (r) => r.tipo?.toLowerCase() === "entrada"
+        (r) =>
+          r.tipo?.toLowerCase() === "entrada" &&
+          r.enlace &&
+          r.enlace.trim() !== ""
       ).length;
 
       const salidas = data.registros.filter(
-        (r) => r.tipo?.toLowerCase() === "salida"
+        (r) =>
+          r.tipo?.toLowerCase() === "salida" &&
+          r.enlace &&
+          r.enlace.trim() !== ""
       ).length;
 
       // Mostrar los valores en las tarjetas
       document.getElementById("metricEntradas").textContent = entradas;
       document.getElementById("metricSalidas").textContent = salidas;
+
+      // Mostrar aviso si faltan salidas
+      const alerta = document.getElementById("alertaDiferencia");
+      if (entradas > salidas) {
+        const faltan = entradas - salidas;
+        alerta.textContent = `🔔 Faltan ${faltan} foto${
+          faltan > 1 ? "s" : ""
+        } de salida para completar el día.`;
+        alerta.style.background = "#fff4e5";
+        alerta.style.color = "#b45309";
+        alerta.style.border = "1px solid #fcd34d";
+        alerta.style.borderRadius = "10px";
+        alerta.style.padding = "8px 14px";
+        alerta.style.width = "fit-content";
+        alerta.style.margin = "10px auto 0";
+        alerta.style.boxShadow = "0 2px 6px rgba(0,0,0,0.05)";
+        alerta.style.display = "block";
+      } else {
+        alerta.style.display = "none";
+      }
 
       // Renderizar tabla normalmente
       renderizarTabla(data.registros);

@@ -364,33 +364,42 @@
             </div>
           </div>
           <div class="cards">
-            <!-- Fotos de entrada hoy -->
-            <div class="card-metric card-blue">
-              <div class="meta">
-                <div class="label">
-                  <i class="fa-solid fa-camera me-2"></i>Fotos de entrada hoy
-                </div>
-                <div class="value" id="metricEntradas">0</div>
-              </div>
-              <div class="icon">
-                <i class="fa-solid fa-arrow-right-to-bracket"></i>
-              </div>
-            </div>
+<div class="cards">
+  <!-- Fotos de entrada hoy -->
+  <div class="card-metric card-blue">
+    <div class="meta">
+      <div class="label">
+        <i class="fa-solid fa-camera me-2"></i>Fotos de entrada hoy
+      </div>
+      <div class="value" id="metricEntradas">0</div>
+    </div>
+    <div class="icon">
+      <i class="fa-solid fa-arrow-right-to-bracket"></i>
+    </div>
+  </div>
 
-            <!-- Fotos de salida hoy -->
-            <div class="card-metric card-orange">
-              <div class="meta">
-                <div class="label">
-                  <i class="fa-solid fa-camera me-2"></i>Fotos de salida hoy
-                </div>
-                <div class="value" id="metricSalidas">0</div>
-              </div>
-              <div class="icon">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-              </div>
-            </div>
-          </div>
+  <!-- Fotos de salida hoy -->
+  <div class="card-metric card-orange">
+    <div class="meta">
+      <div class="label">
+        <i class="fa-solid fa-camera me-2"></i>Fotos de salida hoy
+      </div>
+      <div class="value" id="metricSalidas">0</div>
+    </div>
+    <div class="icon">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    </div>
+  </div>
+</div>
 
+<!-- Aviso dinámico de diferencia -->
+<div
+  id="alertaDiferencia"
+  class="mt-2 text-center fw-medium"
+  style="display: none"
+>
+  <!-- Aquí se insertará el texto con JS -->
+</div>
           <div class="card card-panel">
             <div
               class="card-header d-flex align-items-center justify-content-between"

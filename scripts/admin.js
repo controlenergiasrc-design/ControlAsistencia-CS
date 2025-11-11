@@ -17,15 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
 function mostrarNombreUsuario() {
   const nombre = localStorage.getItem("nombreUsuario");
   const rol = localStorage.getItem("rolUsuario");
-  const span = document.getElementById("nombreUsuario");
+  const saludo = document.getElementById("saludoAdmin");
 
-  if (span && nombre && rol) {
-    // Formato: "Bienvenido Edgar Rivera, SuperAdmin"
-    span.textContent = `${nombre}, ${rol}`;
-  } else if (span && nombre) {
-    span.textContent = `${nombre}`;
-  } else if (span) {
-    span.textContent = "Administrador";
+  if (saludo && nombre && rol) {
+    saludo.textContent = `Bienvenido ${nombre}, ${rol}`;
+  } else if (saludo && nombre) {
+    saludo.textContent = `Bienvenido ${nombre}`;
+  } else if (saludo) {
+    saludo.textContent = "Bienvenido Administrador";
   }
 }
 

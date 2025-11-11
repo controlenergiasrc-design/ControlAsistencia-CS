@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   obtenerRegistrosHoy();
 });
 
+
 // =======================================
 // OBTENER REGISTROS DEL DÍA
 // =======================================
@@ -20,6 +21,20 @@ async function obtenerRegistrosHoy() {
     console.log("Datos recibidos:", data);
 
     if (data && data.registros) {
+      // Calcular fotos de entrada y salida
+      const entradas = data.registros.filter(
+        (r) => r.tipo?.toLowerCase() === "entrada"
+      ).length;
+
+      const salidas = data.registros.filter(
+        (r) => r.tipo?.toLowerCase() === "salida"
+      ).length;
+
+      // Mostrar los valores en las tarjetas
+      document.getElementById("metricEntradas").textContent = entradas;
+      document.getElementById("metricSalidas").textContent = salidas;
+
+      // Renderizar tabla normalmente
       renderizarTabla(data.registros);
     } else {
       renderizarTabla([]);
@@ -50,8 +65,10 @@ function renderizarTabla(registros) {
 
   // Renderizar por usuario
   Object.values(agrupados).forEach((registrosUsuario) => {
-    const entrada = registrosUsuario.find((r) => r.tipo?.toLowerCase() === "entrada") || {};
-    const salida = registrosUsuario.find((r) => r.tipo?.toLowerCase() === "salida") || {};
+    const entrada =
+      registrosUsuario.find((r) => r.tipo?.toLowerCase() === "entrada") || {};
+    const salida =
+      registrosUsuario.find((r) => r.tipo?.toLowerCase() === "salida") || {};
 
     const filaHTML = `
       <tr>
@@ -69,7 +86,9 @@ function renderizarTabla(registros) {
               ? `<a href="${entrada.enlace}" target="_blank" class="btn btn-sm btn-gray"><i class="fa-solid fa-camera"></i> Ver foto</a>`
               : `<button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Sin foto</button>`
           }
-          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${entrada.numero_cs || salida.numero_cs}', 'Entrada')">
+          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${
+            entrada.numero_cs || salida.numero_cs
+          }', 'Entrada')">
             <i class="fa-solid fa-broom"></i> Limpiar
           </button>
         </td>
@@ -93,7 +112,9 @@ function renderizarTabla(registros) {
               ? `<a href="${salida.enlace}" target="_blank" class="btn btn-sm btn-gray"><i class="fa-solid fa-camera"></i> Ver foto</a>`
               : `<button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Sin foto</button>`
           }
-          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${entrada.numero_cs || salida.numero_cs}', 'Salida')">
+          <button class="btn btn-sm btn-gray" onclick="limpiarRegistro('${
+            entrada.numero_cs || salida.numero_cs
+          }', 'Salida')">
             <i class="fa-solid fa-broom"></i> Limpiar
           </button>
         </td>

@@ -332,6 +332,11 @@
   padding: 20px 30px;
   position: relative;
   animation: fadeIn 0.3s ease;
+
+  /* Agregado para permitir scroll interno EN EL MODAL AUDITORIA */
+  max-height: 85vh;      /* limita el alto al 85% de la pantalla */
+  overflow-y: auto;       /* permite desplazamiento vertical */
+  overflow-x: hidden;     /* oculta scroll lateral */
 }
 
 @keyframes fadeIn {

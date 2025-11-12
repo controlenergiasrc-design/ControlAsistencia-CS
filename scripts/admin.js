@@ -293,7 +293,7 @@ function toggleDropdown(id) {
   menu.classList.toggle("active");
 }
 
-function crearOpciones(lista, menuId, listaSeleccionId) {
+function crearOpciones(lista, menuId, listaSeleccionId, limite) {
   const menu = document.getElementById(menuId);
   lista.forEach((item) => {
     const option = document.createElement("div");
@@ -301,7 +301,7 @@ function crearOpciones(lista, menuId, listaSeleccionId) {
     option.textContent = item;
     option.addEventListener("click", (e) => {
       e.stopPropagation();
-      toggleSeleccion(item, listaSeleccionId, 2);
+      toggleSeleccion(item, listaSeleccionId, limite);
     });
     menu.appendChild(option);
   });
@@ -330,8 +330,11 @@ function toggleSeleccion(texto, listaId, limite) {
   }
 }
 
-crearOpciones(actividades, "actividadesMenu", "listaActividades");
-crearOpciones(novedades, "novedadesMenu", "listaNovedades");
+// Actividades → solo 2
+crearOpciones(actividades, "actividadesMenu", "listaActividades", 2);
+
+// Novedades → hasta 3
+crearOpciones(novedades, "novedadesMenu", "listaNovedades", 3);
 
 window.addEventListener("click", (e) => {
   if (!e.target.classList.contains("dropdown")) {

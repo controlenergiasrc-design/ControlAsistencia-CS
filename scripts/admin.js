@@ -268,10 +268,10 @@ function abrirModalAuditoria(numero_cs) {
   // Llenar los títulos dinámicos
   document.getElementById(
     "detalleEntrada"
-  ).textContent = `${tipoFoto1} - ${tipoUsuario} ${numero_cs}`;
+  ).textContent = `${tipoFoto1} - ${numero_cs}`;
   document.getElementById(
     "detalleSalida"
-  ).textContent = `${tipoFoto2} - ${tipoUsuario} ${numero_cs}`;
+  ).textContent = `${tipoFoto2} -  ${numero_cs}`;
 }
 
 function crearOpciones(lista, menuId, listaSeleccionId) {

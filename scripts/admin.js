@@ -245,24 +245,32 @@ document.querySelectorAll(".nav-link").forEach((link) => {
 // MODAL DE AUDITORÍA
 // =======================================
 const actividades = [
-  "Inspección de red",
-  "Mantenimiento de transformador",
-  "Lectura de medidores",
-  "Atención a reporte",
-  "Supervisión de cuadrillas",
-  "Pruebas de tensión",
-  "Instalación de medidores",
-  "Monitoreo de carga",
+  "Revision - Normalizacion",
+  "Gestion logistica de materiales",
+  "Gestion de entrega de materiales en el sector",
+  "Inspecciones de sumistros nuevos y existentes",
+  "Revisiones con Equipo Patron",
+  "Supervision de campo a cuadrillas",
+  "Apoyo Capacitando en Campo a Cuadrilla",
+  "Apoyo Capacitando a Personal Nuevo en Campo Junto a Cuadrilla",
+  "Inspecciones de Nuevos Suministros",
+  "Cuadrilla NO disponible",
+  "Capacitandose para su Ingreso",
+  "Laboro tiempo Incompleto",
+  "Capacitacion y reforzamiento por Parte de UTCD",
+  "Apoyo Revision de actas o Correcciones de NC",
+  "Otra actividad",
 ];
 
 const novedades = [
-  "Retraso en llegada",
-  "Falla de energía",
-  "Condiciones climáticas",
-  "Equipo fuera de servicio",
-  "Falta de personal",
-  "Material insuficiente",
-  "Vía inaccesible",
+  "Afectados por lluvia",
+  "Daño vehiculo en mantenimiento",
+  "Falla en circuitos de distribución",
+  "Vehiculo pinchado",
+  "Entrada tardia sin justificación",
+  "Perdida de tiempo operativo NO justificado",
+  "Entrega de materiales en almacen UTCD",
+  "Tiempo de capacitacion previa",
   "Otro incidente",
 ];
 
@@ -293,7 +301,7 @@ function crearOpciones(lista, menuId, listaSeleccionId) {
     option.textContent = item;
     option.addEventListener("click", (e) => {
       e.stopPropagation();
-      toggleSeleccion(item, listaSeleccionId, 3);
+      toggleSeleccion(item, listaSeleccionId, 2);
     });
     menu.appendChild(option);
   });

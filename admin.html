@@ -627,7 +627,7 @@ textarea {
             <div
               class="card-header d-flex align-items-center justify-content-between"
             >
-              <h2 class="card-title m-0">Registros del día</h2>
+              <h2 id="tituloRegistros" class="card-title m-0"></h2>
             </div>
             <div class="card-body">
               <div class="table-wrap">
@@ -638,7 +638,6 @@ textarea {
                       <th style="min-width: 200px">Nombre</th>
                       <th style="min-width: 140px">Sector</th>
                       <th style="min-width: 110px">Tipo</th>
-                      <th style="min-width: 130px">Fecha</th>
                       <th style="min-width: 120px">Hora</th>
                       <th style="min-width: 220px">Opciones</th>
                       <th style="min-width: 130px">Auditoría</th>
@@ -854,8 +853,8 @@ textarea {
           <div id="modalAuditoria" class="d-none">
             <div class="auditoria-box">
               <div class="auditoria-header">
-                <h2>Auditoría - tipo_usuario numero_cs</h2>
-                <h6>fecha actual</h6>
+                <h2 id="tituloAuditoria">Auditoría - tipo_usuario numero_cs</h2>
+                <h6 id="fechaAuditoria">fecha actual</h6>
                 <button class="btn-cerrar" onclick="cerrarModalAuditoria()">
                   ✕
                 </button>

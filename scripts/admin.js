@@ -8,6 +8,7 @@ const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
 // =======================================
 document.addEventListener("DOMContentLoaded", () => {
   mostrarNombreUsuario();
+  mostrarTituloHoy();
   obtenerRegistrosHoy();
 });
 
@@ -26,6 +27,30 @@ function mostrarNombreUsuario() {
   } else if (saludo) {
     saludo.textContent = "Bienvenido Administrador";
   }
+}
+// =======================================
+// Mostrar título con la fecha de hoy (formato bonito)
+// =======================================
+function mostrarTituloHoy() {
+  const titulo = document.getElementById("tituloRegistros");
+  if (!titulo) return;
+
+  const hoy = new Date();
+  const opciones = {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+
+  // Crear formato bonito en español
+  const fechaFormateada = hoy.toLocaleDateString("es-ES", opciones);
+
+  // Capitalizar primera letra del día (lunes → Lunes)
+  const fechaBonita =
+    fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
+
+  titulo.textContent = `Registros de hoy — ${fechaBonita}`;
 }
 
 // =======================================
@@ -101,7 +126,6 @@ function renderizarTabla(registros) {
 
         <!-- Entrada -->
         <td>${entrada.tipo || "Entrada"}</td>
-        <td>${entrada.fecha || "-"}</td>
         <td>${entrada.hora || "-"}</td>
         <td>
           ${
@@ -120,7 +144,9 @@ function renderizarTabla(registros) {
         <!-- Botón Auditar combinado -->
         <td rowspan="2" class="text-center align-middle">
           <button class="btn btn-sm btn-audit"
-          onclick="abrirModalAuditoria('${entrada.numero_cs || salida.numero_cs}')">
+          onclick="abrirModalAuditoria('${
+            entrada.numero_cs || salida.numero_cs
+          }')">
             <i class="fa-solid fa-file-shield"></i> Auditar
           </button>
         </td>
@@ -129,7 +155,6 @@ function renderizarTabla(registros) {
       <tr>
         <!-- Salida -->
         <td>${salida.tipo || "Salida"}</td>
-        <td>${salida.fecha || "-"}</td>
         <td>${salida.hora || "-"}</td>
         <td>
           ${
@@ -220,25 +245,25 @@ document.querySelectorAll(".nav-link").forEach((link) => {
 // MODAL DE AUDITORÍA
 // =======================================
 const actividades = [
-  'Inspección de red',
-  'Mantenimiento de transformador',
-  'Lectura de medidores',
-  'Atención a reporte',
-  'Supervisión de cuadrillas',
-  'Pruebas de tensión',
-  'Instalación de medidores',
-  'Monitoreo de carga'
+  "Inspección de red",
+  "Mantenimiento de transformador",
+  "Lectura de medidores",
+  "Atención a reporte",
+  "Supervisión de cuadrillas",
+  "Pruebas de tensión",
+  "Instalación de medidores",
+  "Monitoreo de carga",
 ];
 
 const novedades = [
-  'Retraso en llegada',
-  'Falla de energía',
-  'Condiciones climáticas',
-  'Equipo fuera de servicio',
-  'Falta de personal',
-  'Material insuficiente',
-  'Vía inaccesible',
-  'Otro incidente'
+  "Retraso en llegada",
+  "Falla de energía",
+  "Condiciones climáticas",
+  "Equipo fuera de servicio",
+  "Falta de personal",
+  "Material insuficiente",
+  "Vía inaccesible",
+  "Otro incidente",
 ];
 
 function abrirModalAuditoria(numero_cs) {
@@ -253,20 +278,20 @@ function cerrarModalAuditoria() {
 }
 
 function toggleDropdown(id) {
-  document.querySelectorAll('.dropdown-menu').forEach(menu => {
-    if (menu.id !== id) menu.classList.remove('active');
+  document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+    if (menu.id !== id) menu.classList.remove("active");
   });
   const menu = document.getElementById(id);
-  menu.classList.toggle('active');
+  menu.classList.toggle("active");
 }
 
 function crearOpciones(lista, menuId, listaSeleccionId) {
   const menu = document.getElementById(menuId);
-  lista.forEach(item => {
-    const option = document.createElement('div');
-    option.classList.add('dropdown-option');
+  lista.forEach((item) => {
+    const option = document.createElement("div");
+    option.classList.add("dropdown-option");
     option.textContent = item;
-    option.addEventListener('click', (e) => {
+    option.addEventListener("click", (e) => {
       e.stopPropagation();
       toggleSeleccion(item, listaSeleccionId, 3);
     });
@@ -276,8 +301,8 @@ function crearOpciones(lista, menuId, listaSeleccionId) {
 
 function toggleSeleccion(texto, listaId, limite) {
   const lista = document.getElementById(listaId);
-  const tags = Array.from(lista.querySelectorAll('.tag'));
-  const existe = tags.find(t => t.dataset.texto === texto);
+  const tags = Array.from(lista.querySelectorAll(".tag"));
+  const existe = tags.find((t) => t.dataset.texto === texto);
 
   if (existe) {
     existe.remove();
@@ -286,20 +311,24 @@ function toggleSeleccion(texto, listaId, limite) {
       alert(`Solo puedes elegir hasta ${limite} opciones`);
       return;
     }
-    const tag = document.createElement('div');
-    tag.classList.add('tag');
+    const tag = document.createElement("div");
+    tag.classList.add("tag");
     tag.dataset.texto = texto;
     tag.innerHTML = `${texto} <button class='close-btn'>×</button>`;
-    tag.querySelector('.close-btn').addEventListener('click', () => tag.remove());
+    tag
+      .querySelector(".close-btn")
+      .addEventListener("click", () => tag.remove());
     lista.appendChild(tag);
   }
 }
 
-crearOpciones(actividades, 'actividadesMenu', 'listaActividades');
-crearOpciones(novedades, 'novedadesMenu', 'listaNovedades');
+crearOpciones(actividades, "actividadesMenu", "listaActividades");
+crearOpciones(novedades, "novedadesMenu", "listaNovedades");
 
-window.addEventListener('click', (e) => {
-  if (!e.target.classList.contains('dropdown')) {
-    document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('active'));
+window.addEventListener("click", (e) => {
+  if (!e.target.classList.contains("dropdown")) {
+    document
+      .querySelectorAll(".dropdown-menu")
+      .forEach((menu) => menu.classList.remove("active"));
   }
 });

@@ -303,6 +303,232 @@
         width: 100%;
         overflow: auto;
       }
+
+      /* ======== MODAL DE AUDITORÍA ======== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 100;
+}
+
+#modalAuditoria {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.auditoria-box {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  width: 880px;
+  max-width: 95%;
+  padding: 20px 30px;
+  position: relative;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.auditoria-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.btn-cerrar {
+  background: none;
+  border: none;
+  color: #d93025;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-cerrar:hover {
+  transform: scale(1.1);
+}
+
+.fotos {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.foto-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 3px solid #41b6e6;
+  border-radius: 20px;
+  padding: 10px 15px;
+  background: #f8fbfd;
+}
+.foto-box.salida {
+  border-color: #fd7e14;
+  background: #fff8f3;
+}
+
+.foto-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  object-fit: cover;
+}
+
+.foto-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.link-maps {
+  color: #41b6e6;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.link-maps:hover {
+  text-decoration: underline;
+}
+
+.section-pair {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.section {
+  flex: 1;
+  position: relative;
+}
+
+.dropdown {
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  user-select: none;
+  background: #f9f9f9;
+}
+.dropdown::after {
+  content: '▾';
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  font-size: 16px;
+  color: #555;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 105%;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 10;
+  display: none;
+  flex-direction: column;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.dropdown-menu.active {
+  display: flex;
+}
+
+.dropdown-option {
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.dropdown-option:hover {
+  background: #e3f2fd;
+}
+
+.selected-list {
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 8px;
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: #333;
+  min-height: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  background: #e3f2fd;
+  color: #0277bd;
+  border-radius: 12px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #90caf9;
+}
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  color: #d32f2f;
+}
+
+textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 8px;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-guardar {
+  background: #41b6e6;
+  color: white;
+  border: none;
+}
+.btn-guardar:hover {
+  background: #2da0cf;
+}
+
+.btn-auditar {
+  background: #d93025;
+  color: white;
+  border: none;
+}
+.btn-auditar:hover {
+  background: #b8281f;
+}
+
     </style>
   </head>
   <body>
@@ -617,6 +843,90 @@
                   Guardar cambios
                 </button>
               </form>
+            </div>
+          </div>
+        </div>
+
+          <!-- ======== FONDO DESENFOCADO ======== -->
+          <div id="overlay" class="overlay d-none"></div>
+
+          <!-- ======== MODAL DE AUDITORÍA ======== -->
+          <div id="modalAuditoria" class="d-none">
+            <div class="auditoria-box">
+              <div class="auditoria-header">
+                <h2>Auditoría - Asistencia del Día</h2>
+                <button class="btn-cerrar" onclick="cerrarModalAuditoria()">
+                  ✕
+                </button>
+              </div>
+
+              <div class="fotos">
+                <div class="foto-box entrada">
+                  <img
+                    class="foto-img"
+                    src="https://via.placeholder.com/120x120?text=Entrada"
+                    alt="Foto Entrada"
+                  />
+                  <div class="foto-info">
+                    <input type="time" value="07:45" />
+                    <a href="#" class="link-maps"
+                      ><i class="fa-solid fa-location-dot"></i> Ver ubicación</a
+                    >
+                  </div>
+                </div>
+
+                <div class="foto-box salida">
+                  <img
+                    class="foto-img"
+                    src="https://via.placeholder.com/120x120?text=Salida"
+                    alt="Foto Salida"
+                  />
+                  <div class="foto-info">
+                    <input type="time" value="15:30" />
+                    <a href="#" class="link-maps" style="color: #fd7e14"
+                      ><i class="fa-solid fa-location-dot"></i> Ver ubicación</a
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-pair">
+                <div class="section">
+                  <label>Actividades (elige hasta 3)</label>
+                  <div
+                    class="dropdown"
+                    onclick="toggleDropdown('actividadesMenu')"
+                  >
+                    Seleccionar actividades
+                  </div>
+                  <div id="actividadesMenu" class="dropdown-menu"></div>
+                  <div id="listaActividades" class="selected-list"></div>
+                </div>
+
+                <div class="section">
+                  <label>Novedades (elige hasta 3)</label>
+                  <div
+                    class="dropdown"
+                    onclick="toggleDropdown('novedadesMenu')"
+                  >
+                    Seleccionar novedades
+                  </div>
+                  <div id="novedadesMenu" class="dropdown-menu"></div>
+                  <div id="listaNovedades" class="selected-list"></div>
+                </div>
+              </div>
+
+              <div class="section">
+                <label>Observaciones generales</label>
+                <textarea
+                  placeholder="Escribe aquí tus observaciones..."
+                ></textarea>
+              </div>
+
+              <div class="botones">
+                <button class="btn btn-guardar">Guardar</button>
+                <button class="btn btn-auditar">Auditar</button>
+              </div>
             </div>
           </div>
         </div>

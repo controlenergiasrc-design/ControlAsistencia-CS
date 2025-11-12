@@ -120,9 +120,7 @@ function renderizarTabla(registros) {
         <!-- Botón Auditar combinado -->
         <td rowspan="2" class="text-center align-middle">
           <button class="btn btn-sm btn-audit"
-          onclick="abrirModalAuditoria('${
-            entrada.numero_cs || salida.numero_cs
-          }')">
+          onclick="abrirModalAuditoria('${entrada.numero_cs || salida.numero_cs}')">
             <i class="fa-solid fa-file-shield"></i> Auditar
           </button>
         </td>
@@ -222,65 +220,53 @@ document.querySelectorAll(".nav-link").forEach((link) => {
 // MODAL DE AUDITORÍA
 // =======================================
 const actividades = [
-  "Inspección de red",
-  "Mantenimiento de transformador",
-  "Lectura de medidores",
-  "Atención a reporte",
-  "Supervisión de cuadrillas",
-  "Pruebas de tensión",
-  "Instalación de medidores",
-  "Monitoreo de carga",
+  'Inspección de red',
+  'Mantenimiento de transformador',
+  'Lectura de medidores',
+  'Atención a reporte',
+  'Supervisión de cuadrillas',
+  'Pruebas de tensión',
+  'Instalación de medidores',
+  'Monitoreo de carga'
 ];
 
 const novedades = [
-  "Retraso en llegada",
-  "Falla de energía",
-  "Condiciones climáticas",
-  "Equipo fuera de servicio",
-  "Falta de personal",
-  "Material insuficiente",
-  "Vía inaccesible",
-  "Otro incidente",
+  'Retraso en llegada',
+  'Falla de energía',
+  'Condiciones climáticas',
+  'Equipo fuera de servicio',
+  'Falta de personal',
+  'Material insuficiente',
+  'Vía inaccesible',
+  'Otro incidente'
 ];
 
 function abrirModalAuditoria(numero_cs) {
-  console.log("🟢 Abriendo auditoría para:", numero_cs);
-
-  // Mostrar el modal y el fondo blur
   document.getElementById("modalAuditoria").classList.remove("d-none");
   document.getElementById("overlay").classList.remove("d-none");
+  console.log("🟢 Abriendo auditoría para:", numero_cs);
+}
 
-  // Buscar la fila del usuario seleccionado
-  const fila = [...document.querySelectorAll("#tablaRegistros tr")].find((tr) =>
-    tr.innerText.includes(numero_cs)
-  );
+function cerrarModalAuditoria() {
+  document.getElementById("modalAuditoria").classList.add("d-none");
+  document.getElementById("overlay").classList.add("d-none");
+}
 
-  if (!fila) {
-    console.warn("⚠️ No se encontró el registro en la tabla.");
-    return;
-  }
-
-  // Obtener datos básicos (esto puedes adaptar cuando los tengas en tus registros reales)
-  const tipoUsuario = fila.children[1]?.innerText || "Desconocido";
-  const tipoFoto1 = "Entrada";
-  const tipoFoto2 = "Salida";
-
-  // Llenar los títulos dinámicos
-  document.getElementById(
-    "detalleEntrada"
-  ).textContent = `${tipoFoto1} - ${numero_cs}`;
-  document.getElementById(
-    "detalleSalida"
-  ).textContent = `${tipoFoto2} -  ${numero_cs}`;
+function toggleDropdown(id) {
+  document.querySelectorAll('.dropdown-menu').forEach(menu => {
+    if (menu.id !== id) menu.classList.remove('active');
+  });
+  const menu = document.getElementById(id);
+  menu.classList.toggle('active');
 }
 
 function crearOpciones(lista, menuId, listaSeleccionId) {
   const menu = document.getElementById(menuId);
-  lista.forEach((item) => {
-    const option = document.createElement("div");
-    option.classList.add("dropdown-option");
+  lista.forEach(item => {
+    const option = document.createElement('div');
+    option.classList.add('dropdown-option');
     option.textContent = item;
-    option.addEventListener("click", (e) => {
+    option.addEventListener('click', (e) => {
       e.stopPropagation();
       toggleSeleccion(item, listaSeleccionId, 3);
     });
@@ -290,8 +276,8 @@ function crearOpciones(lista, menuId, listaSeleccionId) {
 
 function toggleSeleccion(texto, listaId, limite) {
   const lista = document.getElementById(listaId);
-  const tags = Array.from(lista.querySelectorAll(".tag"));
-  const existe = tags.find((t) => t.dataset.texto === texto);
+  const tags = Array.from(lista.querySelectorAll('.tag'));
+  const existe = tags.find(t => t.dataset.texto === texto);
 
   if (existe) {
     existe.remove();
@@ -300,24 +286,20 @@ function toggleSeleccion(texto, listaId, limite) {
       alert(`Solo puedes elegir hasta ${limite} opciones`);
       return;
     }
-    const tag = document.createElement("div");
-    tag.classList.add("tag");
+    const tag = document.createElement('div');
+    tag.classList.add('tag');
     tag.dataset.texto = texto;
     tag.innerHTML = `${texto} <button class='close-btn'>×</button>`;
-    tag
-      .querySelector(".close-btn")
-      .addEventListener("click", () => tag.remove());
+    tag.querySelector('.close-btn').addEventListener('click', () => tag.remove());
     lista.appendChild(tag);
   }
 }
 
-crearOpciones(actividades, "actividadesMenu", "listaActividades");
-crearOpciones(novedades, "novedadesMenu", "listaNovedades");
+crearOpciones(actividades, 'actividadesMenu', 'listaActividades');
+crearOpciones(novedades, 'novedadesMenu', 'listaNovedades');
 
-window.addEventListener("click", (e) => {
-  if (!e.target.classList.contains("dropdown")) {
-    document
-      .querySelectorAll(".dropdown-menu")
-      .forEach((menu) => menu.classList.remove("active"));
+window.addEventListener('click', (e) => {
+  if (!e.target.classList.contains('dropdown')) {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('active'));
   }
 });

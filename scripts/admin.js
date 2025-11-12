@@ -244,22 +244,34 @@ const novedades = [
 ];
 
 function abrirModalAuditoria(numero_cs) {
+  console.log("🟢 Abriendo auditoría para:", numero_cs);
+
+  // Mostrar el modal y el fondo blur
   document.getElementById("modalAuditoria").classList.remove("d-none");
   document.getElementById("overlay").classList.remove("d-none");
-  console.log("🟢 Abriendo auditoría para:", numero_cs);
-}
 
-function cerrarModalAuditoria() {
-  document.getElementById("modalAuditoria").classList.add("d-none");
-  document.getElementById("overlay").classList.add("d-none");
-}
+  // Buscar la fila del usuario seleccionado
+  const fila = [...document.querySelectorAll("#tablaRegistros tr")].find((tr) =>
+    tr.innerText.includes(numero_cs)
+  );
 
-function toggleDropdown(id) {
-  document.querySelectorAll(".dropdown-menu").forEach((menu) => {
-    if (menu.id !== id) menu.classList.remove("active");
-  });
-  const menu = document.getElementById(id);
-  menu.classList.toggle("active");
+  if (!fila) {
+    console.warn("⚠️ No se encontró el registro en la tabla.");
+    return;
+  }
+
+  // Obtener datos básicos (esto puedes adaptar cuando los tengas en tus registros reales)
+  const tipoUsuario = fila.children[1]?.innerText || "Desconocido";
+  const tipoFoto1 = "Entrada";
+  const tipoFoto2 = "Salida";
+
+  // Llenar los títulos dinámicos
+  document.getElementById(
+    "detalleEntrada"
+  ).textContent = `${tipoFoto1} - ${tipoUsuario} ${numero_cs}`;
+  document.getElementById(
+    "detalleSalida"
+  ).textContent = `${tipoFoto2} - ${tipoUsuario} ${numero_cs}`;
 }
 
 function crearOpciones(lista, menuId, listaSeleccionId) {

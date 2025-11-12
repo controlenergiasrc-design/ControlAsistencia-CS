@@ -847,7 +847,7 @@ textarea {
           </div>
         </div>
 
-          <!-- ======== FONDO DESENFOCADO ======== -->
+          <!-- ======== FONDO DESENFOCADO MIENTRAS ESTA ABIERTO EL MODAL ======== -->
           <div id="overlay" class="overlay d-none"></div>
 
           <!-- ======== MODAL DE AUDITORÍA ======== -->
@@ -861,31 +861,34 @@ textarea {
               </div>
 
               <div class="fotos">
+                <!--cajita de entarda-->
                 <div class="foto-box entrada">
-                  <img
-                    class="foto-img"
-                    src="https://via.placeholder.com/120x120?text=Entrada"
-                    alt="Foto Entrada"
-                  />
+                    <img
+                        class="foto-img"
+                      src="https://via.placeholder.com/120x120?text=Entrada"
+                   alt="Foto Entrada"
+                    />
+                 <p class="foto-detalle" id="detalleEntrada"></p>
                   <div class="foto-info">
-                    <input type="time" value="07:45" />
-                    <a href="#" class="link-maps"
+                      <input type="time" id="horaEntrada" value="07:45" />
+                   <a href="#" class="link-maps" id="linkEntrada"
                       ><i class="fa-solid fa-location-dot"></i> Ver ubicación</a
                     >
                   </div>
                 </div>
-
+                <!--cajita de entarda-->
                 <div class="foto-box salida">
                   <img
-                    class="foto-img"
+                   class="foto-img"
                     src="https://via.placeholder.com/120x120?text=Salida"
                     alt="Foto Salida"
                   />
+                  <p class="foto-detalle salida-text" id="detalleSalida"></p>
                   <div class="foto-info">
-                    <input type="time" value="15:30" />
-                    <a href="#" class="link-maps" style="color: #fd7e14"
+                    <input type="time" id="horaSalida" value="15:30" />
+                    <a href="#" class="link-maps" id="linkSalida" style="color: #fd7e14"
                       ><i class="fa-solid fa-location-dot"></i> Ver ubicación</a
-                    >
+                   >
                   </div>
                 </div>
               </div>

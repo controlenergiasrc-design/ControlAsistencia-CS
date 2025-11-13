@@ -328,7 +328,7 @@ function abrirModalAuditoria(numero_cs) {
 
   // Buscar registros de ese usuario
   const registrosUsuario = registrosHoyGlobal.filter(
-    (r) => r.numero_cs === numero_cs
+    (r) => String(r.numero_cs) === String(numero_cs)
   );
 
   if (!registrosUsuario.length) {

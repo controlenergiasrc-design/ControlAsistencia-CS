@@ -315,6 +315,25 @@ const novedades = [
   "Otro incidente",
 ];
 
+// Normalizar hora para <input type="time"> → "HH:MM"
+function normalizarHora(hora) {
+  if (!hora) return "";
+
+  // Convertir a string y eliminar espacios
+  hora = String(hora).trim();
+
+  // Separar por :
+  const partes = hora.split(":");
+
+  if (partes.length < 2) return "";
+
+  // Hora y minuto con cero a la izquierda
+  let h = partes[0].padStart(2, "0");
+  let m = partes[1].padStart(2, "0");
+
+  return `${h}:${m}`;
+}
+
 // =======================================
 // ABRIR MODAL DE AUDITORÍA (VERSIÓN COMPLETA)
 // =======================================
@@ -355,12 +374,13 @@ function abrirModalAuditoria(numero_cs) {
   const inputHoraEntrada = document.getElementById("inputHoraEntrada");
   const inputHoraSalida = document.getElementById("inputHoraSalida");
 
-  inputHoraEntrada.value = entrada.hora || "";
-  inputHoraSalida.value = salida.hora || "";
+  // Normalizar horas para input type="time"
+  inputHoraEntrada.value = normalizarHora(entrada.hora);
+  inputHoraSalida.value = normalizarHora(salida.hora);
 
-  // Guardamos las horas originales por si borran el campo
-  inputHoraEntrada.dataset.original = entrada.hora || "";
-  inputHoraSalida.dataset.original = salida.hora || "";
+  // Guardar la hora original (ya normalizada) por si borran
+  inputHoraEntrada.dataset.original = inputHoraEntrada.value;
+  inputHoraSalida.dataset.original = inputHoraSalida.value;
 
   // Si borran todo → restaurar
   inputHoraEntrada.addEventListener("blur", () => {
@@ -664,7 +684,6 @@ async function guardarCambiosAuditoria() {
 
       // cerrar modal
       cerrarModalAuditoria();
-
     } else {
       alert("⚠ No se pudieron guardar los cambios");
     }

@@ -178,22 +178,35 @@ function renderizarTabla(registros) {
 }
 
 // =======================================
-// FILTRAR TABLA POR SECTOR
+// FILTRAR TABLA POR SECTOR (CORREGIDO)
 // =======================================
 function filtrarPorSector(sectorSeleccionado) {
-  const filas = document.querySelectorAll("#tablaRegistros tr");
-
-  filas.forEach((fila) => {
-    const celdas = fila.querySelectorAll("td");
-    if (celdas.length > 0) {
-      const sector = celdas[2]?.textContent.trim(); // 3ra columna = sector
-      if (!sectorSeleccionado || sector === sectorSeleccionado) {
-        fila.style.display = "";
-      } else {
-        fila.style.display = "none";
+  // 1. Volvemos a pedir los registros del día
+  fetch(`${API_URL}?accion=registrosHoy`)
+    .then((res) => res.json())
+    .then((data) => {
+      // 2. Verificamos que existan registros válidos
+      if (!data || !data.registros) {
+        renderizarTabla([]);
+        return;
       }
-    }
-  });
+
+      let registros = data.registros;
+
+      // 3. Aplicamos filtro REAL por sector
+      //    Aquí filtramos los datos ANTES de enviarlos a la tabla,
+      //    evitando ocultar <tr> por separado y romper rowspan.
+      if (sectorSeleccionado) {
+        registros = registros.filter((r) => r.sector === sectorSeleccionado);
+      }
+
+      // 4. Renderizamos SOLO los registros filtrados
+      //    Esto mantiene Entrada + Salida juntas.
+      renderizarTabla(registros);
+    })
+    .catch((err) => {
+      console.error("❌ Error filtrando por sector:", err);
+    });
 }
 
 // =======================================
@@ -385,9 +398,8 @@ function llenarFiltroSectores(registros) {
     filtro.appendChild(opt);
   });
 
-
   // ELIMINAR EVENTOS DUPLICADOS
-  const nuevoFiltro = filtro.cloneNode(true); 
+  const nuevoFiltro = filtro.cloneNode(true);
   filtro.parentNode.replaceChild(nuevoFiltro, filtro);
   filtro = nuevoFiltro; // reasignar referencia
 

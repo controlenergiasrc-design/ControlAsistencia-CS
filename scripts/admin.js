@@ -84,6 +84,7 @@ async function obtenerRegistrosHoy() {
 
       // Renderizar tabla normalmente
       renderizarTabla(data.registros);
+      llenarFiltroSectores(data.registros);
     } else {
       renderizarTabla([]);
     }
@@ -173,6 +174,25 @@ function renderizarTabla(registros) {
     `;
 
     tbody.insertAdjacentHTML("beforeend", filaHTML);
+  });
+}
+
+// =======================================
+// FILTRAR TABLA POR SECTOR
+// =======================================
+function filtrarPorSector(sectorSeleccionado) {
+  const filas = document.querySelectorAll("#tablaRegistros tr");
+
+  filas.forEach((fila) => {
+    const celdas = fila.querySelectorAll("td");
+    if (celdas.length > 0) {
+      const sector = celdas[2]?.textContent.trim(); // 3ra columna = sector
+      if (!sectorSeleccionado || sector === sectorSeleccionado) {
+        fila.style.display = "";
+      } else {
+        fila.style.display = "none";
+      }
+    }
   });
 }
 
@@ -343,3 +363,49 @@ window.addEventListener("click", (e) => {
       .forEach((menu) => menu.classList.remove("active"));
   }
 });
+
+// =======================================
+// LLENAR SELECT DE SECTORES AUTOMÁTICAMENTE
+// =======================================
+function llenarFiltroSectores(registros) {
+  let filtro = document.getElementById("filtroSector");
+  if (!filtro) return;
+
+  // Obtener sectores únicos del arreglo
+  const sectores = [...new Set(registros.map((r) => r.sector).filter(Boolean))];
+
+  // Limpiar opciones previas
+  filtro.innerHTML = `<option value="">Todos</option>`;
+
+  // Agregar los sectores encontrados
+  sectores.forEach((sector) => {
+    const opt = document.createElement("option");
+    opt.value = sector;
+    opt.textContent = sector;
+    filtro.appendChild(opt);
+  });
+
+
+  // ELIMINAR EVENTOS DUPLICADOS
+  const nuevoFiltro = filtro.cloneNode(true); 
+  filtro.parentNode.replaceChild(nuevoFiltro, filtro);
+  filtro = nuevoFiltro; // reasignar referencia
+
+  // -------------------------------
+  // FILTRO POR ROL
+  // -------------------------------
+  const rol = localStorage.getItem("rolUsuario");
+  const sectorUsuario = localStorage.getItem("sectorUsuario");
+
+  if (rol?.toLowerCase() === "admin") {
+    filtro.value = sectorUsuario || "";
+    filtro.disabled = true;
+  }
+
+  // -------------------------------
+  // ACTIVAR FILTRADO
+  // -------------------------------
+  filtro.addEventListener("change", () => {
+    filtrarPorSector(filtro.value);
+  });
+}

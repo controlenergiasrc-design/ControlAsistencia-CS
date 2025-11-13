@@ -315,25 +315,6 @@ const novedades = [
   "Otro incidente",
 ];
 
-// Normalizar hora para <input type="time"> → "HH:MM"
-function normalizarHora(hora) {
-  if (!hora) return "";
-
-  // Convertir a string y eliminar espacios
-  hora = String(hora).trim();
-
-  // Separar por :
-  const partes = hora.split(":");
-
-  if (partes.length < 2) return "";
-
-  // Hora y minuto con cero a la izquierda
-  let h = partes[0].padStart(2, "0");
-  let m = partes[1].padStart(2, "0");
-
-  return `${h}:${m}`;
-}
-
 // =======================================
 // ABRIR MODAL DE AUDITORÍA (VERSIÓN COMPLETA)
 // =======================================
@@ -407,8 +388,8 @@ function abrirModalAuditoria(numero_cs) {
   // ---------------------------------------------
   // GOOGLE MAPS LINKS
   // ---------------------------------------------
-  const linkEntrada = document.getElementById("linkMapaEntrada");
-  const linkSalida = document.getElementById("linkMapaSalida");
+  const linkEntrada = document.getElementById("linkEntrada");
+  const linkSalida = document.getElementById("linkSalida");
 
   if (entrada.lat && entrada.lng) {
     linkEntrada.href = `https://www.google.com/maps?q=${entrada.lat},${entrada.lng}`;
@@ -495,6 +476,25 @@ function abrirModalAuditoria(numero_cs) {
       botonAuditar.classList.remove("btn-disabled");
     }
   }
+}
+
+  //=======================================
+  //normalizar hora para <input type="time"> → "HH:MM"
+  //=======================================
+function normalizarHora(hora) {
+  if (!hora) return "";
+
+  // Convertir a string y eliminar espacios
+  hora = String(hora).trim();
+
+  // Separar por :
+  const partes = hora.split(":");
+
+  // Asegurar formato HH:MM (ignoramos los segundos)
+  const h = partes[0].padStart(2, "0");
+  const m = partes[1].padStart(2, "0");
+
+  return `${h}:${m}`;
 }
 
 function cerrarModalAuditoria() {

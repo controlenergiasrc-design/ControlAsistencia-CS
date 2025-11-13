@@ -4,6 +4,11 @@
 const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
 
 // =======================================
+// VARIABLES GLOBALES
+// =======================================
+let registrosHoyGlobal = []; // aquí guardaremos los registros válidos de hoy
+
+// =======================================
 // AL CARGAR LA PÁGINA
 // =======================================
 document.addEventListener("DOMContentLoaded", () => {
@@ -63,6 +68,9 @@ async function obtenerRegistrosHoy() {
     console.log("Datos recibidos:", data);
 
     if (data && data.registros) {
+      //  GUARDAMOS TODOS LOS REGISTROS EN UNA VARIABLE GLOBAL
+      registrosHoyGlobal = data.registros;
+
       // Filtrar solo registros con foto (enlace existente)
       const entradas = data.registros.filter(
         (r) =>
@@ -307,10 +315,166 @@ const novedades = [
   "Otro incidente",
 ];
 
+// =======================================
+// ABRIR MODAL DE AUDITORÍA (VERSIÓN COMPLETA)
+// =======================================
+
 function abrirModalAuditoria(numero_cs) {
+  // Mostrar modal
   document.getElementById("modalAuditoria").classList.remove("d-none");
   document.getElementById("overlay").classList.remove("d-none");
+
   console.log("🟢 Abriendo auditoría para:", numero_cs);
+
+  // Buscar registros de ese usuario
+  const registrosUsuario = registrosHoyGlobal.filter(
+    (r) => r.numero_cs === numero_cs
+  );
+
+  if (!registrosUsuario.length) {
+    alert("No se encontró información del usuario en registrosHoyGlobal.");
+    return;
+  }
+
+  // Separar entrada y salida
+  const entrada = registrosUsuario.find((r) => r.tipo === "entrada") || {};
+  const salida = registrosUsuario.find((r) => r.tipo === "salida") || {};
+
+  // ---------------------------------------------
+  // LLENAR ENCABEZADO
+  // ---------------------------------------------
+  const titulo = document.getElementById("tituloModalAuditoria");
+  const hoy = new Date();
+  const fecha = hoy.toLocaleDateString("es-ES");
+
+  titulo.textContent = `AUDITORÍA – CUADRILLA ${numero_cs}      ${fecha}`;
+
+  // ---------------------------------------------
+  // HORAS (24H)
+  // ---------------------------------------------
+  const inputHoraEntrada = document.getElementById("inputHoraEntrada");
+  const inputHoraSalida = document.getElementById("inputHoraSalida");
+
+  inputHoraEntrada.value = entrada.hora || "";
+  inputHoraSalida.value = salida.hora || "";
+
+  // Guardamos las horas originales por si borran el campo
+  inputHoraEntrada.dataset.original = entrada.hora || "";
+  inputHoraSalida.dataset.original = salida.hora || "";
+
+  // Si borran todo → restaurar
+  inputHoraEntrada.addEventListener("blur", () => {
+    if (!inputHoraEntrada.value.trim()) {
+      inputHoraEntrada.value = inputHoraEntrada.dataset.original;
+    }
+  });
+
+  inputHoraSalida.addEventListener("blur", () => {
+    if (!inputHoraSalida.value.trim()) {
+      inputHoraSalida.value = inputHoraSalida.dataset.original;
+    }
+  });
+
+  // SOLO NÚMEROS Y :
+  inputHoraEntrada.addEventListener("input", () => {
+    inputHoraEntrada.value = inputHoraEntrada.value.replace(/[^0-9:]/g, "");
+  });
+
+  inputHoraSalida.addEventListener("input", () => {
+    inputHoraSalida.value = inputHoraSalida.value.replace(/[^0-9:]/g, "");
+  });
+
+  // ---------------------------------------------
+  // GOOGLE MAPS LINKS
+  // ---------------------------------------------
+  const linkEntrada = document.getElementById("linkMapaEntrada");
+  const linkSalida = document.getElementById("linkMapaSalida");
+
+  if (entrada.lat && entrada.lng) {
+    linkEntrada.href = `https://www.google.com/maps?q=${entrada.lat},${entrada.lng}`;
+  } else {
+    linkEntrada.removeAttribute("href");
+  }
+
+  if (salida.lat && salida.lng) {
+    linkSalida.href = `https://www.google.com/maps?q=${salida.lat},${salida.lng}`;
+  } else {
+    linkSalida.removeAttribute("href");
+  }
+
+  // ---------------------------------------------
+  // ACTIVIDADES (2) — desde BD
+  // ---------------------------------------------
+  const listaAct = document.getElementById("listaActividades");
+  listaAct.innerHTML = "";
+
+  if (entrada.actividades) {
+    entrada.actividades.split(",").forEach((act) => {
+      act = act.trim();
+      if (!act) return;
+
+      const tag = document.createElement("div");
+      tag.classList.add("tag");
+      tag.dataset.texto = act;
+      tag.innerHTML = `${act} <button class='close-btn'>×</button>`;
+      tag
+        .querySelector(".close-btn")
+        .addEventListener("click", () => tag.remove());
+      listaAct.appendChild(tag);
+    });
+  }
+
+  // ---------------------------------------------
+  // NOVEDADES (3) — desde BD
+  // ---------------------------------------------
+  const listaNov = document.getElementById("listaNovedades");
+  listaNov.innerHTML = "";
+
+  if (entrada.novedades) {
+    entrada.novedades.split(",").forEach((nov) => {
+      nov = nov.trim();
+      if (!nov) return;
+
+      const tag = document.createElement("div");
+      tag.classList.add("tag");
+      tag.dataset.texto = nov;
+      tag.innerHTML = `${nov} <button class='close-btn'>×</button>`;
+      tag
+        .querySelector(".close-btn")
+        .addEventListener("click", () => tag.remove());
+      listaNov.appendChild(tag);
+    });
+  }
+
+  // ---------------------------------------------
+  // OBSERVACIONES
+  // ---------------------------------------------
+  const inputObs = document.getElementById("inputObservaciones");
+  inputObs.value = entrada.observaciones || "";
+
+  // ---------------------------------------------
+  // CONTROL DE AUDITORÍA
+  // ---------------------------------------------
+  const botonAuditar = document.getElementById("btnConfirmarAuditoria");
+
+  const estado = entrada.estado_auditoria?.trim().toUpperCase();
+
+  const horaActual = new Date().getHours();
+
+  if (estado === "AUDITADO") {
+    // Ya auditado → ver solamente
+    botonAuditar.disabled = true;
+    botonAuditar.classList.add("btn-disabled");
+  } else {
+    // No auditado
+    if (horaActual < 17) {
+      botonAuditar.disabled = true;
+      botonAuditar.classList.add("btn-disabled");
+    } else {
+      botonAuditar.disabled = false;
+      botonAuditar.classList.remove("btn-disabled");
+    }
+  }
 }
 
 function cerrarModalAuditoria() {
@@ -420,4 +584,92 @@ function llenarFiltroSectores(registros) {
   filtro.addEventListener("change", () => {
     filtrarPorSector(filtro.value);
   });
+}
+
+// =======================================
+// GUARDAR CAMBIOS DE AUDITORÍA
+// =======================================
+async function guardarCambiosAuditoria() {
+  const numero_cs = document
+    .getElementById("tituloModalAuditoria")
+    .textContent.split(" ")[2]; // Extrae la cuadrilla
+
+  // -------------------------
+  // 1. OBTENER HORAS EDITADAS
+  // -------------------------
+  const horaEntrada = document.getElementById("inputHoraEntrada").value.trim();
+  const horaSalida = document.getElementById("inputHoraSalida").value.trim();
+
+  // -------------------------
+  // 2. OBTENER ACTIVIDADES
+  // -------------------------
+  const actividadesTags = Array.from(
+    document.querySelectorAll("#listaActividades .tag")
+  ).map((t) => t.dataset.texto);
+
+  const actividades = actividadesTags.join(", ");
+
+  // -------------------------
+  // 3. OBTENER NOVEDADES
+  // -------------------------
+  const novedadesTags = Array.from(
+    document.querySelectorAll("#listaNovedades .tag")
+  ).map((t) => t.dataset.texto);
+
+  const novedades = novedadesTags.join(", ");
+
+  // -------------------------
+  // 4. OBTENER OBSERVACIONES
+  // -------------------------
+  const observaciones = document
+    .getElementById("inputObservaciones")
+    .value.trim();
+
+  // -------------------------
+  // 5. CONSTRUIR URL PARA GUARDAR
+  // -------------------------
+  const url = `${API_URL}?accion=guardarAuditoria&numero_cs=${numero_cs}&hora_entrada=${encodeURIComponent(
+    horaEntrada
+  )}&hora_salida=${encodeURIComponent(
+    horaSalida
+  )}&actividades=${encodeURIComponent(
+    actividades
+  )}&novedades=${encodeURIComponent(
+    novedades
+  )}&observaciones=${encodeURIComponent(observaciones)}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.success) {
+      alert("✔ Cambios guardados correctamente");
+
+      // -------------------------
+      // 6. GUARDAR TAMBIÉN EN LOCALSTORAGE
+      // -------------------------
+      const clave = `auditoria_${numero_cs}`;
+      const objetoLocal = {
+        horaEntrada,
+        horaSalida,
+        actividades,
+        novedades,
+        observaciones,
+      };
+
+      localStorage.setItem(clave, JSON.stringify(objetoLocal));
+
+      // Recargar tabla
+      obtenerRegistrosHoy();
+
+      // cerrar modal
+      cerrarModalAuditoria();
+
+    } else {
+      alert("⚠ No se pudieron guardar los cambios");
+    }
+  } catch (error) {
+    console.error("❌ Error guardando auditoría:", error);
+    alert("Error al guardar los cambios.");
+  }
 }

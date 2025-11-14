@@ -134,7 +134,7 @@ function renderizarTabla(registros) {
         <td rowspan="2">${entrada.sector || salida.sector || "-"}</td>
 
         <!-- Entrada -->
-        <td>${entrada.tipo || "ENTRADA"}</td>
+        <td>${entrada.tipo || "Entrada"}</td>
         <td>${entrada.hora || "-"}</td>
         <td>
           ${
@@ -163,7 +163,7 @@ function renderizarTabla(registros) {
 
       <tr>
         <!-- Salida -->
-        <td>${salida.tipo || "SALIDA"}</td>
+        <td>${salida.tipo || "Salida"}</td>
         <td>${salida.hora || "-"}</td>
         <td>
           ${
@@ -315,22 +315,23 @@ const novedades = [
   "Otro incidente",
 ];
 
-// =========================================================================
-//  Convertir enlace de drive a compatible para mostrar imagen directamente
-// =========================================================================
-function convertirDriveDirecto(url) {
-  if (!url) return "";
+// Normalizar hora para <input type="time"> → "HH:MM"
+function normalizarHora(hora) {
+  if (!hora) return "";
 
-  // Si no es un enlace de Drive, lo dejamos igual
-  if (!url.includes("drive.google.com")) return url;
+  // Convertir a string y eliminar espacios
+  hora = String(hora).trim();
 
-  // Extraer el ID del archivo
-  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (!match) return url;
+  // Separar por :
+  const partes = hora.split(":");
 
-  const id = match[1];
+  if (partes.length < 2) return "";
 
-  return `https://drive.google.com/uc?export=view&id=${id}`;
+  // Hora y minuto con cero a la izquierda
+  let h = partes[0].padStart(2, "0");
+  let m = partes[1].padStart(2, "0");
+
+  return `${h}:${m}`;
 }
 
 // =======================================
@@ -342,7 +343,7 @@ function abrirModalAuditoria(numero_cs) {
   document.getElementById("modalAuditoria").classList.remove("d-none");
   document.getElementById("overlay").classList.remove("d-none");
 
-  console.log("Abriendo auditoría para:", numero_cs);
+  console.log("🟢 Abriendo auditoría para:", numero_cs);
 
   // Buscar registros de ese usuario
   const registrosUsuario = registrosHoyGlobal.filter(
@@ -355,8 +356,8 @@ function abrirModalAuditoria(numero_cs) {
   }
 
   // Separar entrada y salida
-  const entrada = registrosUsuario.find((r) => r.tipo === "ENTRADA") || {};
-  const salida = registrosUsuario.find((r) => r.tipo === "SALIDA") || {};
+  const entrada = registrosUsuario.find((r) => r.tipo === "entrada") || {};
+  const salida = registrosUsuario.find((r) => r.tipo === "salida") || {};
 
   // ---------------------------------------------
   // LLENAR ENCABEZADO
@@ -494,30 +495,11 @@ function abrirModalAuditoria(numero_cs) {
       botonAuditar.classList.remove("btn-disabled");
     }
   }
-  // ---------------------------------------------
-  // MOSTRAR FOTOS EN EL MODAL
-  // ---------------------------------------------
-  const imgEntrada = document.querySelector(".foto-box.entrada .foto-img");
-  const imgSalida = document.querySelector(".foto-box.salida  .foto-img");
-
-  // FOTO DE ENTRADA
-  if (entrada.enlace) {
-    imgEntrada.src = convertirDriveDirecto(entrada.enlace);
-  } else {
-    imgEntrada.src = "https://via.placeholder.com/120x120?text=Sin+foto";
-  }
-
-  // FOTO DE SALIDA
-  if (salida.enlace) {
-    imgSalida.src = convertirDriveDirecto(salida.enlace);
-  } else {
-    imgSalida.src = "https://via.placeholder.com/120x120?text=Sin+foto";
-  }
 }
 
-//=======================================
-//normalizar hora para <input type="time"> → "HH:MM"
-//=======================================
+  //=======================================
+  //normalizar hora para <input type="time"> → "HH:MM"
+  //=======================================
 function normalizarHora(hora) {
   if (!hora) return "";
 

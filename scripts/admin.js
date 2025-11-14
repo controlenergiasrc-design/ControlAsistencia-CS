@@ -526,14 +526,14 @@ function abrirModalAuditoria(numero_cs) {
   if (entrada.enlace) {
     imgEntrada.src = convertirDriveDirecto(entrada.enlace);
   } else {
-    imgEntrada.src = "https://via.placeholder.com/120x120?text=Sin+foto";
+    imgEntrada.src = "https://placehold.co/120x120?text=Sin+foto";
   }
 
   // FOTO DE SALIDA
   if (salida.enlace) {
     imgSalida.src = convertirDriveDirecto(salida.enlace);
   } else {
-    imgSalida.src = "https://via.placeholder.com/120x120?text=Sin+foto";
+    imgSalida.src  = "https://placehold.co/120x120?text=Sin+foto";
   }
 }
 

@@ -542,24 +542,7 @@ function abrirModalAuditoria(numero_cs) {
   }
 }
 
-//=======================================
-//normalizar hora para <input type="time"> → "HH:MM"
-//=======================================
-function normalizarHora(hora) {
-  if (!hora) return "";
 
-  // Convertir a string y eliminar espacios
-  hora = String(hora).trim();
-
-  // Separar por :
-  const partes = hora.split(":");
-
-  // Asegurar formato HH:MM (ignoramos los segundos)
-  const h = partes[0].padStart(2, "0");
-  const m = partes[1].padStart(2, "0");
-
-  return `${h}:${m}`;
-}
 
 function cerrarModalAuditoria() {
   document.getElementById("modalAuditoria").classList.add("d-none");

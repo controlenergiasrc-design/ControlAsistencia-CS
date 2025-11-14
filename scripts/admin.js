@@ -134,7 +134,7 @@ function renderizarTabla(registros) {
         <td rowspan="2">${entrada.sector || salida.sector || "-"}</td>
 
         <!-- Entrada -->
-        <td>${entrada.tipo || "ENTRADA"}</td> // como en la bd
+        <td>${entrada.tipo || "ENTRADA"}</td>
         <td>${entrada.hora || "-"}</td>
         <td>
           ${

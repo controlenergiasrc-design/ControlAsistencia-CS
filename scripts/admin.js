@@ -476,11 +476,30 @@ function abrirModalAuditoria(numero_cs) {
       botonAuditar.classList.remove("btn-disabled");
     }
   }
+  // ---------------------------------------------
+  // MOSTRAR FOTOS EN EL MODAL
+  // ---------------------------------------------
+  const imgEntrada = document.querySelector(".foto-box.entrada .foto-img");
+  const imgSalida = document.querySelector(".foto-box.salida  .foto-img");
+
+  // Entrada
+  if (entrada.enlace) {
+    imgEntrada.src = entrada.enlace;
+  } else {
+    imgEntrada.src = "https://via.placeholder.com/120x120?text=Sin+foto";
+  }
+
+  // Salida
+  if (salida.enlace) {
+    imgSalida.src = salida.enlace;
+  } else {
+    imgSalida.src = "https://via.placeholder.com/120x120?text=Sin+foto";
+  }
 }
 
-  //=======================================
-  //normalizar hora para <input type="time"> → "HH:MM"
-  //=======================================
+//=======================================
+//normalizar hora para <input type="time"> → "HH:MM"
+//=======================================
 function normalizarHora(hora) {
   if (!hora) return "";
 

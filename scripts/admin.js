@@ -375,9 +375,14 @@ function abrirModalAuditoria(numero_cs) {
 
   // Separar entrada y salida
   const entrada =
-    registrosUsuario.find((r) => r.tipo?.toUpperCase() === "ENTRADA") || {};
+    registrosUsuario.find(
+      (r) => r.tipo?.toString().trim().toLowerCase() === "entrada"
+    ) || {};
+
   const salida =
-    registrosUsuario.find((r) => r.tipo?.toUpperCase() === "SALIDA") || {};
+    registrosUsuario.find(
+      (r) => r.tipo?.toString().trim().toLowerCase() === "salida"
+    ) || {};
 
   // ---------------------------------------------
   // LLENAR ENCABEZADO
@@ -533,7 +538,7 @@ function abrirModalAuditoria(numero_cs) {
   if (salida.enlace) {
     imgSalida.src = convertirDriveDirecto(salida.enlace);
   } else {
-    imgSalida.src  = "https://placehold.co/120x120?text=Sin+foto";
+    imgSalida.src = "https://placehold.co/120x120?text=Sin+foto";
   }
 }
 

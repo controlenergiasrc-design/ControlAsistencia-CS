@@ -334,6 +334,24 @@ function normalizarHora(hora) {
   return `${h}:${m}`;
 }
 
+// =========================================================================
+// Convertir enlace de Drive a un enlace directo que el <img> pueda mostrar
+// =========================================================================
+function convertirDriveDirecto(url) {
+  if (!url) return "";
+
+  if (!url.includes("drive.google.com")) return url;
+
+  // Extraer ID
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (!match) return url;
+
+  const id = match[1];
+
+  // Enlace directo que SÍ carga en <img>
+  return `https://drive.google.com/uc?export=view&id=${id}`;
+}
+
 // =======================================
 // ABRIR MODAL DE AUDITORÍA (VERSIÓN COMPLETA)
 // =======================================
@@ -495,11 +513,31 @@ function abrirModalAuditoria(numero_cs) {
       botonAuditar.classList.remove("btn-disabled");
     }
   }
+
+  // ---------------------------------------------
+  // MOSTRAR FOTOS EN EL MODAL
+  // ---------------------------------------------
+  const imgEntrada = document.querySelector(".foto-box.entrada .foto-img");
+  const imgSalida = document.querySelector(".foto-box.salida  .foto-img");
+
+  // FOTO DE ENTRADA
+  if (entrada.enlace) {
+    imgEntrada.src = convertirDriveDirecto(entrada.enlace);
+  } else {
+    imgEntrada.src = "https://via.placeholder.com/120x120?text=Sin+foto";
+  }
+
+  // FOTO DE SALIDA
+  if (salida.enlace) {
+    imgSalida.src = convertirDriveDirecto(salida.enlace);
+  } else {
+    imgSalida.src = "https://via.placeholder.com/120x120?text=Sin+foto";
+  }
 }
 
-  //=======================================
-  //normalizar hora para <input type="time"> → "HH:MM"
-  //=======================================
+//=======================================
+//normalizar hora para <input type="time"> → "HH:MM"
+//=======================================
 function normalizarHora(hora) {
   if (!hora) return "";
 

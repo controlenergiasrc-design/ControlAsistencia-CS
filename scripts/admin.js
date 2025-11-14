@@ -340,17 +340,17 @@ function normalizarHora(hora) {
 function convertirDriveDirecto(url) {
   if (!url) return "";
 
-  if (!url.includes("drive.google.com")) return url;
+  // Detectar ID en formato: /file/d/ID/...
+  const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
 
-  // Extraer ID
-  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (!match) return url;
+  if (match && match[1]) {
+    const id = match[1];
+    return `https://drive.google.com/uc?export=view&id=${id}`;
+  }
 
-  const id = match[1];
-
-  // Enlace directo que SÍ carga en <img>
-  return `https://drive.google.com/uc?export=view&id=${id}`;
+  return url; // si no es enlace de Drive, se devuelve igual
 }
+
 
 // =======================================
 // ABRIR MODAL DE AUDITORÍA (VERSIÓN COMPLETA)

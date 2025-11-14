@@ -375,9 +375,9 @@ function abrirModalAuditoria(numero_cs) {
 
   // Separar entrada y salida
   const entrada =
-    registrosUsuario.find((r) => r.tipo?.toLowerCase() === "entrada") || {};
+    registrosUsuario.find((r) => r.tipo?.toUpperCase() === "ENTRADA") || {};
   const salida =
-    registrosUsuario.find((r) => r.tipo?.toLowerCase() === "salida") || {};
+    registrosUsuario.find((r) => r.tipo?.toUpperCase() === "SALIDA") || {};
 
   // ---------------------------------------------
   // LLENAR ENCABEZADO

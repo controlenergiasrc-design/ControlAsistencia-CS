@@ -314,7 +314,6 @@ function convertirDriveDirecto(url) {
   return url; // si no es enlace de Drive, se devuelve igual
 }
 
-
 // =======================================
 // ABRIR MODAL DE AUDITORÍA (VERSIÓN COMPLETA)
 // =======================================
@@ -502,6 +501,25 @@ function abrirModalAuditoria(numero_cs) {
     imgSalida.src = convertirDriveDirecto(salida.enlace);
   } else {
     imgSalida.src = "https://placehold.co/120x120?text=Sin+foto";
+  }
+  // -------------------------------------------
+  // ACTIVAR / DESACTIVAR BOTONES EDITAR FOTO
+  // -------------------------------------------
+  const btnEditarEntrada = document.getElementById("btnEditarEntrada");
+  const btnEditarSalida = document.getElementById("btnEditarSalida");
+
+  // ENTRADA
+  if (!entrada.enlace || entrada.enlace.trim() === "") {
+    btnEditarEntrada.classList.add("disabled");
+  } else {
+    btnEditarEntrada.classList.remove("disabled");
+  }
+
+  // SALIDA
+  if (!salida.enlace || salida.enlace.trim() === "") {
+    btnEditarSalida.classList.add("disabled");
+  } else {
+    btnEditarSalida.classList.remove("disabled");
   }
 }
 
@@ -732,12 +750,12 @@ async function subirFotoEditada(event, tipo) {
     numero_cs,
     tipo,
     sector,
-    fotoBase64: base64
+    fotoBase64: base64,
   };
 
   const res = await fetch(API_URL, {
     method: "POST",
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   const data = await res.json();

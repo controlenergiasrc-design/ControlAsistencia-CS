@@ -563,6 +563,12 @@ textarea {
   transform: scale(1.15);
   color: #111;
 }
+.btn-edit-foto.disabled {
+  pointer-events: none;
+  opacity: 0.35;
+  filter: grayscale(100%);
+}
+
     </style>
   </head>
   <body>
@@ -912,7 +918,7 @@ textarea {
                 src="https://via.placeholder.com/120x120?text=Entrada"
               />
               <!-- ICONO EDITAR -->
-              <button class="btn-edit-foto" onclick="document.getElementById('inputEditarEntrada').click()">
+              <button id="btnEditarEntrada" class="btn-edit-foto" onclick="document.getElementById('inputEditarEntrada').click()">
                 <i class="fa-solid fa-pen"></i>
               </button>
 
@@ -934,7 +940,7 @@ textarea {
                 src="https://via.placeholder.com/120x120?text=Salida"
               />
               <!-- ICONO EDITAR -->
-              <button class="btn-edit-foto" onclick="document.getElementById('inputEditarSalida').click()">
+              <button id="btnEditarSalida" class="btn-edit-foto" onclick="document.getElementById('inputEditarSalida').click()">
                 <i class="fa-solid fa-pen"></i>
               </button>
               <input type="file" id="inputEditarSalida" hidden accept="image/*"

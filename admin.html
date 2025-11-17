@@ -393,6 +393,8 @@
   border-radius: 10px;
   border: 1px solid #ccc;
   object-fit: cover;
+   display: block;          /* ← AGREGA ESTO */
+  position: relative;
 }
 
 .foto-info {
@@ -537,8 +539,8 @@ textarea {
 /*===== BOTÓN EDITAR FOTO ===== */
 .btn-edit-foto {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 4px;
+  left: 94px; /* ← esquina superior derecha de la foto */
   width: 32px;
   height: 32px;
   background: rgba(255, 255, 255, 0.45);
@@ -904,50 +906,46 @@ textarea {
 
               <div class="fotos">
                 <!--cajita de entarda-->
-<div class="foto-box entrada" style="position: relative;">
-    <!-- ICONO PARA EDITAR FOTO DE ENTRADA -->
-  <button class="btn-edit-foto" onclick="document.getElementById('inputEditarEntrada').click()">
-    <i class="fa-solid fa-pen"></i>
-  </button>
-  <!-- INPUT OCULTO -->
-  <input type="file" id="inputEditarEntrada" accept="image/*" hidden
-         onchange="subirFotoEditada(event, 'entrada')"/>
-  <img
-    class="foto-img"
-    src="https://via.placeholder.com/120x120?text=Entrada"
-    alt="Foto Entrada"
-  />
+            <div class="foto-box entrada">
+              <img
+                class="foto-img"
+                src="https://via.placeholder.com/120x120?text=Entrada"
+              />
+              <!-- ICONO EDITAR -->
+              <button class="btn-edit-foto" onclick="document.getElementById('inputEditarEntrada').click()">
+                <i class="fa-solid fa-pen"></i>
+              </button>
 
-  <div class="foto-info">
-    <input type="time" id="inputHoraEntrada" value="07:45" />
-    <a href="#" class="link-maps" id="linkEntrada">
-      <i class="fa-solid fa-location-dot"></i> Ver ubicación de ENTRADA
-    </a>
-  </div>
-</div>
+              <input type="file" id="inputEditarEntrada" hidden accept="image/*"
+                    onchange="subirFotoEditada(event, 'entrada')" />
+
+              <div class="foto-info">
+                <input type="time" id="inputHoraEntrada" value="07:45" />
+                <a class="link-maps" id="linkEntrada">
+                  <i class="fa-solid fa-location-dot"></i> Ver ubicación de ENTRADA
+                </a>
+              </div>
+            </div>
 
                 <!--cajita de salida-->
-<div class="foto-box salida" style="position: relative;">
-    <!-- ICONO PARA EDITAR FOTO DE SALIDA -->
-  <button class="btn-edit-foto" onclick="document.getElementById('inputEditarSalida').click()">
-    <i class="fa-solid fa-pen"></i>
-  </button>
-  <!-- INPUT OCULTO -->
-  <input type="file" id="inputEditarSalida" accept="image/*" hidden
-         onchange="subirFotoEditada(event, 'salida')"/>
-  <img
-    class="foto-img"
-    src="https://via.placeholder.com/120x120?text=Salida"
-    alt="Foto Salida"
-  />
-  <div class="foto-info">
-    <input type="time" id="inputHoraSalida" value="15:30" />
-    <a href="#" class="link-maps" id="linkSalida" style="color: #fd7e14">
-      <i class="fa-solid fa-location-dot"></i> Ver ubicación de SALIDA
-    </a>
-  </div>
-</div>
-
+            <div class="foto-box salida">
+              <img
+                class="foto-img"
+                src="https://via.placeholder.com/120x120?text=Salida"
+              />
+              <!-- ICONO EDITAR -->
+              <button class="btn-edit-foto" onclick="document.getElementById('inputEditarSalida').click()">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <input type="file" id="inputEditarSalida" hidden accept="image/*"
+                    onchange="subirFotoEditada(event, 'salida')" />
+              <div class="foto-info">
+                <input type="time" id="inputHoraSalida" value="15:30" />
+                <a class="link-maps" id="linkSalida" style="color:#fd7e14">
+                  <i class="fa-solid fa-location-dot"></i> Ver ubicación de SALIDA
+                </a>
+              </div>
+            </div>
               </div>
 
               <div class="section-pair">

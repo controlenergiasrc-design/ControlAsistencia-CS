@@ -398,14 +398,18 @@ function abrirModalAuditoria(numero_cs) {
 
   if (entrada.lat && entrada.lng) {
     linkEntrada.href = `https://www.google.com/maps?q=${entrada.lat},${entrada.lng}`;
+    linkEntrada.target = "_blank";//abrir en nueva pestaña
   } else {
     linkEntrada.removeAttribute("href");
+    linkEntrada.removeAttribute("target");
   }
 
   if (salida.lat && salida.lng) {
     linkSalida.href = `https://www.google.com/maps?q=${salida.lat},${salida.lng}`;
+    linkSalida.target = "_blank";//abrir en nueva pestaña
   } else {
     linkSalida.removeAttribute("href");
+    linkSalida.removeAttribute("target");
   }
 
   // ---------------------------------------------

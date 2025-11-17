@@ -208,7 +208,6 @@ function filtrarPorSector(sectorSeleccionado) {
 //========================================
 //Mostrar secciones según menú lateral
 //========================================
-
 // Alternar módulos al hacer clic en el menú lateral
 document.querySelectorAll(".nav-link").forEach((link) => {
   link.addEventListener("click", (e) => {
@@ -738,9 +737,9 @@ async function subirFotoEditada(event, tipo) {
   });
 
   // Obtener número CS desde el modal
-  const numero_cs = document
-    .getElementById("tituloModalAuditoria")
-    .textContent.split(" ")[2];
+const numero_cs = document
+  .getElementById("tituloModalAuditoria")
+  .textContent.match(/\d+/)[0];
 
   // Encontrar sector desde registros globales
   const registrosUsuario = registrosHoyGlobal.filter(

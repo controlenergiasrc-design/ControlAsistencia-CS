@@ -639,9 +639,9 @@ function llenarFiltroSectores(registros) {
 // GUARDAR CAMBIOS DE AUDITORÍA
 // =======================================
 async function guardarCambiosAuditoria() {
-  const numero_cs = document
-    .getElementById("tituloModalAuditoria")
-    .textContent.split(" ")[2]; // Extrae la cuadrilla
+const numero_cs = document
+  .getElementById("tituloModalAuditoria")
+  .textContent.match(/\d+/)[0]; // Extrae la cuadrilla
 
   // -------------------------
   // 1. OBTENER HORAS EDITADAS

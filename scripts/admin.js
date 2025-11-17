@@ -510,15 +510,19 @@ function abrirModalAuditoria(numero_cs) {
 
   // ENTRADA
   if (!entrada.enlace || entrada.enlace.trim() === "") {
+    btnEditarEntrada.disabled = true;
     btnEditarEntrada.classList.add("disabled");
   } else {
+    btnEditarEntrada.disabled = false;
     btnEditarEntrada.classList.remove("disabled");
   }
 
   // SALIDA
   if (!salida.enlace || salida.enlace.trim() === "") {
+    btnEditarSalida.disabled = true;
     btnEditarSalida.classList.add("disabled");
   } else {
+    btnEditarSalida.disabled = false;
     btnEditarSalida.classList.remove("disabled");
   }
 }

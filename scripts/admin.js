@@ -700,3 +700,61 @@ async function guardarCambiosAuditoria() {
     alert("Error al guardar los cambios.");
   }
 }
+
+//========================================
+// SUBIR FOTO EDITADA
+//========================================
+async function subirFotoEditada(event, tipo) {
+  const archivo = event.target.files[0];
+  if (!archivo) return;
+
+  // Convertir a Base64
+  const base64 = await new Promise((resolve) => {
+    const lector = new FileReader();
+    lector.onloadend = () => resolve(lector.result);
+    lector.readAsDataURL(archivo);
+  });
+
+  // Obtener número CS desde el modal
+  const numero_cs = document
+    .getElementById("tituloModalAuditoria")
+    .textContent.split(" ")[2];
+
+  // Encontrar sector desde registros globales
+  const registrosUsuario = registrosHoyGlobal.filter(
+    (r) => String(r.numero_cs) === String(numero_cs)
+  );
+  const sector = registrosUsuario[0]?.sector || "";
+
+  // Enviar al API
+  const body = {
+    accion: "actualizarFoto",
+    numero_cs,
+    tipo,
+    sector,
+    fotoBase64: base64
+  };
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(body)
+  });
+
+  const data = await res.json();
+
+  if (data.ok) {
+    alert("✔ Foto actualizada correctamente");
+
+    // Actualizar imagen en pantalla
+    if (tipo === "entrada") {
+      document.querySelector(".foto-box.entrada .foto-img").src = data.link;
+    } else {
+      document.querySelector(".foto-box.salida .foto-img").src = data.link;
+    }
+
+    // Recargar tabla
+    obtenerRegistrosHoy();
+  } else {
+    alert("❌ Error al actualizar la foto");
+  }
+}

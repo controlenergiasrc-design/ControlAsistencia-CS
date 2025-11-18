@@ -100,7 +100,6 @@ async function obtenerRegistrosHoy() {
     console.error("❌ Error al obtener registros:", err);
   }
 }
-
 // =======================================
 // RENDERIZAR TABLA COMPLETA (ENTRADA/SALIDA)
 // =======================================
@@ -113,43 +112,73 @@ function renderizarTabla(registros) {
     return;
   }
 
-  // Agrupar registros por número de cuadrilla o supervisor (numero_cs)
+  // Agrupar registros por numero_cs
   const agrupados = {};
   registros.forEach((r) => {
     if (!agrupados[r.numero_cs]) agrupados[r.numero_cs] = [];
     agrupados[r.numero_cs].push(r);
   });
 
-  // Renderizar por usuario
   Object.values(agrupados).forEach((registrosUsuario) => {
     const entrada =
       registrosUsuario.find((r) => r.tipo?.toLowerCase() === "entrada") || {};
     const salida =
       registrosUsuario.find((r) => r.tipo?.toLowerCase() === "salida") || {};
 
+    // OBJETO COMPLETO PARA EL MODAL
+    const registroCompleto = {
+      numero_cs: entrada.numero_cs || salida.numero_cs,
+      nombre: entrada.nombre || salida.nombre,
+      sector: entrada.sector || salida.sector,
+      fecha: entrada.fecha || salida.fecha || "",
+
+      entrada: {
+        hora: entrada.hora || "",
+        enlace: entrada.enlace || "",
+        lat: entrada.lat || "",
+        lng: entrada.lng || "",
+      },
+
+      salida: {
+        hora: salida.hora || "",
+        enlace: salida.enlace || "",
+        lat: salida.lat || "",
+        lng: salida.lng || "",
+      },
+
+      actividades: entrada.actividades || "",
+      novedades: entrada.novedades || "",
+      observaciones: entrada.observaciones || "",
+      estado_auditoria: entrada.estado_auditoria || "",
+    };
+
+    // Convertir a JSON seguro
+    const registroJSON = JSON.stringify(registroCompleto).replace(
+      /"/g,
+      "&quot;"
+    );
+
+    // HTML de la fila
     const filaHTML = `
       <tr>
-        <td rowspan="2">${entrada.numero_cs || salida.numero_cs || "-"}</td>
-        <td rowspan="2">${entrada.nombre || salida.nombre || "-"}</td>
-        <td rowspan="2">${entrada.sector || salida.sector || "-"}</td>
+        <td rowspan="2">${registroCompleto.numero_cs}</td>
+        <td rowspan="2">${registroCompleto.nombre}</td>
+        <td rowspan="2">${registroCompleto.sector}</td>
 
         <!-- Entrada -->
-        <td>${entrada.tipo || "Entrada"}</td>
+        <td>Entrada</td>
         <td>${entrada.hora || "-"}</td>
         <td>
           ${
             entrada.enlace
               ? `<a href="${entrada.enlace}" target="_blank" class="btn btn-sm btn-gray"><i class="fa-solid fa-camera"></i> Ver foto</a>`
-              : `<button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Sin foto</button>`
+              : `<button class="btn btn-sm btn-gray" disabled>Sin foto</button>`
           }
         </td>
 
-        <!-- Botón Auditar combinado -->
         <td rowspan="2" class="text-center align-middle">
           <button class="btn btn-sm btn-audit"
-          onclick="abrirModalAuditoria('${
-            entrada.numero_cs || salida.numero_cs
-          }')">
+            onclick='abrirModalAuditoria(${registroJSON})'>
             <i class="fa-solid fa-file-shield"></i> Auditar
           </button>
         </td>
@@ -157,13 +186,13 @@ function renderizarTabla(registros) {
 
       <tr>
         <!-- Salida -->
-        <td>${salida.tipo || "Salida"}</td>
+        <td>Salida</td>
         <td>${salida.hora || "-"}</td>
         <td>
           ${
             salida.enlace
               ? `<a href="${salida.enlace}" target="_blank" class="btn btn-sm btn-gray"><i class="fa-solid fa-camera"></i> Ver foto</a>`
-              : `<button class="btn btn-sm btn-gray" disabled><i class="fa-solid fa-camera"></i> Sin foto</button>`
+              : `<button class="btn btn-sm btn-gray" disabled>Sin foto</button>`
           }
         </td>
       </tr>
@@ -314,63 +343,43 @@ function convertirDriveDirecto(url) {
 }
 
 // =======================================
-// ABRIR MODAL DE AUDITORÍA (VERSIÓN COMPLETA)
+// ABRIR MODAL DE AUDITORÍA (NUEVA LÓGICA)
 // =======================================
-
-function abrirModalAuditoria(numero_cs) {
+function abrirModalAuditoria(registro) {
   // Mostrar modal
   document.getElementById("modalAuditoria").classList.remove("d-none");
   document.getElementById("overlay").classList.remove("d-none");
 
-  console.log("Abriendo auditoría para:", numero_cs);
-  alert("Recibo en el modal: " + numero_cs);
+  console.log("Abriendo auditoría para:", registro);
 
+  // -----------------------------
+  // 1. GUARDAR EN INPUTS OCULTOS
+  // -----------------------------
+  document.getElementById("hiddenNumeroCS").value = registro.numero_cs;
+  document.getElementById("hiddenFechaRegistro").value = registro.fecha;
+  document.getElementById("hiddenSector").value = registro.sector;
 
-  // Buscar registros de ese usuario
-  const registrosUsuario = registrosHoyGlobal.filter(
-    (r) => String(r.numero_cs) === String(numero_cs)
-  );
+  const entrada = registro.entrada || {};
+  const salida = registro.salida || {};
 
-  if (!registrosUsuario.length) {
-    alert("No se encontró información del usuario en registrosHoyGlobal.");
-    return;
-  }
-
-  // Separar entrada y salida
-  const entrada =
-    registrosUsuario.find(
-      (r) => r.tipo?.toString().trim().toLowerCase() === "entrada"
-    ) || {};
-
-  const salida =
-    registrosUsuario.find(
-      (r) => r.tipo?.toString().trim().toLowerCase() === "salida"
-    ) || {};
-
-  // ---------------------------------------------
-  // LLENAR ENCABEZADO
-  // ---------------------------------------------
+  // -----------------------------
+  // 2. TITULO DEL MODAL
+  // -----------------------------
   const titulo = document.getElementById("tituloModalAuditoria");
-  const hoy = new Date();
-  const fecha = hoy.toLocaleDateString("es-ES");
+  titulo.textContent = `AUDITORÍA – CUADRILLA ${registro.numero_cs}`;
 
-  titulo.textContent = `AUDITORÍA – CUADRILLA ${numero_cs}      ${fecha}`;
-
-  // ---------------------------------------------
-  // HORAS (24H)
-  // ---------------------------------------------
+  // -----------------------------
+  // 3. HORAS
+  // -----------------------------
   const inputHoraEntrada = document.getElementById("inputHoraEntrada");
   const inputHoraSalida = document.getElementById("inputHoraSalida");
 
-  // Normalizar horas para input type="time"
   inputHoraEntrada.value = normalizarHora(entrada.hora);
   inputHoraSalida.value = normalizarHora(salida.hora);
 
-  // Guardar la hora original (ya normalizada) por si borran
   inputHoraEntrada.dataset.original = inputHoraEntrada.value;
   inputHoraSalida.dataset.original = inputHoraSalida.value;
 
-  // Si borran todo → restaurar
   inputHoraEntrada.addEventListener("blur", () => {
     if (!inputHoraEntrada.value.trim()) {
       inputHoraEntrada.value = inputHoraEntrada.dataset.original;
@@ -383,52 +392,40 @@ function abrirModalAuditoria(numero_cs) {
     }
   });
 
-  // SOLO NÚMEROS Y :
-  inputHoraEntrada.addEventListener("input", () => {
-    inputHoraEntrada.value = inputHoraEntrada.value.replace(/[^0-9:]/g, "");
-  });
-
-  inputHoraSalida.addEventListener("input", () => {
-    inputHoraSalida.value = inputHoraSalida.value.replace(/[^0-9:]/g, "");
-  });
-
-  // ---------------------------------------------
-  // GOOGLE MAPS LINKS
-  // ---------------------------------------------
+  // -----------------------------
+  // 4. UBICACIONES GOOGLE MAPS
+  // -----------------------------
   const linkEntrada = document.getElementById("linkEntrada");
   const linkSalida = document.getElementById("linkSalida");
 
   if (entrada.lat && entrada.lng) {
     linkEntrada.href = `https://www.google.com/maps?q=${entrada.lat},${entrada.lng}`;
-    linkEntrada.target = "_blank";//abrir en nueva pestaña
+    linkEntrada.target = "_blank";
   } else {
     linkEntrada.removeAttribute("href");
-    linkEntrada.removeAttribute("target");
   }
 
   if (salida.lat && salida.lng) {
     linkSalida.href = `https://www.google.com/maps?q=${salida.lat},${salida.lng}`;
-    linkSalida.target = "_blank";//abrir en nueva pestaña
+    linkSalida.target = "_blank";
   } else {
     linkSalida.removeAttribute("href");
-    linkSalida.removeAttribute("target");
   }
 
-  // ---------------------------------------------
-  // ACTIVIDADES (2) — desde BD
-  // ---------------------------------------------
+  // -----------------------------
+  // 5. LLENAR ACTIVIDADES
+  // -----------------------------
   const listaAct = document.getElementById("listaActividades");
   listaAct.innerHTML = "";
 
-  if (entrada.actividades) {
-    entrada.actividades.split(",").forEach((act) => {
+  if (registro.actividades) {
+    registro.actividades.split(",").forEach((act) => {
       act = act.trim();
       if (!act) return;
-
       const tag = document.createElement("div");
       tag.classList.add("tag");
       tag.dataset.texto = act;
-      tag.innerHTML = `${act} <button class='close-btn'>×</button>`;
+      tag.innerHTML = `${act} <button class="close-btn">×</button>`;
       tag
         .querySelector(".close-btn")
         .addEventListener("click", () => tag.remove());
@@ -436,21 +433,20 @@ function abrirModalAuditoria(numero_cs) {
     });
   }
 
-  // ---------------------------------------------
-  // NOVEDADES (3) — desde BD
-  // ---------------------------------------------
+  // -----------------------------
+  // 6. LLENAR NOVEDADES
+  // -----------------------------
   const listaNov = document.getElementById("listaNovedades");
   listaNov.innerHTML = "";
 
-  if (entrada.novedades) {
-    entrada.novedades.split(",").forEach((nov) => {
+  if (registro.novedades) {
+    registro.novedades.split(",").forEach((nov) => {
       nov = nov.trim();
       if (!nov) return;
-
       const tag = document.createElement("div");
       tag.classList.add("tag");
       tag.dataset.texto = nov;
-      tag.innerHTML = `${nov} <button class='close-btn'>×</button>`;
+      tag.innerHTML = `${nov} <button class="close-btn">×</button>`;
       tag
         .querySelector(".close-btn")
         .addEventListener("click", () => tag.remove());
@@ -458,27 +454,23 @@ function abrirModalAuditoria(numero_cs) {
     });
   }
 
-  // ---------------------------------------------
-  // OBSERVACIONES
-  // ---------------------------------------------
+  // -----------------------------
+  // 7. OBSERVACIONES
+  // -----------------------------
   const inputObs = document.getElementById("inputObservaciones");
-  inputObs.value = entrada.observaciones || "";
+  inputObs.value = registro.observaciones || "";
 
-  // ---------------------------------------------
-  // CONTROL DE AUDITORÍA
-  // ---------------------------------------------
+  // -----------------------------
+  // 8. ESTADO AUDITORÍA
+  // -----------------------------
   const botonAuditar = document.getElementById("btnConfirmarAuditoria");
-
-  const estado = entrada.estado_auditoria?.trim().toUpperCase();
-
+  const estado = (registro.estado_auditoria || "").trim().toUpperCase();
   const horaActual = new Date().getHours();
 
   if (estado === "AUDITADO") {
-    // Ya auditado → ver solamente
     botonAuditar.disabled = true;
     botonAuditar.classList.add("btn-disabled");
   } else {
-    // No auditado
     if (horaActual < 17) {
       botonAuditar.disabled = true;
       botonAuditar.classList.add("btn-disabled");
@@ -488,33 +480,28 @@ function abrirModalAuditoria(numero_cs) {
     }
   }
 
-  // ---------------------------------------------
-  // MOSTRAR FOTOS EN EL MODAL
-  // ---------------------------------------------
+  // -----------------------------
+  // 9. FOTOS
+  // -----------------------------
   const imgEntrada = document.querySelector(".foto-box.entrada .foto-img");
-  const imgSalida = document.querySelector(".foto-box.salida  .foto-img");
+  const imgSalida = document.querySelector(".foto-box.salida .foto-img");
 
-  // FOTO DE ENTRADA
-  if (entrada.enlace) {
-    imgEntrada.src = convertirDriveDirecto(entrada.enlace);
-  } else {
-    imgEntrada.src = "https://placehold.co/120x120?text=Sin+foto";
-  }
+  imgEntrada.src = entrada.enlace
+    ? convertirDriveDirecto(entrada.enlace)
+    : "https://placehold.co/120x120?text=Sin+foto";
 
-  // FOTO DE SALIDA
-  if (salida.enlace) {
-    imgSalida.src = convertirDriveDirecto(salida.enlace);
-  } else {
-    imgSalida.src = "https://placehold.co/120x120?text=Sin+foto";
-  }
-  // -------------------------------------------
-  // ACTIVAR / DESACTIVAR BOTONES EDITAR FOTO
-  // -------------------------------------------
+  imgSalida.src = salida.enlace
+    ? convertirDriveDirecto(salida.enlace)
+    : "https://placehold.co/120x120?text=Sin+foto";
+
+  // -----------------------------
+  // 10. BOTONES EDITAR FOTO
+  // -----------------------------
   const btnEditarEntrada = document.getElementById("btnEditarEntrada");
   const btnEditarSalida = document.getElementById("btnEditarSalida");
 
-  // ENTRADA
-  if (!entrada.enlace || entrada.enlace.trim() === "") {
+  // Entrada
+  if (!entrada.enlace) {
     btnEditarEntrada.disabled = true;
     btnEditarEntrada.classList.add("disabled");
   } else {
@@ -522,8 +509,8 @@ function abrirModalAuditoria(numero_cs) {
     btnEditarEntrada.classList.remove("disabled");
   }
 
-  // SALIDA
-  if (!salida.enlace || salida.enlace.trim() === "") {
+  // Salida
+  if (!salida.enlace) {
     btnEditarSalida.disabled = true;
     btnEditarSalida.classList.add("disabled");
   } else {
@@ -645,9 +632,9 @@ function llenarFiltroSectores(registros) {
 // GUARDAR CAMBIOS DE AUDITORÍA
 // =======================================
 async function guardarCambiosAuditoria() {
-const numero_cs = document
-  .getElementById("tituloModalAuditoria")
-  .textContent.match(/\d+/)[0]; // Extrae la cuadrilla
+  const numero_cs = document
+    .getElementById("tituloModalAuditoria")
+    .textContent.match(/\d+/)[0]; // Extrae la cuadrilla
 
   // -------------------------
   // 1. OBTENER HORAS EDITADAS
@@ -743,9 +730,9 @@ async function subirFotoEditada(event, tipo) {
   });
 
   // Obtener número CS desde el modal
-const numero_cs = document
-  .getElementById("tituloModalAuditoria")
-  .textContent.match(/\d+/)[0];
+  const numero_cs = document
+    .getElementById("tituloModalAuditoria")
+    .textContent.match(/\d+/)[0];
 
   // Encontrar sector desde registros globales
   const registrosUsuario = registrosHoyGlobal.filter(

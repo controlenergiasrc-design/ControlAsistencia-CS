@@ -323,7 +323,8 @@ function abrirModalAuditoria(numero_cs) {
   document.getElementById("overlay").classList.remove("d-none");
 
   console.log("Abriendo auditoría para:", numero_cs);
-  
+  alert("Recibo en el modal: " + numero_cs);
+
 
   // Buscar registros de ese usuario
   const registrosUsuario = registrosHoyGlobal.filter(

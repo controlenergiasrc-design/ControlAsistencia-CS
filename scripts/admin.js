@@ -323,6 +323,8 @@ function abrirModalAuditoria(numero_cs) {
   document.getElementById("overlay").classList.remove("d-none");
 
   console.log("Abriendo auditoría para:", numero_cs);
+  //Obtener el numero de cuadrilla y asignarlo al input hidden
+  document.getElementById("auditNumeroCS").value = numero_cs;
 
   // Buscar registros de ese usuario
   const registrosUsuario = registrosHoyGlobal.filter(
@@ -643,9 +645,8 @@ function llenarFiltroSectores(registros) {
 // GUARDAR CAMBIOS DE AUDITORÍA
 // =======================================
 async function guardarCambiosAuditoria() {
-const numero_cs = document
-  .getElementById("tituloModalAuditoria")
-  .textContent.match(/\d+/)[0]; // Extrae la cuadrilla
+//Depende del numero de cuadrilla/supervisor
+const numero_cs = document.getElementById("auditNumeroCS").value;
 
   // -------------------------
   // 1. OBTENER HORAS EDITADAS
@@ -741,9 +742,7 @@ async function subirFotoEditada(event, tipo) {
   });
 
   // Obtener número CS desde el modal
-const numero_cs = document
-  .getElementById("tituloModalAuditoria")
-  .textContent.match(/\d+/)[0];
+const numero_cs = document.getElementById("auditNumeroCS").value;
 
   // Encontrar sector desde registros globales
   const registrosUsuario = registrosHoyGlobal.filter(

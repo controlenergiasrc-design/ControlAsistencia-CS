@@ -393,7 +393,7 @@ function abrirModalAuditoria(registro) {
   });
 
   // -----------------------------
-  // 4. UBICACIONES GOOGLE MAPSss
+  // 4. UBICACIONES GOOGLE MAPSSSSS
   // -----------------------------
   const linkEntrada = document.getElementById("linkEntrada");
   const linkSalida = document.getElementById("linkSalida");

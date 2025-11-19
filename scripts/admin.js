@@ -489,24 +489,50 @@ function abrirModalAuditoria(registro) {
   // -----------------------------
   // 9. FOTOS (debug de ruta final)
   // -----------------------------
+  // -----------------------------
+  // 9. FOTOS
+  // -----------------------------
   const imgEntrada = document.querySelector(".foto-box.entrada .foto-img");
   const imgSalida = document.querySelector(".foto-box.salida .foto-img");
 
-  // ENTRADA
-  imgEntrada.src = entrada.enlace
+  // URL original como viene de la hoja
+  const urlOriginalEntrada = entrada.enlace;
+  const urlOriginalSalida = salida.enlace;
+
+  // URL convertida para mostrar en <img>
+  const urlConvertidaEntrada = entrada.enlace
     ? convertirDriveDirecto(entrada.enlace)
-    : "https://placehold.co/120x120?text=Sin+foto";
-
-  // ALERT de ruta final
-  alert("Ruta final de ENTRADA (src): " + imgEntrada.src);
-
-  // SALIDA
-  imgSalida.src = salida.enlace
+    : "";
+  const urlConvertidaSalida = salida.enlace
     ? convertirDriveDirecto(salida.enlace)
+    : "";
+
+  // Mostrar alerta
+  alert(
+    " DEBUG FOTOS\n\n" +
+      " ENTRADA:\n" +
+      "• Original: " +
+      urlOriginalEntrada +
+      "\n" +
+      "• Convertida: " +
+      urlConvertidaEntrada +
+      "\n\n" +
+      " SALIDA:\n" +
+      "• Original: " +
+      urlOriginalSalida +
+      "\n" +
+      "• Convertida: " +
+      urlConvertidaSalida
+  );
+
+  // Asignar al <img>
+  imgEntrada.src = urlConvertidaEntrada
+    ? urlConvertidaEntrada
     : "https://placehold.co/120x120?text=Sin+foto";
 
-  // ALERT de ruta final
-  alert("Ruta final de SALIDA (src): " + imgSalida.src);
+  imgSalida.src = urlConvertidaSalida
+    ? urlConvertidaSalida
+    : "https://placehold.co/120x120?text=Sin+foto";
 
   // -----------------------------
   // 10. BOTONES EDITAR FOTO

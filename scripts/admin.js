@@ -628,7 +628,6 @@ function llenarFiltroSectores(registros) {
   });
 }
 
-
 // =======================================
 // GUARDAR CAMBIOS DE AUDITORÍA
 // =======================================
@@ -674,7 +673,17 @@ async function guardarCambiosAuditoria() {
   // -------------------------
   // 5. URL COMPLETA (con sector)
   // -------------------------
-  const url = `${API_URL}?accion=guardarAuditoria&numero_cs=${numero_cs}&sector=${encodeURIComponent(sector)}&hora_entrada=${encodeURIComponent(horaEntrada)}&hora_salida=${encodeURIComponent(horaSalida)}&actividades=${encodeURIComponent(actividades)}&novedades=${encodeURIComponent(novedades)}&observaciones=${encodeURIComponent(observaciones)}`;
+  const url = `${API_URL}?accion=guardarAuditoria&numero_cs=${numero_cs}&sector=${encodeURIComponent(
+    sector
+  )}&hora_entrada=${encodeURIComponent(
+    horaEntrada
+  )}&hora_salida=${encodeURIComponent(
+    horaSalida
+  )}&actividades=${encodeURIComponent(
+    actividades
+  )}&novedades=${encodeURIComponent(
+    novedades
+  )}&observaciones=${encodeURIComponent(observaciones)}`;
 
   try {
     const res = await fetch(url);
@@ -738,29 +747,29 @@ async function confirmarAuditoriaFrontend() {
 }
 
 //========================================
-// SUBIR FOTO EDITADA
+// SUBIR FOTO EDITADA (VERSIÓN PRO)
 //========================================
 async function subirFotoEditada(event, tipo) {
   const archivo = event.target.files[0];
   if (!archivo) return;
 
-  // Convertir a Base64
+  // Convertir archivo a Base64
   const base64 = await new Promise((resolve) => {
     const lector = new FileReader();
     lector.onloadend = () => resolve(lector.result);
     lector.readAsDataURL(archivo);
   });
 
-  // Obtener número CS desde el modal
+  // Número CS desde el título del modal
   const numero_cs = document
     .getElementById("tituloModalAuditoria")
     .textContent.match(/\d+/)[0];
 
-  // Encontrar sector desde registros globales
-  const registrosUsuario = registrosHoyGlobal.filter(
-    (r) => String(r.numero_cs) === String(numero_cs)
-  );
-  const sector = registrosUsuario[0]?.sector || "";
+  // Sector REAL del registro
+  const sector = document.getElementById("hiddenSector").value.trim();
+
+  // FECHA REAL del registro (entrada o salida)
+  const fecha = document.getElementById("hiddenFechaRegistro").value.trim();
 
   // Enviar al API
   const body = {
@@ -768,6 +777,7 @@ async function subirFotoEditada(event, tipo) {
     numero_cs,
     tipo,
     sector,
+    fecha,
     fotoBase64: base64,
   };
 
@@ -788,7 +798,7 @@ async function subirFotoEditada(event, tipo) {
       document.querySelector(".foto-box.salida .foto-img").src = data.link;
     }
 
-    // Recargar tabla
+    // Recargar tabla del dashboard
     obtenerRegistrosHoy();
   } else {
     alert("❌ Error al actualizar la foto");

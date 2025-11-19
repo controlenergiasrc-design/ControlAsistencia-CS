@@ -336,7 +336,7 @@ function convertirDriveDirecto(url) {
 
   if (match && match[1]) {
     const id = match[1];
-    return `https://drive.google.com/uc?export=view&id=${id}`;
+    return `https://drive.google.com/uc?export=download&id=${id}`;
   }
 
   return url; // si no es enlace de Drive, se devuelve igual

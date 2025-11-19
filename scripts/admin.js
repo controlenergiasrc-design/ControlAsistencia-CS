@@ -331,15 +331,21 @@ function normalizarHora(hora) {
 function convertirDriveDirecto(url) {
   if (!url) return "";
 
-  // Detectar ID en formato: /file/d/ID/...
-  const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-
+  // Formato 1: https://drive.google.com/file/d/ID/view
+  let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     const id = match[1];
-    return `https://drive.google.com/uc?export=download&id=${id}`;
+    return `https://drive.google.com/uc?id=${id}`;
   }
 
-  return url; // si no es enlace de Drive, se devuelve igual
+  // Formato 2: https://drive.google.com/uc?export=download&id=ID
+  let match2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (match2 && match2[1]) {
+    const id = match2[1];
+    return `https://drive.google.com/uc?id=${id}`;
+  }
+
+  return url;
 }
 
 // =======================================

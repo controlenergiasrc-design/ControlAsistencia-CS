@@ -628,13 +628,17 @@ function llenarFiltroSectores(registros) {
   });
 }
 
+
 // =======================================
 // GUARDAR CAMBIOS DE AUDITORÍA
 // =======================================
 async function guardarCambiosAuditoria() {
   const numero_cs = document
     .getElementById("tituloModalAuditoria")
-    .textContent.match(/\d+/)[0]; // Extrae la cuadrilla
+    .textContent.match(/\d+/)[0];
+
+  // AGREGADO: obtener sector
+  const sector = document.getElementById("hiddenSector").value.trim();
 
   // -------------------------
   // 1. OBTENER HORAS EDITADAS
@@ -668,17 +672,9 @@ async function guardarCambiosAuditoria() {
     .value.trim();
 
   // -------------------------
-  // 5. CONSTRUIR URL PARA GUARDAR
+  // 5. URL COMPLETA (con sector)
   // -------------------------
-  const url = `${API_URL}?accion=guardarAuditoria&numero_cs=${numero_cs}&hora_entrada=${encodeURIComponent(
-    horaEntrada
-  )}&hora_salida=${encodeURIComponent(
-    horaSalida
-  )}&actividades=${encodeURIComponent(
-    actividades
-  )}&novedades=${encodeURIComponent(
-    novedades
-  )}&observaciones=${encodeURIComponent(observaciones)}`;
+  const url = `${API_URL}?accion=guardarAuditoria&numero_cs=${numero_cs}&sector=${encodeURIComponent(sector)}&hora_entrada=${encodeURIComponent(horaEntrada)}&hora_salida=${encodeURIComponent(horaSalida)}&actividades=${encodeURIComponent(actividades)}&novedades=${encodeURIComponent(novedades)}&observaciones=${encodeURIComponent(observaciones)}`;
 
   try {
     const res = await fetch(url);
@@ -687,9 +683,6 @@ async function guardarCambiosAuditoria() {
     if (data.success) {
       alert("✔ Cambios guardados correctamente");
 
-      // -------------------------
-      // 6. GUARDAR TAMBIÉN EN LOCALSTORAGE
-      // -------------------------
       const clave = `auditoria_${numero_cs}`;
       const objetoLocal = {
         horaEntrada,
@@ -701,10 +694,7 @@ async function guardarCambiosAuditoria() {
 
       localStorage.setItem(clave, JSON.stringify(objetoLocal));
 
-      // Recargar tabla
       obtenerRegistrosHoy();
-
-      // cerrar modal
       cerrarModalAuditoria();
     } else {
       alert("⚠ No se pudieron guardar los cambios");

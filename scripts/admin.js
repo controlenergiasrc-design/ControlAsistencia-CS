@@ -583,9 +583,9 @@ window.addEventListener("click", (e) => {
   }
 });
 
-// =======================================
-// LLENAR SELECT DE SECTORES AUTOMÁTICAMENTE
-// =======================================
+// ====================================================
+// LLENAR SELECT DE SECTORES AUTOMÁTICAMENTE (SECTORES)
+// ====================================================
 function llenarFiltroSectores(registros) {
   let filtro = document.getElementById("filtroSector");
   if (!filtro) return;
@@ -712,6 +712,38 @@ async function guardarCambiosAuditoria() {
   } catch (error) {
     console.error("❌ Error guardando auditoría:", error);
     alert("Error al guardar los cambios.");
+  }
+}
+
+// =======================================
+// CONFIRMAR AUDITORÍA (BOTÓN ROJO)
+// =======================================
+async function confirmarAuditoriaFrontend() {
+  // Sacar el número CS del título del modal
+  const numero_cs = document
+    .getElementById("tituloModalAuditoria")
+    .textContent.match(/\d+/)[0];
+
+  const url = `${API_URL}?accion=confirmarAuditoria&numero_cs=${numero_cs}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.success) {
+      alert("✔ Registro marcado como AUDITADO");
+
+      // Recargar tabla para que ya no deje auditar de nuevo
+      obtenerRegistrosHoy();
+
+      // Cerrar modal
+      cerrarModalAuditoria();
+    } else {
+      alert(data.mensaje || "⚠ No se pudo auditar");
+    }
+  } catch (err) {
+    console.error("❌ Error al auditar:", err);
+    alert("Error al auditar el registro.");
   }
 }
 

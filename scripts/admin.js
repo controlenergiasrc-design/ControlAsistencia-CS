@@ -328,18 +328,18 @@ function normalizarHora(hora) {
 function convertirDriveDirecto(url) {
   if (!url) return "";
 
-  // Formato 1: /file/d/ID/
+  // 1. Extraer ID desde "/file/d/ID/"
   let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     const id = match[1];
-    return `https://drive.google.com/uc?export=view&id=${id}`;
+    return `https://drive.google.com/thumbnail?id=${id}`;
   }
 
-  // Formato 2: ?id=ID
+  // 2. Extraer ID desde "?id=ID"
   let match2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (match2 && match2[1]) {
     const id = match2[1];
-    return `https://drive.google.com/uc?export=view&id=${id}`;
+    return `https://drive.google.com/thumbnail?id=${id}`;
   }
 
   return url;

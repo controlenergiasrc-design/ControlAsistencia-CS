@@ -374,14 +374,15 @@
 .foto-box {
   flex: 1;
   display: flex;
-  align-items: flex-start;   /* ← reemplazo */
-  position: relative;        /* ← AGREGA ESTO */
+  align-items: center;   /* ← FIX */
+  position: relative;
   gap: 10px;
   border: 3px solid #41b6e6;
   border-radius: 20px;
   padding: 10px 15px;
   background: #f8fbfd;
 }
+
 .foto-box.salida {
   border-color: #fd7e14;
   background: #fff8f3;
@@ -393,8 +394,8 @@
   border-radius: 10px;
   border: 1px solid #ccc;
   object-fit: cover;
-   display: block;          /* ← AGREGA ESTO */
-  position: relative;
+  display: block;
+  position: static;   /* ← FIX */
 }
 
 .foto-info {
@@ -403,6 +404,7 @@
   flex-direction: column;
   gap: 6px;
 }
+
 
 .link-maps {
   color: #41b6e6;

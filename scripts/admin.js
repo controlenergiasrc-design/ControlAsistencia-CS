@@ -486,9 +486,6 @@ function abrirModalAuditoria(registro) {
   // -----------------------------
   // 9. FOTOS (debug de ruta final)
   // -----------------------------
-  // -----------------------------
-  // 9. FOTOS
-  // -----------------------------
   const imgEntrada = document.querySelector(".foto-box.entrada .foto-img");
   const imgSalida = document.querySelector(".foto-box.salida .foto-img");
 
@@ -505,7 +502,7 @@ function abrirModalAuditoria(registro) {
     : "";
 
   // Mostrar alerta
-  alert(
+ /* alert(
     " DEBUG FOTOS\n\n" +
       " ENTRADA:\n" +
       "• Original: " +
@@ -520,7 +517,7 @@ function abrirModalAuditoria(registro) {
       "\n" +
       "• Convertida: " +
       urlConvertidaSalida
-  );
+  );*/
 
   // Asignar al <img>
   imgEntrada.src = urlConvertidaEntrada

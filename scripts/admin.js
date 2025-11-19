@@ -481,18 +481,30 @@ function abrirModalAuditoria(registro) {
   }
 
   // -----------------------------
-  // 9. FOTOS
+  // 9. FOTOS (con alerts de debug)
   // -----------------------------
   const imgEntrada = document.querySelector(".foto-box.entrada .foto-img");
   const imgSalida = document.querySelector(".foto-box.salida .foto-img");
 
-  imgEntrada.src = entrada.enlace
-    ? convertirDriveDirecto(entrada.enlace)
-    : "https://placehold.co/120x120?text=Sin+foto";
+  // ENTRADA
+  if (entrada.enlace && entrada.enlace.trim() !== "") {
+    const urlEntrada = convertirDriveDirecto(entrada.enlace);
+    alert("✔ Se recibió ruta de ENTRADA:\n" + urlEntrada);
+    imgEntrada.src = urlEntrada;
+  } else {
+    alert("❌ No se recibió enlace de ENTRADA");
+    imgEntrada.src = "https://placehold.co/120x120?text=Sin+foto";
+  }
 
-  imgSalida.src = salida.enlace
-    ? convertirDriveDirecto(salida.enlace)
-    : "https://placehold.co/120x120?text=Sin+foto";
+  // SALIDA
+  if (salida.enlace && salida.enlace.trim() !== "") {
+    const urlSalida = convertirDriveDirecto(salida.enlace);
+    alert("✔ Se recibió ruta de SALIDA:\n" + urlSalida);
+    imgSalida.src = urlSalida;
+  } else {
+    alert("❌ No se recibió enlace de SALIDA");
+    imgSalida.src = "https://placehold.co/120x120?text=Sin+foto";
+  }
 
   // -----------------------------
   // 10. BOTONES EDITAR FOTO

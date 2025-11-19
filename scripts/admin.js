@@ -499,10 +499,10 @@ function abrirModalAuditoria(registro) {
   // SALIDA
   if (salida.enlace && salida.enlace.trim() !== "") {
     const urlSalida = convertirDriveDirecto(salida.enlace);
-    alert("✔ Se recibió ruta de SALIDA:\n" + urlSalida);
+    alert("Se recibió ruta de SALIDA:\n" + urlSalida);
     imgSalida.src = urlSalida;
   } else {
-    alert("❌ No se recibió enlace de SALIDA");
+    alert("No se recibió enlace de SALIDA");
     imgSalida.src = "https://placehold.co/120x120?text=Sin+foto";
   }
 

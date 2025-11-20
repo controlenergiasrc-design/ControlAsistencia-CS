@@ -934,6 +934,7 @@ function renderizarHistorial(registros) {
         </td>
         <td>${fila.actividades || "-"}</td>
         <td>${fila.novedades || "-"}</td>
+        <td>${fila.observaciones || "-"}</td>
 
         <td>
           <button class="btn btn-sm btn-audit"

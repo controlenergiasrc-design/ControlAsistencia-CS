@@ -570,6 +570,89 @@ textarea {
   opacity: 0.35;
   filter: grayscale(100%);
 }
+/* ============================================================
+   HISTORIAL — ESTILO EXCEL (solo esta tabla)
+============================================================ */
+
+.historial-card {
+  font-size: 11px;
+}
+
+/* Scroll lateral */
+.historial-table-container {
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* Tabla estilo Excel */
+.historial-table {
+  width: max-content;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.historial-table thead th {
+  background: #f1f5f9;        /* gris clarito estilo Excel */
+  font-weight: 600;
+  color: #475569;
+  padding: 6px 10px;
+  border-bottom: 2px solid #cbd5e1;
+  white-space: nowrap;
+}
+
+.historial-table tbody td {
+  padding: 4px 8px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.historial-table tbody tr:hover {
+  background: #f8fafc;      /* hover estilo Excel */
+}
+
+.historial-table button {
+  font-size: 10px;
+  padding: 3px 6px;
+}
+
+/* Paginación */
+.historial-paginacion {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.historial-paginacion button {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+/* Botones especiales del historial */
+.btn-ver-foto {
+  background: var(--isse-blue);
+  color: white;
+  border: none;
+  padding: 3px 8px;
+  font-size: 10px;
+  border-radius: 4px;
+}
+.btn-ver-foto:hover {
+  background: #2da0cf;
+}
+
+.btn-auditar-hist {
+  background: #d93025;
+  color: white;
+  border: none;
+  padding: 3px 8px;
+  font-size: 10px;
+  border-radius: 4px;
+}
+.btn-auditar-hist:hover {
+  background: #b8281f;
+}
 
     </style>
   </head>
@@ -802,54 +885,84 @@ textarea {
           </div>
         </div>
 
-        <!--==========Modulo de historial============-->
-        <div id="mod-historial" class="page d-none">
-          <div class="page-title">
-            <h1>Historial de Asistencias</h1>
-            <div class="page-sub">
-              Consulta registros anteriores por fecha o sector
-            </div>
-          </div>
+<!--========== MODULO DE HISTORIAL ==========-->
+<div id="mod-historial" class="page d-none">
 
-          <div class="card card-panel">
-            <div
-              class="card-header d-flex justify-content-between align-items-center"
-            >
-              <h2 class="card-title m-0">Registros históricos</h2>
-              <input
-                type="date"
-                id="filtroFecha"
-                class="form-control form-control-sm"
-                style="width: 200px"
-              />
-            </div>
+  <div class="page-title">
+    <h1>Historial de Asistencias</h1>
+    <div class="page-sub">
+      Vista detallada del registro histórico (estilo Excel)
+    </div>
+  </div>
 
-            <div class="card-body">
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Fecha</th>
-                      <th>Número C/S</th>
-                      <th>Nombre</th>
-                      <th>Sector</th>
-                      <th>Tipo</th>
-                      <th>Hora</th>
-                      <th>Foto</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tablaHistorial">
-                    <tr>
-                      <td colspan="7" class="text-center text-muted">
-                        Sin datos para mostrar 📅
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+  <div class="card card-panel historial-card">
+
+    <!-- HEADER -->
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h2 class="card-title m-0">Registros históricos</h2>
+
+      <div class="d-flex gap-2">
+        <input 
+          type="date" 
+          id="filtroFechaHistorial" 
+          class="form-control form-control-sm" 
+          style="min-width:160px;"
+        />
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="card-body">
+
+      <!-- Scroll lateral -->
+      <div class="historial-table-container">
+        <table class="historial-table" id="tablaHistorialFront">
+
+          <!-- ENCABEZADO -->
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Número C/S</th>
+              <th>Nombre</th>
+              <th>Tipo usuario</th>
+              <th>Sector</th>
+
+              <th>Tipo foto (E)</th>
+              <th>Fecha entrada</th>
+              <th>Hora entrada</th>
+              <th>Lat entrada</th>
+              <th>Lng entrada</th>
+              <th>Foto entrada</th>
+
+              <th>Tipo foto (S)</th>
+              <th>Fecha salida</th>
+              <th>Hora salida</th>
+              <th>Lat salida</th>
+              <th>Lng salida</th>
+              <th>Foto salida</th>
+
+              <th>Auditoría</th>
+            </tr>
+          </thead>
+
+          <!-- CUERPO -->
+          <tbody id="historialBodyFront">
+            <tr>
+              <td colspan="18" class="text-center text-muted py-3">
+                Cargando historial… ⏳
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PAGINACIÓN -->
+      <div id="paginacionHistorial" class="historial-paginacion mt-3"></div>
+
+    </div>
+  </div>
+</div>
+
         <!--=========Modulo de configuracions==========-->
         <div id="mod-config" class="page d-none">
           <div class="page-title">

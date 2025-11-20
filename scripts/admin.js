@@ -324,7 +324,9 @@ function normalizarHora(hora) {
 
   return `${h}:${m}`;
 }
-
+//====================================================
+//Convertir a drive con formato thumbnail (miniaatura)
+//====================================================
 function convertirDriveDirecto(url) {
   if (!url) return "";
 

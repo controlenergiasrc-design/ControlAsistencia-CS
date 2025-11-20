@@ -7,7 +7,6 @@ const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
 // VARIABLES GLOBALES
 // =======================================
 let registrosHoyGlobal = []; // aquí guardaremos los registros válidos de hoy
-
 // =======================================
 // AL CARGAR LA PÁGINA
 // =======================================
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   mostrarTituloHoy();
   obtenerRegistrosHoy();
 });
-
 // ======================================================
 // FILTRO DE FECHA PARA HISTORIAL
 // ======================================================
@@ -24,7 +22,6 @@ const filtroFecha = document.getElementById("filtroFechaHistorial");
 if (filtroFecha) {
   filtroFecha.addEventListener("change", cargarHistorial);
 }
-
 // =======================================
 // MOSTRAR NOMBRE DEL USUARIO ACTUAL
 // =======================================
@@ -47,7 +44,6 @@ function mostrarNombreUsuario() {
 function mostrarTituloHoy() {
   const titulo = document.getElementById("tituloRegistros");
   if (!titulo) return;
-
   const hoy = new Date();
   const opciones = {
     weekday: "long",
@@ -55,17 +51,13 @@ function mostrarTituloHoy() {
     month: "long",
     year: "numeric",
   };
-
   // Crear formato bonito en español
   const fechaFormateada = hoy.toLocaleDateString("es-ES", opciones);
-
   // Capitalizar primera letra del día (lunes → Lunes)
   const fechaBonita =
     fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
-
   titulo.textContent = `Registros de hoy — ${fechaBonita}`;
 }
-
 // =======================================
 // OBTENER REGISTROS DEL DÍA
 // =======================================
@@ -74,11 +66,9 @@ async function obtenerRegistrosHoy() {
     const res = await fetch(`${API_URL}?accion=registrosHoy`);
     const data = await res.json();
     console.log("Datos recibidos:", data);
-
     if (data && data.registros) {
       //  GUARDAMOS TODOS LOS REGISTROS EN UNA VARIABLE GLOBAL
       registrosHoyGlobal = data.registros;
-
       // Filtrar solo registros con foto (enlace existente)
       const entradas = data.registros.filter(
         (r) =>
@@ -86,18 +76,15 @@ async function obtenerRegistrosHoy() {
           r.enlace &&
           r.enlace.trim() !== ""
       ).length;
-
       const salidas = data.registros.filter(
         (r) =>
           r.tipo?.toLowerCase() === "salida" &&
           r.enlace &&
           r.enlace.trim() !== ""
       ).length;
-
       // Mostrar los valores en las tarjetas
       document.getElementById("metricEntradas").textContent = entradas;
       document.getElementById("metricSalidas").textContent = salidas;
-
       // Renderizar tabla normalmente
       renderizarTabla(data.registros);
       llenarFiltroSectores(data.registros);
@@ -114,65 +101,55 @@ async function obtenerRegistrosHoy() {
 function renderizarTabla(registros) {
   const tbody = document.getElementById("tablaRegistros");
   tbody.innerHTML = "";
-
   if (!registros.length) {
     tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">No hay registros del día de hoy 🕒</td></tr>`;
     return;
   }
-
   // Agrupar registros por numero_cs
   const agrupados = {};
   registros.forEach((r) => {
     if (!agrupados[r.numero_cs]) agrupados[r.numero_cs] = [];
     agrupados[r.numero_cs].push(r);
   });
-
   Object.values(agrupados).forEach((registrosUsuario) => {
     const entrada =
       registrosUsuario.find((r) => r.tipo?.toLowerCase() === "entrada") || {};
     const salida =
       registrosUsuario.find((r) => r.tipo?.toLowerCase() === "salida") || {};
-
     // OBJETO COMPLETO PARA EL MODAL
     const registroCompleto = {
       numero_cs: entrada.numero_cs || salida.numero_cs,
       nombre: entrada.nombre || salida.nombre,
       sector: entrada.sector || salida.sector,
       fecha: entrada.fecha || salida.fecha || "",
-
       entrada: {
         hora: entrada.hora || "",
         enlace: entrada.enlace || "",
         lat: entrada.lat || "",
         lng: entrada.lng || "",
       },
-
       salida: {
         hora: salida.hora || "",
         enlace: salida.enlace || "",
         lat: salida.lat || "",
         lng: salida.lng || "",
       },
-
       actividades: entrada.actividades || "",
       novedades: entrada.novedades || "",
       observaciones: entrada.observaciones || "",
       estado_auditoria: entrada.estado_auditoria || "",
     };
-
     // Convertir a JSON seguro
     const registroJSON = JSON.stringify(registroCompleto).replace(
       /"/g,
       "&quot;"
     );
-
     // HTML de la fila
     const filaHTML = `
       <tr>
         <td rowspan="2">${registroCompleto.numero_cs}</td>
         <td rowspan="2">${registroCompleto.nombre}</td>
         <td rowspan="2">${registroCompleto.sector}</td>
-
         <!-- Entrada -->
         <td>Entrada</td>
         <td>${entrada.hora || "-"}</td>
@@ -183,7 +160,6 @@ function renderizarTabla(registros) {
               : `<button class="btn btn-sm btn-gray" disabled>Sin foto</button>`
           }
         </td>
-
         <td rowspan="2" class="text-center align-middle">
           <button class="btn btn-sm btn-audit"
             onclick='abrirModalAuditoria(${registroJSON})'>
@@ -191,7 +167,6 @@ function renderizarTabla(registros) {
           </button>
         </td>
       </tr>
-
       <tr>
         <!-- Salida -->
         <td>Salida</td>
@@ -205,11 +180,9 @@ function renderizarTabla(registros) {
         </td>
       </tr>
     `;
-
     tbody.insertAdjacentHTML("beforeend", filaHTML);
   });
 }
-
 // =======================================
 // FILTRAR TABLA POR SECTOR (CORREGIDO)
 // =======================================
@@ -223,16 +196,13 @@ function filtrarPorSector(sectorSeleccionado) {
         renderizarTabla([]);
         return;
       }
-
       let registros = data.registros;
-
       // 3. Aplicamos filtro REAL por sector
       //    Aquí filtramos los datos ANTES de enviarlos a la tabla,
       //    evitando ocultar <tr> por separado y romper rowspan.
       if (sectorSeleccionado) {
         registros = registros.filter((r) => r.sector === sectorSeleccionado);
       }
-
       // 4. Renderizamos SOLO los registros filtrados
       //    Esto mantiene Entrada + Salida juntas.
       renderizarTabla(registros);
@@ -249,7 +219,6 @@ function filtrarPorSector(sectorSeleccionado) {
 document.querySelectorAll(".nav-link").forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
-
     // Evitar conflicto con "Cerrar sesión"
     if (link.innerText.includes("Cerrar")) {
       const confirmar = confirm("¿Seguro que deseas cerrar sesión?");
@@ -258,18 +227,15 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       window.location.href = "index.html"; // tu login
       return; // detiene el resto del código
     }
-
     // Quitar activo del resto
     document
       .querySelectorAll(".nav-link")
       .forEach((l) => l.classList.remove("active"));
     link.classList.add("active");
-
     // Ocultar todas las páginas
     document
       .querySelectorAll(".page")
       .forEach((p) => p.classList.add("d-none"));
-
     // Mostrar la correspondiente
     if (link.innerText.includes("Asistencia"))
       document.getElementById("mod-asistencia").classList.remove("d-none");
@@ -301,7 +267,6 @@ const actividades = [
   "Apoyo Revision de actas o Correcciones de NC",
   "Otra actividad",
 ];
-
 const novedades = [
   "Afectados por lluvia",
   "Daño vehiculo en mantenimiento",
@@ -313,23 +278,17 @@ const novedades = [
   "Tiempo de capacitacion previa",
   "Otro incidente",
 ];
-
 // Normalizar hora para <input type="time"> → "HH:MM"
 function normalizarHora(hora) {
   if (!hora) return "";
-
   // Convertir a string y eliminar espacios
   hora = String(hora).trim();
-
   // Separar por :
   const partes = hora.split(":");
-
   if (partes.length < 2) return "";
-
   // Hora y minuto con cero a la izquierda
   let h = partes[0].padStart(2, "0");
   let m = partes[1].padStart(2, "0");
-
   return `${h}:${m}`;
 }
 //====================================================
@@ -337,24 +296,20 @@ function normalizarHora(hora) {
 //====================================================
 function convertirDriveDirecto(url) {
   if (!url) return "";
-
   // 1. Extraer ID desde "/file/d/ID/"
   let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     const id = match[1];
     return `https://drive.google.com/thumbnail?id=${id}`;
   }
-
   // 2. Extraer ID desde "?id=ID"
   let match2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (match2 && match2[1]) {
     const id = match2[1];
     return `https://drive.google.com/thumbnail?id=${id}`;
   }
-
   return url;
 }
-
 // =======================================
 // ABRIR MODAL DE AUDITORÍA (NUEVA LÓGICA)
 // =======================================
@@ -362,9 +317,7 @@ function abrirModalAuditoria(registro) {
   // Mostrar modal
   document.getElementById("modalAuditoria").classList.remove("d-none");
   document.getElementById("overlay").classList.remove("d-none");
-
   console.log("Abriendo auditoría para:", registro);
-
   // -----------------------------
   // 1. GUARDAR EN INPUTS OCULTOS
   // -----------------------------
@@ -374,13 +327,11 @@ function abrirModalAuditoria(registro) {
 
   const entrada = registro.entrada || {};
   const salida = registro.salida || {};
-
   // -----------------------------
   // 2. TITULO DEL MODAL
   // -----------------------------
   const titulo = document.getElementById("tituloModalAuditoria");
   titulo.textContent = `AUDITORÍA – CUADRILLA ${registro.numero_cs}`;
-
   // -----------------------------
   // 3. HORAS
   // -----------------------------
@@ -398,13 +349,11 @@ function abrirModalAuditoria(registro) {
       inputHoraEntrada.value = inputHoraEntrada.dataset.original;
     }
   });
-
   inputHoraSalida.addEventListener("blur", () => {
     if (!inputHoraSalida.value.trim()) {
       inputHoraSalida.value = inputHoraSalida.dataset.original;
     }
   });
-
   // -----------------------------
   // 4. UBICACIONES GOOGLE MAPSSSSS
   // -----------------------------
@@ -424,7 +373,6 @@ function abrirModalAuditoria(registro) {
   } else {
     linkSalida.removeAttribute("href");
   }
-
   // -----------------------------
   // 5. LLENAR ACTIVIDADES
   // -----------------------------
@@ -445,13 +393,11 @@ function abrirModalAuditoria(registro) {
       listaAct.appendChild(tag);
     });
   }
-
   // -----------------------------
   // 6. LLENAR NOVEDADES
   // -----------------------------
   const listaNov = document.getElementById("listaNovedades");
   listaNov.innerHTML = "";
-
   if (registro.novedades) {
     registro.novedades.split(",").forEach((nov) => {
       nov = nov.trim();
@@ -466,13 +412,11 @@ function abrirModalAuditoria(registro) {
       listaNov.appendChild(tag);
     });
   }
-
   // -----------------------------
   // 7. OBSERVACIONES
   // -----------------------------
   const inputObs = document.getElementById("inputObservaciones");
   inputObs.value = registro.observaciones || "";
-
   // -----------------------------
   // 8. ESTADO AUDITORÍA
   // -----------------------------
@@ -492,7 +436,6 @@ function abrirModalAuditoria(registro) {
       botonAuditar.classList.remove("btn-disabled");
     }
   }
-
   // -----------------------------
   // 9. FOTOS (debug de ruta final)
   // -----------------------------
@@ -510,24 +453,6 @@ function abrirModalAuditoria(registro) {
   const urlConvertidaSalida = salida.enlace
     ? convertirDriveDirecto(salida.enlace)
     : "";
-
-  // Mostrar alerta
-  /* alert(
-    " DEBUG FOTOS\n\n" +
-      " ENTRADA:\n" +
-      "• Original: " +
-      urlOriginalEntrada +
-      "\n" +
-      "• Convertida: " +
-      urlConvertidaEntrada +
-      "\n\n" +
-      " SALIDA:\n" +
-      "• Original: " +
-      urlOriginalSalida +
-      "\n" +
-      "• Convertida: " +
-      urlConvertidaSalida
-  );*/
 
   // Asignar al <img>
   imgEntrada.src = urlConvertidaEntrada
@@ -939,11 +864,16 @@ function renderizarHistorial(registros) {
         <td>${fila.observaciones || "-"}</td>
 
         <td>
-          <button class="btn btn-sm btn-audit"
-            onclick='abrirModalAuditoria(${objJSON})'>
-            <i class="fa-solid fa-file-shield"></i> Auditar
-          </button>
+          ${
+            fila.estado === "Auditado"
+              ? `<span class="badge bg-success">Auditado ✔</span>`
+              : `<button class="btn btn-sm btn-audit"
+                    onclick='abrirModalAuditoria(${objJSON})'>
+                    <i class="fa-solid fa-file-shield"></i> Auditar
+                </button>`
+          }
         </td>
+
 
       </tr>
     `;

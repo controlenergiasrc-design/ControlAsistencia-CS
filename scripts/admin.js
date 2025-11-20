@@ -17,6 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
   obtenerRegistrosHoy();
 });
 
+// ======================================================
+// FILTRO DE FECHA PARA HISTORIAL
+// ======================================================
+const filtroFecha = document.getElementById("filtroFechaHistorial");
+if (filtroFecha) {
+  filtroFecha.addEventListener("change", cargarHistorial);
+}
+
 // =======================================
 // MOSTRAR NOMBRE DEL USUARIO ACTUAL
 // =======================================
@@ -504,7 +512,7 @@ function abrirModalAuditoria(registro) {
     : "";
 
   // Mostrar alerta
- /* alert(
+  /* alert(
     " DEBUG FOTOS\n\n" +
       " ENTRADA:\n" +
       "• Original: " +
@@ -839,4 +847,133 @@ async function subirFotoEditada(event, tipo) {
   } else {
     alert("❌ Error al actualizar la foto");
   }
+}
+
+// ======================================================
+// CARGAR HISTORIAL DESDE EL API
+// ======================================================
+async function cargarHistorial() {
+  const fecha = document.getElementById("filtroFechaHistorial").value;
+
+  if (!fecha) {
+    alert("Selecciona una fecha para consultar el historial");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}?accion=historial&fecha=${fecha}`);
+    const data = await res.json();
+
+    if (data && data.registros) {
+      renderizarHistorial(data.registros);
+    } else {
+      renderizarHistorial([]);
+    }
+  } catch (error) {
+    console.error("❌ Error al cargar historial:", error);
+    alert("Error cargando historial");
+  }
+}
+
+// ======================================================
+// RENDERIZAR TABLA DE HISTORIAL
+// ======================================================
+function renderizarHistorial(registros) {
+  const tbody = document.getElementById("historialBodyFront");
+  tbody.innerHTML = "";
+
+  if (!registros || registros.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="18" class="text-center text-muted">
+          No hay registros en este historial 📭
+        </td>
+      </tr>`;
+    return;
+  }
+
+  registros.forEach((fila) => {
+    const obj = construirObjetoHistorial(fila);
+    const objJSON = JSON.stringify(obj).replace(/"/g, "&quot;");
+
+    const html = `
+      <tr>
+
+        <td>${fila.id}</td>
+        <td>${fila.numero_cs}</td>
+        <td>${fila.nombre_usuario}</td>
+        <td>${fila.tipo_usuario}</td>
+        <td>${fila.sector}</td>
+
+        <!-- Entrada -->
+        <td>${fila.tipo_fotoentrada || "-"}</td> 
+        <td>${fila.fecha_entrada || "-"}</td>
+        <td>${fila.hora_entrada || "-"}</td>
+        <td>${fila.lat_entrada || "-"}</td>
+        <td>${fila.lng_entrada || "-"}</td>
+        <td>
+          ${
+            fila.enlace_fotoentrada
+              ? `<a href="${fila.enlace_fotoentrada}" target="_blank">Ver</a>`
+              : "-"
+          }
+        </td>
+
+        <!-- Salida -->
+        <td>${fila.tipo_fotosalida || "-"}</td>
+        <td>${fila.fecha_salida || "-"}</td>
+        <td>${fila.hora_salida || "-"}</td>
+        <td>${fila.lat_salida || "-"}</td>
+        <td>${fila.lng_salida || "-"}</td>
+        <td>
+          ${
+            fila.enlace_fotosalida
+              ? `<a href="${fila.enlace_fotosalida}" target="_blank">Ver</a>`
+              : "-"
+          }
+        </td>
+
+        <td>
+          <button class="btn btn-sm btn-audit"
+            onclick='abrirModalAuditoria(${objJSON})'>
+            <i class="fa-solid fa-file-shield"></i> Auditar
+          </button>
+        </td>
+
+      </tr>
+    `;
+
+    tbody.insertAdjacentHTML("beforeend", html);
+  });
+}
+
+//==========================================================================================
+//constructr de objeto para auditar historial *(reutiliza el mismo modal de auditoria iaria)
+//==========================================================================================
+function construirObjetoHistorial(fila) {
+  return {
+    numero_cs: fila.numero_cs,
+    nombre: fila.nombre_usuario,
+    sector: fila.sector,
+    fecha: fila.fecha_entrada || fila.fecha_salida || "",
+
+    entrada: {
+      hora: fila.hora_entrada,
+      enlace: fila.enlace_fotoentrada,
+      lat: fila.lat_entrada,
+      lng: fila.lng_entrada,
+    },
+
+    salida: {
+      hora: fila.hora_salida,
+      enlace: fila.enlace_fotosalida,
+      lat: fila.lat_salida,
+      lng: fila.lng_salida,
+    },
+
+    actividades: fila.actividades || "",
+    novedades: fila.novedades || "",
+    observaciones: fila.observaciones || "",
+    estado_auditoria: fila.estado || "",
+  };
 }

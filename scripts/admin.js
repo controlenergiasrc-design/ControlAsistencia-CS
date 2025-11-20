@@ -864,6 +864,8 @@ async function cargarHistorial() {
     const res = await fetch(`${API_URL}?accion=historial&fecha=${fecha}`);
     const data = await res.json();
 
+    console.log("Historial data:", data);
+
     if (data && data.registros) {
       renderizarHistorial(data.registros);
     } else {

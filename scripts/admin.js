@@ -15,13 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   mostrarTituloHoy();
   obtenerRegistrosHoy();
 });
-// ======================================================
-// FILTRO DE FECHA PARA HISTORIAL
-// ======================================================
-const filtroFecha = document.getElementById("filtroFechaHistorial");
-if (filtroFecha) {
-  filtroFecha.addEventListener("change", cargarHistorial);
-}
+
 // =======================================
 // MOSTRAR NOMBRE DEL USUARIO ACTUAL
 // =======================================
@@ -243,6 +237,7 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-usuarios").classList.remove("d-none");
     if (link.innerText.includes("Historial"))
       document.getElementById("mod-historial").classList.remove("d-none");
+    cargarHistorial(); // ← AQUÍ SE CARGA AUTOMÁTICAMENTE EL HISTORIAL
     if (link.innerText.includes("Configuración"))
       document.getElementById("mod-config").classList.remove("d-none");
   });
@@ -775,18 +770,11 @@ async function subirFotoEditada(event, tipo) {
 }
 
 // ======================================================
-// CARGAR HISTORIAL DESDE EL API
+// CARGAR HISTORIAL — Últimos 30 días (sin incluir HOY)
 // ======================================================
 async function cargarHistorial() {
-  const fecha = document.getElementById("filtroFechaHistorial").value;
-
-  if (!fecha) {
-    alert("Selecciona una fecha para consultar el historial");
-    return;
-  }
-
   try {
-    const res = await fetch(`${API_URL}?accion=historial&fecha=${fecha}`);
+    const res = await fetch(`${API_URL}?accion=historial`);
     const data = await res.json();
 
     console.log("Historial data:", data);
@@ -803,7 +791,7 @@ async function cargarHistorial() {
 }
 
 // ======================================================
-// RENDERIZAR TABLA DE HISTORIAL
+// RENDERIZAR TABLA DEL HISTORIAL
 // ======================================================
 function renderizarHistorial(registros) {
   const tbody = document.getElementById("historialBodyFront");
@@ -812,8 +800,8 @@ function renderizarHistorial(registros) {
   if (!registros || registros.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="18" class="text-center text-muted">
-          No hay registros en este historial 📭
+        <td colspan="21" class="text-center text-muted">
+          No hay registros en el historial 📭
         </td>
       </tr>`;
     return;
@@ -823,16 +811,16 @@ function renderizarHistorial(registros) {
     const obj = construirObjetoHistorial(fila);
     const objJSON = JSON.stringify(obj).replace(/"/g, "&quot;");
 
+    const estado = (fila.estado || "").toUpperCase();
+
     const html = `
       <tr>
-
         <td>${fila.id}</td>
         <td>${fila.numero_cs}</td>
         <td>${fila.nombre_usuario}</td>
         <td>${fila.tipo_usuario}</td>
         <td>${fila.sector}</td>
 
-        <!-- Entrada -->
         <td>${fila.tipo_fotoentrada || "-"}</td> 
         <td>${fila.fecha_entrada || "-"}</td>
         <td>${fila.hora_entrada || "-"}</td>
@@ -846,7 +834,6 @@ function renderizarHistorial(registros) {
           }
         </td>
 
-        <!-- Salida -->
         <td>${fila.tipo_fotosalida || "-"}</td>
         <td>${fila.fecha_salida || "-"}</td>
         <td>${fila.hora_salida || "-"}</td>
@@ -859,13 +846,14 @@ function renderizarHistorial(registros) {
               : "-"
           }
         </td>
+
         <td>${fila.actividades || "-"}</td>
         <td>${fila.novedades || "-"}</td>
         <td>${fila.observaciones || "-"}</td>
 
         <td>
           ${
-            fila.estado === "Auditado"
+            estado === "AUDITADO"
               ? `<span class="badge bg-success">Auditado ✔</span>`
               : `<button class="btn btn-sm btn-audit"
                     onclick='abrirModalAuditoria(${objJSON})'>
@@ -873,10 +861,7 @@ function renderizarHistorial(registros) {
                 </button>`
           }
         </td>
-
-
-      </tr>
-    `;
+      </tr>`;
 
     tbody.insertAdjacentHTML("beforeend", html);
   });
@@ -909,6 +894,7 @@ function construirObjetoHistorial(fila) {
     actividades: fila.actividades || "",
     novedades: fila.novedades || "",
     observaciones: fila.observaciones || "",
+
     estado_auditoria: fila.estado || "",
   };
 }

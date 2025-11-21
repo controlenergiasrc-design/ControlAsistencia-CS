@@ -596,13 +596,15 @@ textarea {
   white-space: nowrap;
 }
 
-.historial-table tbody tr:hover {
-  background: #f8fafc;      /* hover estilo Excel */
-}
-
 /*  HISTORIAL - UN SOLO COLOR EN TODAS LAS FILAS*/
 .historial-table tbody tr {
-  background-color: #ffeedc !important;
+  background-color: #ffefdc !important; /* naranjita suave */
+  transition: background-color 0.2s ease-in-out; /* ← AQUÍ la transición */
+}
+
+/* HOVER blanco */
+.historial-table tbody tr:hover {
+  background-color: #ffffff !important;
 }
 
 .historial-table button {

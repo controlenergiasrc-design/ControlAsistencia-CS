@@ -851,7 +851,8 @@ function renderizarHistorial(registros) {
         <td>
           ${
             fila.enlace_fotosalida
-              ? `<a href="${fila.enlace_fotosalida}" target="_blank">Ver</a>`
+              
+              ? `<a href="${fila.enlace_fotosalida}" target="_blank" class="btn btn-sm btn-gray"><i class="fa-solid fa-camera"></i> Ver foto</a>`
               : "-"
           }
         </td>

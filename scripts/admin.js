@@ -773,8 +773,17 @@ async function subirFotoEditada(event, tipo) {
 // CARGAR HISTORIAL — Últimos 30 días (sin incluir HOY)
 // ======================================================
 async function cargarHistorial() {
+  const fecha = document.getElementById("filtroFechaHistorial").value;
+
+  let url = `${API_URL}?accion=historial`;
+
+  // Si el usuario seleccionó una fecha → usar filtro manual
+  if (fecha) {
+    url += `&fecha=${fecha}`;
+  }
+
   try {
-    const res = await fetch(`${API_URL}?accion=historial`);
+    const res = await fetch(url);
     const data = await res.json();
 
     console.log("Historial data:", data);

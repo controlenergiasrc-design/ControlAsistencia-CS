@@ -653,6 +653,13 @@ textarea {
 .btn-auditar-hist:hover {
   background: #b8281f;
 }
+/* ==== Reducir tamaño de letra SOLO en la tabla principal ==== */
+.tabla-hoy th,
+.tabla-hoy td {
+  font-size: 12px !important;   /* Cámbialo a 11px si quieres aún más pequeño */
+  padding: 6px 8px !important;  /* Más compacta */
+}
+
 
     </style>
   </head>
@@ -766,7 +773,7 @@ textarea {
             <div class="card-body">
               <!--tabla de registros diarios-->
               <div class="table-wrap">
-                <table class="table">
+                  <table class="table tabla-hoy">
                   <thead>
                     <tr>
                       <th style="min-width: 100px">Número C/S</th>

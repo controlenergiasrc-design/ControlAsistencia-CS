@@ -237,7 +237,7 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-usuarios").classList.remove("d-none");
     if (link.innerText.includes("Historial"))
       document.getElementById("mod-historial").classList.remove("d-none");
-    cargarHistorial(); // ← AQUÍ SE CARGA AUTOMÁTICAMENTE EL HISTORIAL
+      cargarHistorial(); // ← AQUÍ SE CARGA AUTOMÁTICAMENTE EL HISTORIAL
     if (link.innerText.includes("Configuración"))
       document.getElementById("mod-config").classList.remove("d-none");
   });

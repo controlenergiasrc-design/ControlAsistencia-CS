@@ -880,21 +880,96 @@ function renderizarHistorial(registros) {
 //constructr de objeto para auditar historial *(reutiliza el mismo modal de auditoria iaria)
 //==========================================================================================
 function construirObjetoHistorial(fila) {
+
+  // =============================
+  // LIMPIAR FECHA (Cualquiera → YYYY-MM-DD)
+  // =============================
+  function limpiarFecha(v) {
+    if (!v) return "";
+
+    // Si es objeto Date
+    if (v instanceof Date && !isNaN(v)) {
+      return v.toISOString().split("T")[0]; // YYYY-MM-DD
+    }
+
+    let s = String(v).trim();
+    if (s === "") return "";
+
+    // Serial de Google Sheets
+    if (!isNaN(s) && !s.includes("-") && !s.includes("/")) {
+      const ms = (Number(s) - 25569) * 86400 * 1000;
+      return new Date(ms).toISOString().split("T")[0];
+    }
+
+    // YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+    // MM/DD/YYYY → YYYY-MM-DD
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
+      const [mm, dd, yyyy] = s.split("/");
+      return `${yyyy}-${mm.padStart(2,"0")}-${dd.padStart(2,"0")}`;
+    }
+
+    // Último intento → Date()
+    const f = new Date(s);
+    return isNaN(f) ? "" : f.toISOString().split("T")[0];
+  }
+
+  // =============================
+  // LIMPIAR HORA (Cualquiera → HH:mm:ss)
+  // =============================
+  function limpiarHora(v) {
+    if (!v) return "";
+
+    // Si es Date con hora
+    if (v instanceof Date && !isNaN(v)) {
+      return v.toTimeString().split(" ")[0]; // HH:mm:ss
+    }
+
+    let s = String(v).trim();
+    if (s === "") return "";
+
+    // HH:mm
+    if (/^\d{2}:\d{2}$/.test(s)) {
+      return s + ":00";
+    }
+
+    // HH:mm:ss
+    if (/^\d{2}:\d{2}:\d{2}$/.test(s)) {
+      return s;
+    }
+
+    // Si viene tipo “1899-12-30T23:38:52.000Z”
+    if (s.includes("T")) {
+      return s.split("T")[1].split(".")[0];
+    }
+
+    return "";
+  }
+
+  // =============================
+  // CONSTRUCCIÓN FINAL DEL OBJETO
+  // =============================
   return {
     numero_cs: fila.numero_cs,
     nombre: fila.nombre_usuario,
     sector: fila.sector,
-    fecha: fila.fecha_entrada || fila.fecha_salida || "",
+    fecha:
+      limpiarFecha(fila.fecha_entrada) ||
+      limpiarFecha(fila.fecha_salida) ||
+      "",
 
     entrada: {
-      hora: fila.hora_entrada,
+      hora: limpiarHora(fila.hora_entrada),
+      fecha: limpiarFecha(fila.fecha_entrada),
       enlace: fila.enlace_fotoentrada,
       lat: fila.lat_entrada,
       lng: fila.lng_entrada,
     },
 
     salida: {
-      hora: fila.hora_salida,
+      hora: limpiarHora(fila.hora_salida),
+      fecha: limpiarFecha(fila.fecha_salida),
       enlace: fila.enlace_fotosalida,
       lat: fila.lat_salida,
       lng: fila.lng_salida,
@@ -903,7 +978,6 @@ function construirObjetoHistorial(fila) {
     actividades: fila.actividades || "",
     novedades: fila.novedades || "",
     observaciones: fila.observaciones || "",
-
     estado_auditoria: fila.estado || "",
   };
 }

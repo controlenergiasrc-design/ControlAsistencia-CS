@@ -667,6 +667,101 @@ textarea {
   padding: 5px 6px !important;
   line-height: 1.1 !important;
 }
+/* ============================================================
+   ❄️ CONGELAR PRIMERAS 3 COLUMNAS DEL HISTORIAL + CELDAS COMPACTAS
+============================================================ */
+
+/* Contenedor con scroll */
+.historial-table-container {
+  overflow-x: auto;
+  position: relative;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* Tabla estilo Excel */
+.historial-table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+  font-size: 11px;
+  table-layout: fixed; /* ← hace que todas las columnas tengan tamaño estable */
+}
+
+/* Encabezados */
+.historial-table thead th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #475569;
+  padding: 6px 10px !important;
+  border-bottom: 2px solid #cbd5e1;
+  white-space: nowrap;
+  height: 32px;           /* ← alto fijo */
+  line-height: 32px;
+}
+
+/* Celdas del cuerpo */
+.historial-table tbody td {
+  padding: 4px 8px !important;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+  height: 30px;           /* ← alto fijo */
+  line-height: 30px;
+  overflow: hidden;
+  text-overflow: ellipsis; /* ← evita que el texto se salga */
+}
+
+/* Color base de las filas */
+.historial-table tbody tr {
+  background-color: #fff4ea !important;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Hover */
+.historial-table tbody tr:hover {
+  background-color: #ffffff !important;
+}
+
+/* Botones de la tabla */
+.historial-table button {
+  font-size: 10px;
+  padding: 3px 6px;
+}
+
+/* ============ ❄️ COLUMNAS CONGELADAS ============ */
+
+/* Columna 1: ID */
+.historial-table th:nth-child(1),
+.historial-table td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: #fff4ea;
+}
+
+/* Columna 2: Número C/S */
+.historial-table th:nth-child(2),
+.historial-table td:nth-child(2) {
+  position: sticky;
+  left: 70px; /* ← ajustado al ancho real de ID */
+  z-index: 3;
+  background: #fff4ea;
+}
+
+/* Columna 3: Nombre */
+.historial-table th:nth-child(3),
+.historial-table td:nth-child(3) {
+  position: sticky;
+  left: 170px; /* ID (70) + CS (100) */
+  z-index: 3;
+  background: #fff4ea;
+}
+
+/* Asegurar que los TH estén por encima */
+.historial-table thead th {
+  z-index: 5 !important;
+}
+
     </style>
   </head>
   <body>

@@ -237,7 +237,7 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-usuarios").classList.remove("d-none");
     if (link.innerText.includes("Historial"))
       document.getElementById("mod-historial").classList.remove("d-none");
-      cargarHistorial(); // ← AQUÍ SE CARGA AUTOMÁTICAMENTE EL HISTORIAL
+    cargarHistorial(); // ← AQUÍ SE CARGA AUTOMÁTICAMENTE EL HISTORIAL
     if (link.innerText.includes("Configuración"))
       document.getElementById("mod-config").classList.remove("d-none");
   });
@@ -591,7 +591,6 @@ function llenarFiltroSectores(registros) {
     filtrarPorSector(filtro.value);
   });
 }
-
 // =======================================
 // GUARDAR CAMBIOS DE AUDITORÍA
 // =======================================
@@ -604,10 +603,13 @@ async function guardarCambiosAuditoria() {
   const sector = document.getElementById("hiddenSector").value.trim();
 
   // -------------------------
-  // 1. OBTENER HORAS EDITADAS
+  // 1. OBTENER HORAS y fecha EDITADAS
   // -------------------------
   const horaEntrada = document.getElementById("inputHoraEntrada").value.trim();
   const horaSalida = document.getElementById("inputHoraSalida").value.trim();
+  const fechaRegistro = document
+    .getElementById("hiddenFechaRegistro")
+    .value.trim();
 
   // -------------------------
   // 2. OBTENER ACTIVIDADES
@@ -639,6 +641,8 @@ async function guardarCambiosAuditoria() {
   // -------------------------
   const url = `${API_URL}?accion=guardarAuditoria&numero_cs=${numero_cs}&sector=${encodeURIComponent(
     sector
+  )}&fecha_registro=${encodeURIComponent(
+    fechaRegistro
   )}&hora_entrada=${encodeURIComponent(
     horaEntrada
   )}&hora_salida=${encodeURIComponent(
@@ -880,7 +884,6 @@ function renderizarHistorial(registros) {
 //constructr de objeto para auditar historial *(reutiliza el mismo modal de auditoria iaria)
 //==========================================================================================
 function construirObjetoHistorial(fila) {
-
   // =============================
   // LIMPIAR FECHA (Cualquiera → YYYY-MM-DD)
   // =============================
@@ -907,7 +910,7 @@ function construirObjetoHistorial(fila) {
     // MM/DD/YYYY → YYYY-MM-DD
     if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
       const [mm, dd, yyyy] = s.split("/");
-      return `${yyyy}-${mm.padStart(2,"0")}-${dd.padStart(2,"0")}`;
+      return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
     }
 
     // Último intento → Date()
@@ -955,9 +958,7 @@ function construirObjetoHistorial(fila) {
     nombre: fila.nombre_usuario,
     sector: fila.sector,
     fecha:
-      limpiarFecha(fila.fecha_entrada) ||
-      limpiarFecha(fila.fecha_salida) ||
-      "",
+      limpiarFecha(fila.fecha_entrada) || limpiarFecha(fila.fecha_salida) || "",
 
     entrada: {
       hora: limpiarHora(fila.hora_entrada),
@@ -981,3 +982,4 @@ function construirObjetoHistorial(fila) {
     estado_auditoria: fila.estado || "",
   };
 }
+//HOLAAAAAAAAAAAAAAAAAAAAAAA

@@ -688,6 +688,7 @@ textarea {
 .historial-table td {
   padding: 4px 8px !important;
   font-size: 11px !important;
+  border: none !important;   /* ← QUITA TODOS LOS BORDES */
 }
 
 /* ================================
@@ -699,34 +700,35 @@ textarea {
 .historial-table td:nth-child(1) {
   position: sticky;
   left: 0px;
-  z-index: 0;
   background: #fff4ea !important;
-  border-right: 1px solid #d1d1d1;
+  z-index: 3;
 }
 
 /* COL 2 — Número C/S */
 .historial-table th:nth-child(2),
 .historial-table td:nth-child(2) {
   position: sticky;
-  left: 32px; /* ANCHO REAL DE COL1 */
-  z-index: 0;
+  left: 32px; /* tus medidas */
   background: #fff4ea !important;
-  border-right: 1px solid #d1d1d1;
+  z-index: 3;
 }
 
-/* COL 3 — Nombre */
+/* COL 3 — Nombre (ÚNICO QUE LLEVA BORDE) */
 .historial-table th:nth-child(3),
 .historial-table td:nth-child(3) {
   position: sticky;
-  left: 118px; /* 65 + 115 */
-  z-index: 0;
+  left: 116px; /* tus medidas */
   background: #fff4ea !important;
-  border-right: 1px solid #d1d1d1;
+  z-index: 3;
+
+  /* ESTA ES LA ÚNICA LÍNEA QUE QUEDARÁ */
+  border-right: 2px solid #d0d0d0 !important;
 }
 
 /* ================================
    HACER COLUMNAS GRANDES
 ================================ */
+
 .historial-table th:nth-child(18),
 .historial-table td:nth-child(18),
 .historial-table th:nth-child(19),
@@ -745,6 +747,7 @@ textarea {
   text-align: center;
   white-space: nowrap;
 }
+
 
 
 

@@ -668,7 +668,7 @@ textarea {
   line-height: 1.1 !important;
 }
 /* ===========================================
-   HISTORIAL — FIX TOTAL (sticky + tamaños)
+   HISTORIAL — FIX TOTAL (sticky + tamaños)INMOVILIZAR
 =========================================== */
 
 /* QUITAR ESPACIOS */
@@ -747,6 +747,22 @@ textarea {
   text-align: center;
   white-space: nowrap;
 }
+/* --- Encabezados de columnas fijas con fondo azul --- */
+.historial-table thead th:nth-child(1),
+.historial-table thead th:nth-child(2),
+.historial-table thead th:nth-child(3) {
+  background: #e0e9ffc4 !important;  /* mismo azul clarito */
+  z-index: 4 !important;             /* arriba de los td sticky */
+}
+
+/* Borde inferior del encabezado */
+.historial-table thead th {
+  border-bottom: 2px solid #d0d0d0 !important;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
 
     </style>
   </head>

@@ -700,29 +700,30 @@ textarea {
 .historial-table td:nth-child(1) {
   position: sticky;
   left: 0px;
-  z-index: 3;
   background: #fff4ea !important;
+  z-index: 3;
 }
 
 /* COL 2 — Número C/S */
 .historial-table th:nth-child(2),
 .historial-table td:nth-child(2) {
   position: sticky;
-  left: 32px;  /* ✔ tu ancho real de la col1 */
-  z-index: 3;
+  left: 32px; /* tus medidas */
   background: #fff4ea !important;
+  z-index: 3;
 }
 
-/* COL 3 — Nombre (borde único aquí) */
+/* COL 3 — Nombre (ÚNICO QUE LLEVA BORDE) */
 .historial-table th:nth-child(3),
 .historial-table td:nth-child(3) {
   position: sticky;
-  left: 120px; /* ✔ 42px col1 + 78px col2 */
-  z-index: 3;
+  left: 116px; /* tus medidas */
   background: #fff4ea !important;
-  border-right: 2px solid #bfbfbf; /* borde */
-}
+  z-index: 3;
 
+  /*  ESTA ES LA ÚNICA LÍNEA QUE QUEDARÁ */
+  border-right: 2px solid #d0d0d0 !important;
+}
 
 /* ================================
    HACER COLUMNAS GRANDES
@@ -746,6 +747,10 @@ textarea {
   text-align: center;
   white-space: nowrap;
 }
+
+
+
+
     </style>
   </head>
   <body>

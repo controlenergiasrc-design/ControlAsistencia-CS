@@ -668,7 +668,7 @@ textarea {
   line-height: 1.1 !important;
 }
 /* ===========================================
-   HISTORIAL — FIX TOTAL (sticky, tamaños, hover)
+   HISTORIAL — FIX COMPLETO (sticky, tamaños, hover)
 =========================================== */
 
 /* Quitar espacios entre columnas */
@@ -678,22 +678,22 @@ textarea {
   width: max-content;
 }
 
-/* Hover de fila completa */
+/* Hover blanco en TODA la fila (incluso columnas fijas) */
 .historial-table tbody tr:hover td {
   background-color: #ffffff !important;
 }
 
-/* Padding estilo Excel */
+/* Padding pequeño estilo Excel */
 .historial-table th,
 .historial-table td {
   padding: 4px 8px !important;
   font-size: 11px !important;
-  white-space: nowrap;
+  border-right: 1px solid #e2e8f0; /* Borde normal entre columnas */
 }
 
-/* ================================
+/* ===========================================
    CONGELAR PRIMERAS 3 COLUMNAS
-================================ */
+=========================================== */
 
 /* Columna 1 */
 .historial-table th:nth-child(1),
@@ -708,29 +708,24 @@ textarea {
 .historial-table th:nth-child(2),
 .historial-table td:nth-child(2) {
   position: sticky;
-  left: 70px; /* Ajustado */
+  left: 60px; /* ancho de columna 1 */
   z-index: 5;
   background: #fff4ea !important;
 }
 
-/* Columna 3 */
+/* Columna 3 (NOMBRE) */
 .historial-table th:nth-child(3),
 .historial-table td:nth-child(3) {
   position: sticky;
-  left: 170px; /* Ajustado */
-  z-index: 6; /* más alto porque tendrá borde */
+  left: 160px; /* 60 + ancho col2 */
+  z-index: 6; /* más alto porque tiene la línea gris */
   background: #fff4ea !important;
+  border-right: 2px solid #cbd5e1 !important; /* LÍNEA GRIS ELEGANTE */
 }
 
-/* BORDE GRIS SOLO A LA ÚLTIMA COLUMNA FIJA (como Google Sheets) */
-.historial-table th:nth-child(3),
-.historial-table td:nth-child(3) {
-  border-right: 2px solid #d0d4d9 !important;
-}
-
-/* ================================
-   COLUMNAS GRANDES (texto multilínea)
-================================ */
+/* ===========================================
+   HACER COLUMNAS GRANDES (texto largo)
+=========================================== */
 
 /* Actividades */
 .historial-table th:nth-child(18),
@@ -747,19 +742,26 @@ textarea {
   line-height: 1.25;
 }
 
-/* Auditoría */
+/* Botón Auditar */
 .historial-table th:nth-child(21),
 .historial-table td:nth-child(21) {
   text-align: center;
   white-space: nowrap;
 }
 
-/* ================================
-   Color base + transición
-================================ */
+/* ===========================================
+   COLOR BASE DE FILAS (naranjita)
+=========================================== */
 .historial-table tbody tr {
   background-color: #fff4ea !important;
   transition: background-color 0.2s ease-in-out;
+}
+
+/* Encabezado estilo Excel (gris normal, NO naranja) */
+.historial-table thead th {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-bottom: 2px solid #cbd5e1 !important;
 }
 
 

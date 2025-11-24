@@ -667,99 +667,94 @@ textarea {
   padding: 5px 6px !important;
   line-height: 1.1 !important;
 }
-/* ============================================================
-   ❄️ CONGELAR PRIMERAS 3 COLUMNAS DEL HISTORIAL + CELDAS COMPACTAS
-============================================================ */
+/* ===========================================
+   HISTORIAL — FIX TOTAL (sticky, tamaños, hover)
+=========================================== */
 
-/* Contenedor con scroll */
-.historial-table-container {
-  overflow-x: auto;
-  position: relative;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-/* Tabla estilo Excel */
+/* Quitar espacios entre columnas */
 .historial-table {
   border-collapse: collapse;
+  border-spacing: 0;
   width: max-content;
-  min-width: 100%;
-  font-size: 11px;
-  table-layout: fixed; /* ← hace que todas las columnas tengan tamaño estable */
 }
 
-/* Encabezados */
-.historial-table thead th {
-  background: #f1f5f9;
-  font-weight: 600;
-  color: #475569;
-  padding: 6px 10px !important;
-  border-bottom: 2px solid #cbd5e1;
-  white-space: nowrap;
-  height: 32px;           /* ← alto fijo */
-  line-height: 32px;
-}
-
-/* Celdas del cuerpo */
-.historial-table tbody td {
-  padding: 4px 8px !important;
-  border-bottom: 1px solid #e2e8f0;
-  white-space: nowrap;
-  height: 30px;           /* ← alto fijo */
-  line-height: 30px;
-  overflow: hidden;
-  text-overflow: ellipsis; /* ← evita que el texto se salga */
-}
-
-/* Color base de las filas */
-.historial-table tbody tr {
-  background-color: #fff4ea !important;
-  transition: background-color 0.2s ease-in-out;
-}
-
-/* Hover */
-.historial-table tbody tr:hover {
+/* Hover que afecta TODA la fila, incluso las columnas congeladas */
+.historial-table tbody tr:hover td {
   background-color: #ffffff !important;
 }
 
-/* Botones de la tabla */
-.historial-table button {
-  font-size: 10px;
-  padding: 3px 6px;
+/* Ajustar padding pequeño (más estilo Excel) */
+.historial-table th,
+.historial-table td {
+  padding: 4px 8px !important;
+  font-size: 11px !important;
 }
 
-/* ============ ❄️ COLUMNAS CONGELADAS ============ */
+/* ================================
+   CONGELAR PRIMERAS 3 COLUMNAS
+================================ */
 
-/* Columna 1: ID */
 .historial-table th:nth-child(1),
 .historial-table td:nth-child(1) {
   position: sticky;
   left: 0;
-  z-index: 3;
-  background: #fff4ea;
+  z-index: 4;
+  background: #fff4ea !important;
 }
 
-/* Columna 2: Número C/S */
 .historial-table th:nth-child(2),
 .historial-table td:nth-child(2) {
   position: sticky;
-  left: 70px; /* ← ajustado al ancho real de ID */
-  z-index: 3;
-  background: #fff4ea;
+  left: 60px; /* ANCHO APROX DE COL1 */
+  z-index: 4;
+  background: #fff4ea !important;
 }
 
-/* Columna 3: Nombre */
 .historial-table th:nth-child(3),
 .historial-table td:nth-child(3) {
   position: sticky;
-  left: 170px; /* ID (70) + CS (100) */
-  z-index: 3;
-  background: #fff4ea;
+  left: 160px; /* 60 + ancho col2 */
+  z-index: 4;
+  background: #fff4ea !important;
 }
 
-/* Asegurar que los TH estén por encima */
-.historial-table thead th {
-  z-index: 5 !important;
+/*
+Si necesitás que lo ajuste EXACTO a tu ancho real,
+solo mandame un screenshot como el anterior y te lo calibro con precisión milimétrica 😘
+*/
+
+/* ================================
+   HACER COLUMNAS GRANDES → MÁS BONITAS
+================================ */
+
+/* Actividades */
+.historial-table th:nth-child(18),
+.historial-table td:nth-child(18),
+/* Novedades */
+.historial-table th:nth-child(19),
+.historial-table td:nth-child(19),
+/* Observaciones */
+.historial-table th:nth-child(20),
+.historial-table td:nth-child(20) {
+  max-width: 180px;
+  white-space: normal !important; /* permite saltos de línea */
+  word-wrap: break-word !important;
+  line-height: 1.25;
+}
+
+/* Ajustar también el botón auditar */
+.historial-table th:nth-child(21),
+.historial-table td:nth-child(21) {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ================================
+   Mejorar color base de filas
+================================ */
+.historial-table tbody tr {
+  background-color: #fff4ea !important;
+  transition: background-color 0.2s ease-in-out;
 }
 
     </style>

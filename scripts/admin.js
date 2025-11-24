@@ -926,25 +926,38 @@ function construirObjetoHistorial(fila) {
 
     // Si es Date con hora
     if (v instanceof Date && !isNaN(v)) {
-      return v.toTimeString().split(" ")[0]; // HH:mm:ss
+      const h = v.getHours(); // 0 - 23
+      const m = v.getMinutes(); // 0 - 59
+      const s = v.getSeconds(); // 0 - 59
+      return `${h}:${m.toString().padStart(2, "0")}:${s
+        .toString()
+        .padStart(2, "0")}`;
     }
 
     let s = String(v).trim();
     if (s === "") return "";
 
-    // HH:mm
-    if (/^\d{2}:\d{2}$/.test(s)) {
-      return s + ":00";
+    // FORMATO HH:mm (acepta 1 o 2 dígitos en la hora)
+    if (/^\d{1,2}:\d{2}$/.test(s)) {
+      let [h, m] = s.split(":");
+      // Quitar ceros adelante SOLO en la hora
+      h = h.replace(/^0+/, "") || "0";
+      return `${h}:${m}:00`;
     }
 
-    // HH:mm:ss
-    if (/^\d{2}:\d{2}:\d{2}$/.test(s)) {
-      return s;
+    // FORMATO HH:mm:ss (acepta 1 o 2 dígitos en la hora)
+    if (/^\d{1,2}:\d{2}:\d{2}$/.test(s)) {
+      let [h, m, sec] = s.split(":");
+      h = h.replace(/^0+/, "") || "0";
+      return `${h}:${m}:${sec}`;
     }
 
-    // Si viene tipo “1899-12-30T23:38:52.000Z”
+    // Si viene tipo 1899-12-30T23:38:52Z
     if (s.includes("T")) {
-      return s.split("T")[1].split(".")[0];
+      let hhmmss = s.split("T")[1].split(".")[0];
+      let [h, m, sec] = hhmmss.split(":");
+      h = h.replace(/^0+/, "") || "0";
+      return `${h}:${m}:${sec}`;
     }
 
     return "";

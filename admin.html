@@ -678,53 +678,58 @@ textarea {
   width: max-content;
 }
 
-/* Hover que afecta TODA la fila, incluso las columnas congeladas */
+/* Hover de fila completa */
 .historial-table tbody tr:hover td {
   background-color: #ffffff !important;
 }
 
-/* Ajustar padding pequeño (más estilo Excel) */
+/* Padding estilo Excel */
 .historial-table th,
 .historial-table td {
   padding: 4px 8px !important;
   font-size: 11px !important;
+  white-space: nowrap;
 }
 
 /* ================================
    CONGELAR PRIMERAS 3 COLUMNAS
 ================================ */
 
+/* Columna 1 */
 .historial-table th:nth-child(1),
 .historial-table td:nth-child(1) {
   position: sticky;
   left: 0;
-  z-index: 4;
+  z-index: 5;
   background: #fff4ea !important;
 }
 
+/* Columna 2 */
 .historial-table th:nth-child(2),
 .historial-table td:nth-child(2) {
   position: sticky;
-  left: 60px; /* ANCHO APROX DE COL1 */
-  z-index: 4;
+  left: 70px; /* Ajustado */
+  z-index: 5;
   background: #fff4ea !important;
 }
 
+/* Columna 3 */
 .historial-table th:nth-child(3),
 .historial-table td:nth-child(3) {
   position: sticky;
-  left: 160px; /* 60 + ancho col2 */
-  z-index: 4;
+  left: 170px; /* Ajustado */
+  z-index: 6; /* más alto porque tendrá borde */
   background: #fff4ea !important;
 }
 
-/*
-Si necesitás que lo ajuste EXACTO a tu ancho real,
-solo mandame un screenshot como el anterior y te lo calibro con precisión milimétrica 😘
-*/
+/* BORDE GRIS SOLO A LA ÚLTIMA COLUMNA FIJA (como Google Sheets) */
+.historial-table th:nth-child(3),
+.historial-table td:nth-child(3) {
+  border-right: 2px solid #d0d4d9 !important;
+}
 
 /* ================================
-   HACER COLUMNAS GRANDES → MÁS BONITAS
+   COLUMNAS GRANDES (texto multilínea)
 ================================ */
 
 /* Actividades */
@@ -737,12 +742,12 @@ solo mandame un screenshot como el anterior y te lo calibro con precisión milim
 .historial-table th:nth-child(20),
 .historial-table td:nth-child(20) {
   max-width: 180px;
-  white-space: normal !important; /* permite saltos de línea */
+  white-space: normal !important;
   word-wrap: break-word !important;
   line-height: 1.25;
 }
 
-/* Ajustar también el botón auditar */
+/* Auditoría */
 .historial-table th:nth-child(21),
 .historial-table td:nth-child(21) {
   text-align: center;
@@ -750,12 +755,13 @@ solo mandame un screenshot como el anterior y te lo calibro con precisión milim
 }
 
 /* ================================
-   Mejorar color base de filas
+   Color base + transición
 ================================ */
 .historial-table tbody tr {
   background-color: #fff4ea !important;
   transition: background-color 0.2s ease-in-out;
 }
+
 
     </style>
   </head>

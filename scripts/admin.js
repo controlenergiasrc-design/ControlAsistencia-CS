@@ -237,6 +237,7 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-usuarios").classList.remove("d-none");
     if (link.innerText.includes("Historial"))
       document.getElementById("mod-historial").classList.remove("d-none");
+    configurarRangoFechaHistorial();// para el input date
     cargarHistorial(); // ← AQUÍ SE CARGA AUTOMÁTICAMENTE EL HISTORIAL
     if (link.innerText.includes("Configuración"))
       document.getElementById("mod-config").classList.remove("d-none");
@@ -996,4 +997,37 @@ function construirObjetoHistorial(fila) {
     estado_auditoria: fila.estado || "",
   };
 }
+
+// =======================================
+// CONFIGURAR RANGO DEL INPUT DE FECHA (HISTORIAL)
+// =======================================
+function configurarRangoFechaHistorial() {
+  const input = document.getElementById("filtroFechaHistorial");
+  if (!input) return;
+
+  const hoy = new Date();
+
+  // Ayer (igual que en el backend)
+  const fechaFin = new Date(hoy);
+  fechaFin.setDate(fechaFin.getDate() - 1);
+
+  // 8 días en total (ayer y 7 días hacia atrás)
+  const fechaInicio = new Date(fechaFin);
+  fechaInicio.setDate(fechaFin.getDate() - 7);
+
+  // Helper para formatear YYYY-MM-DD
+  const toISO = (d) => d.toISOString().split("T")[0];
+
+  // Limitar el date picker
+  input.min = toISO(fechaInicio);
+  input.max = toISO(fechaFin);
+
+  // Opcional: si tenía una fecha fuera de rango, limpiarla
+  if (input.value) {
+    if (input.value < input.min || input.value > input.max) {
+      input.value = "";
+    }
+  }
+}
+
 //HOLAAAAAAAAAAAAAAAAAAAAAAA

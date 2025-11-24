@@ -775,6 +775,9 @@ async function subirFotoEditada(event, tipo) {
   }
 }
 
+//==========================================
+//funcion configurar rango de fecha 
+//=========================================
 function configurarRangoFechaHistorial() {
   const input = document.getElementById("filtroFechaHistorial");
   if (!input) return;
@@ -802,6 +805,16 @@ function configurarRangoFechaHistorial() {
     }
   }
 }
+
+// ==============================
+// CAMBIO DE FECHA → RECARGAR HISTORIAL
+// ==============================
+document.addEventListener("change", (e) => {
+  if (e.target.id === "filtroFechaHistorial") {
+    cargarHistorial();
+  }
+});
+
 
 // ======================================================
 // CARGAR HISTORIAL — Últimos 30 días (sin incluir HOY)

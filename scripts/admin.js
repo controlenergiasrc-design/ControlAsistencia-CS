@@ -775,6 +775,34 @@ async function subirFotoEditada(event, tipo) {
   }
 }
 
+function configurarRangoFechaHistorial() {
+  const input = document.getElementById("filtroFechaHistorial");
+  if (!input) return;
+
+  const hoy = new Date();
+
+  // Ayer (igual que en backend)
+  const fechaFin = new Date(hoy);
+  fechaFin.setDate(fechaFin.getDate() - 1);
+
+  // 8 días en total (ayer + 7 hacia atrás)
+  const fechaInicio = new Date(fechaFin);
+  fechaInicio.setDate(fechaFin.getDate() - 7);
+
+  const toISO = (d) => d.toISOString().split("T")[0];
+
+  // Limitar
+  input.min = toISO(fechaInicio);
+  input.max = toISO(fechaFin);
+
+  // Si la fecha estaba fuera de rango → limpiar
+  if (input.value) {
+    if (input.value < input.min || input.value > input.max) {
+      input.value = "";
+    }
+  }
+}
+
 // ======================================================
 // CARGAR HISTORIAL — Últimos 30 días (sin incluir HOY)
 // ======================================================
@@ -996,38 +1024,6 @@ function construirObjetoHistorial(fila) {
     observaciones: fila.observaciones || "",
     estado_auditoria: fila.estado || "",
   };
-}
-
-// =======================================
-// CONFIGURAR RANGO DEL INPUT DE FECHA (HISTORIAL)
-// =======================================
-function configurarRangoFechaHistorial() {
-  const input = document.getElementById("filtroFechaHistorial");
-  if (!input) return;
-
-  const hoy = new Date();
-
-  // Ayer (igual que en el backend)
-  const fechaFin = new Date(hoy);
-  fechaFin.setDate(fechaFin.getDate() - 1);
-
-  // 8 días en total (ayer y 7 días hacia atrás)
-  const fechaInicio = new Date(fechaFin);
-  fechaInicio.setDate(fechaFin.getDate() - 7);
-
-  // Helper para formatear YYYY-MM-DD
-  const toISO = (d) => d.toISOString().split("T")[0];
-
-  // Limitar el date picker
-  input.min = toISO(fechaInicio);
-  input.max = toISO(fechaFin);
-
-  // Opcional: si tenía una fecha fuera de rango, limpiarla
-  if (input.value) {
-    if (input.value < input.min || input.value > input.max) {
-      input.value = "";
-    }
-  }
 }
 
 //HOLAAAAAAAAAAAAAAAAAAAAAAA

@@ -670,9 +670,10 @@ async function guardarCambiosAuditoria() {
       };
 
       localStorage.setItem(clave, JSON.stringify(objetoLocal));
+      obtenerRegistrosHoy(); // refresca el panel del día
+      cargarHistorial(); // refresca historial automáticamente
+      cerrarModalAuditoria(); // cierra modal
 
-      obtenerRegistrosHoy();
-      cerrarModalAuditoria();
     } else {
       alert("⚠ No se pudieron guardar los cambios");
     }

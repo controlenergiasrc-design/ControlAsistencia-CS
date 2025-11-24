@@ -688,17 +688,18 @@ textarea {
 .historial-table td {
   padding: 4px 8px !important;
   font-size: 11px !important;
-  border: none !important;   /* ← QUITA TODOS LOS BORDES */
+  border: none !important;
 }
+
 /* ================================
-   ENCABEZADO – igual color + borde inferior
+   ENCABEZADO – color + borde + FIX
 ================================ */
 .historial-table thead th {
-  background: #e0e9ffc4 !important; /* igual que las fijas */
-  border-bottom: 2px solid #d0d0d0 !important; /* borde inferior estilo Sheets */
+  background: #e0e9ffc4 !important; /* color uniforme */
+  border-bottom: 2px solid #d0d0d0 !important; /* borde inferior */
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 50 !important; /* FIX: siempre por encima de las sticky */
 }
 
 /* ================================
@@ -711,7 +712,7 @@ textarea {
   position: sticky;
   left: 0px;
   background: #fff4ea !important;
-  z-index: 3;
+  z-index: 2 !important; /* <── BAJA para no tapar encabezado */
 }
 
 /* COL 2 — Número C/S */
@@ -720,23 +721,21 @@ textarea {
   position: sticky;
   left: 32px; /* tus medidas */
   background: #fff4ea !important;
-  z-index: 3;
+  z-index: 2 !important;
 }
 
-/* COL 3 — Nombre (ÚNICO QUE LLEVA BORDE) */
+/* COL 3 — Nombre (con borde derecho) */
 .historial-table th:nth-child(3),
 .historial-table td:nth-child(3) {
   position: sticky;
   left: 116px; /* tus medidas */
   background: #fff4ea !important;
-  z-index: 3;
-
-  /*  ESTA ES LA ÚNICA LÍNEA QUE QUEDARÁ */
+  z-index: 2 !important;
   border-right: 2px solid #d0d0d0 !important;
 }
 
 /* ================================
-   HACER COLUMNAS GRANDES
+   COLUMNAS GRANDES
 ================================ */
 
 .historial-table th:nth-child(18),
@@ -757,9 +756,6 @@ textarea {
   text-align: center;
   white-space: nowrap;
 }
-
-
-
 
     </style>
   </head>

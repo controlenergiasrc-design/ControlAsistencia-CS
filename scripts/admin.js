@@ -881,6 +881,14 @@ async function cargarHistorial() {
       (r) => (r.estado || "").toUpperCase() !== "AUDITADO"
     );
 
+    // =============================================
+    // ACTUALIZAR CONTADOR DE PENDIENTES EN EL TÍTULO
+    // =============================================
+    const contador = document.getElementById("conteoPendientes");
+    if (contador) {
+      contador.textContent = registros.length;
+    }
+
     renderizarHistorial(registros);
   } catch (error) {
     console.error("❌ Error al cargar pendientes:", error);

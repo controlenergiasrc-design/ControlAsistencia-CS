@@ -237,7 +237,7 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-usuarios").classList.remove("d-none");
     if (link.innerText.includes("Pendientes"))
       document.getElementById("mod-historial").classList.remove("d-none");
-    configurarRangoFechaHistorial();// para el input date
+    configurarRangoFechaHistorial(); // para el input date
     cargarHistorial(); // ← AQUÍ SE CARGA AUTOMÁTICAMENTE EL HISTORIAL
     if (link.innerText.includes("Configuración"))
       document.getElementById("mod-config").classList.remove("d-none");
@@ -306,6 +306,26 @@ function convertirDriveDirecto(url) {
   }
   return url;
 }
+
+// =======================================
+// SE PUEDE AUDITAR ESTE REGISTRO?
+// - Si es de un día anterior... SIEMPRE se puede
+// - Si es de HOY... solo después de las 5 PM
+// =======================================
+function puedeAuditarRegistro(registro) {
+  const hoy = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+  const fechaRegistro = registro.fecha || ""; // viene de registroCompleto / construirObjetoHistorial
+
+  // 1. Si NO es hoy → es un día anterior → SIEMPRE puede auditar
+  if (fechaRegistro !== hoy) {
+    return true;
+  }
+
+  // 2. Si es HOY → solo después de las 5 PM (17 horas)
+  const horaActual = new Date().getHours();
+  return horaActual >= 17;
+}
+
 // =======================================
 // ABRIR MODAL DE AUDITORÍA (NUEVA LÓGICA)
 // =======================================
@@ -414,24 +434,28 @@ function abrirModalAuditoria(registro) {
   const inputObs = document.getElementById("inputObservaciones");
   inputObs.value = registro.observaciones || "";
   // -----------------------------
-  // 8. ESTADO AUDITORÍA
+  // 8. ESTADO AUDITORÍA (LÓGICA NUEVA DEL INGE)
   // -----------------------------
   const botonAuditar = document.getElementById("btnConfirmarAuditoria");
   const estado = (registro.estado_auditoria || "").trim().toUpperCase();
-  const horaActual = new Date().getHours();
 
+  // Si ya fue auditado...  nunca permitir volver a auditar
   if (estado === "AUDITADO") {
     botonAuditar.disabled = true;
     botonAuditar.classList.add("btn-disabled");
   } else {
-    if (horaActual < 17) {
-      botonAuditar.disabled = true;
-      botonAuditar.classList.add("btn-disabled");
-    } else {
+    // Si está pendiente... regla:
+    // - Día anterior... SIEMPRE puede
+    // - HOY... solo después de las 5 PM
+    if (puedeAuditarRegistro(registro)) {
       botonAuditar.disabled = false;
       botonAuditar.classList.remove("btn-disabled");
+    } else {
+      botonAuditar.disabled = true;
+      botonAuditar.classList.add("btn-disabled");
     }
   }
+
   // -----------------------------
   // 9. FOTOS (debug de ruta final)
   // -----------------------------
@@ -674,7 +698,6 @@ async function guardarCambiosAuditoria() {
       obtenerRegistrosHoy(); // refresca el panel del día
       cargarHistorial(); // refresca historial automáticamente
       cerrarModalAuditoria(); // cierra modal
-
     } else {
       alert("⚠ No se pudieron guardar los cambios");
     }
@@ -699,14 +722,18 @@ async function confirmarAuditoriaFrontend() {
     const res = await fetch(url);
     const data = await res.json();
 
-    if (data.success) {
+        if (data.success) {
       alert("✔ Registro marcado como AUDITADO");
 
-      // Recargar tabla para que ya no deje auditar de nuevo
+      // Recargar tabla de HOY
       obtenerRegistrosHoy();
+
+      // Recargar tabla de PENDIENTES (para que desaparezca de ahí)
+      cargarHistorial();
 
       // Cerrar modal
       cerrarModalAuditoria();
+    
     } else {
       alert(data.mensaje || "⚠ No se pudo auditar");
     }
@@ -776,7 +803,7 @@ async function subirFotoEditada(event, tipo) {
 }
 
 //==========================================
-//funcion configurar rango de fecha 
+//funcion configurar rango de fecha
 //=========================================
 function configurarRangoFechaHistorial() {
   const input = document.getElementById("filtroFechaHistorial");
@@ -815,14 +842,11 @@ document.addEventListener("change", (e) => {
   }
 });
 
-
 // ======================================================
-// CARGAR HISTORIAL — Últimos 30 días (sin incluir HOY)
+// CARGAR HISTORIAL — Últimos 7 días (sin incluir HOY)
 // Módulo: Auditoría Pendiente
 // ======================================================
 async function cargarHistorial() {
-
-  // Esta vista YA NO FILTRA POR FECHA → cargamos pendientes directamente
   const url = `${API_URL}?accion=historial`;
 
   try {
@@ -831,8 +855,20 @@ async function cargarHistorial() {
 
     console.log("Historial-Pendientes data:", data);
 
-    renderizarHistorial(data.registros || []);
+    const hoy = new Date().toISOString().slice(0, 10);
+    let registros = data.registros || [];
 
+    // 1. Quitar registros de HOY (pendientes = días anteriores)
+    registros = registros.filter(
+      (r) => (r.fecha_entrada || "").split("T")[0] !== hoy
+    );
+
+    // 2. Quitar registros AUDITADOS (solo queremos pendientes)
+    registros = registros.filter(
+      (r) => (r.estado || "").toUpperCase() !== "AUDITADO"
+    );
+
+    renderizarHistorial(registros);
   } catch (error) {
     console.error("❌ Error al cargar pendientes:", error);
     alert("Error cargando pendientes");

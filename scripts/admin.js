@@ -112,6 +112,7 @@ function renderizarTabla(registros) {
       registrosUsuario.find((r) => r.tipo?.toLowerCase() === "salida") || {};
     // OBJETO COMPLETO PARA EL MODAL
     const registroCompleto = {
+      tipo_usuario: entrada.tipo_usuario || salida.tipo_usuario,
       numero_cs: entrada.numero_cs || salida.numero_cs,
       nombre: entrada.nombre || salida.nombre,
       sector: entrada.sector || salida.sector,
@@ -1064,6 +1065,7 @@ function construirObjetoHistorial(fila) {
   // CONSTRUCCIÓN FINAL DEL OBJETO
   // =============================
   return {
+    tipo_usuario: fila.tipo_usuario,
     numero_cs: fila.numero_cs,
     nombre: fila.nombre_usuario,
     sector: fila.sector,

@@ -361,7 +361,7 @@ function abrirModalAuditoria(registro) {
   // 2. TITULO DEL MODAL
   // -----------------------------
   const titulo = document.getElementById("tituloModalAuditoria");
-  titulo.textContent = `AUDITORÍA – CUADRILLA ${registro.numero_cs}`;
+  titulo.textContent = `AUDITORÍA – ${registro.tipo_usuario} ${registro.numero_cs}`;
   // FECHA DEL REGISTRO (entrada o salida)
   const fechaLabel = document.getElementById("fechaAuditoria");
   fechaLabel.textContent = registro.fecha ? registro.fecha : "Sin fecha";

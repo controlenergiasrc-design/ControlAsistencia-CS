@@ -235,7 +235,7 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-asistencia").classList.remove("d-none");
     if (link.innerText.includes("Usuarios"))
       document.getElementById("mod-usuarios").classList.remove("d-none");
-    if (link.innerText.includes("Historial"))
+    if (link.innerText.includes("Pendientes"))
       document.getElementById("mod-historial").classList.remove("d-none");
     configurarRangoFechaHistorial();// para el input date
     cargarHistorial(); // ← AQUÍ SE CARGA AUTOMÁTICAMENTE EL HISTORIAL
@@ -817,7 +817,7 @@ document.addEventListener("change", (e) => {
 
 
 // ======================================================
-// CARGAR HISTORIAL — Últimos 30 días (sin incluir HOY)
+// CARGAR HISTORIAL — Últimos 30 días (sin incluir HOY) PENDIENTESSSSSSSSSSSS
 // ======================================================
 async function cargarHistorial() {
   const fecha = document.getElementById("filtroFechaHistorial").value;
@@ -841,13 +841,13 @@ async function cargarHistorial() {
       renderizarHistorial([]);
     }
   } catch (error) {
-    console.error("❌ Error al cargar historial:", error);
-    alert("Error cargando historial");
+    console.error("❌ Error al cargar pendientes:", error);
+    alert("Error cargando pendientes");
   }
 }
 
 // ======================================================
-// RENDERIZAR TABLA DEL HISTORIAL
+// RENDERIZAR TABLA DEL HISTORIAL PENDIENTESSS
 // ======================================================
 function renderizarHistorial(registros) {
   const tbody = document.getElementById("historialBodyFront");
@@ -924,7 +924,7 @@ function renderizarHistorial(registros) {
 }
 
 //==========================================================================================
-//constructr de objeto para auditar historial *(reutiliza el mismo modal de auditoria iaria)
+//constructr de objeto para auditar historial PENDIENTES *(reutiliza el mismo modal de auditoria iaria)
 //==========================================================================================
 function construirObjetoHistorial(fila) {
   // =============================

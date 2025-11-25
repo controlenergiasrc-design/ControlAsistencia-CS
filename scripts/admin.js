@@ -817,29 +817,22 @@ document.addEventListener("change", (e) => {
 
 
 // ======================================================
-// CARGAR HISTORIAL — Últimos 30 días (sin incluir HOY) PENDIENTESSSSSSSSSSSS
+// CARGAR HISTORIAL — Últimos 30 días (sin incluir HOY)
+// Módulo: Auditoría Pendiente
 // ======================================================
 async function cargarHistorial() {
-  const fecha = document.getElementById("filtroFechaHistorial").value;
 
-  let url = `${API_URL}?accion=historial`;
-
-  // Si el usuario seleccionó una fecha → usar filtro manual
-  if (fecha) {
-    url += `&fecha=${fecha}`;
-  }
+  // Esta vista YA NO FILTRA POR FECHA → cargamos pendientes directamente
+  const url = `${API_URL}?accion=historial`;
 
   try {
     const res = await fetch(url);
     const data = await res.json();
 
-    console.log("Historial data:", data);
+    console.log("Historial-Pendientes data:", data);
 
-    if (data && data.registros) {
-      renderizarHistorial(data.registros);
-    } else {
-      renderizarHistorial([]);
-    }
+    renderizarHistorial(data.registros || []);
+
   } catch (error) {
     console.error("❌ Error al cargar pendientes:", error);
     alert("Error cargando pendientes");

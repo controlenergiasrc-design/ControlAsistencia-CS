@@ -148,12 +148,28 @@ function renderizarTabla(registros) {
         <td>Entrada</td>
         <td>${entrada.hora || "-"}</td>
         <td>
+<td>
+  ${
+    entrada.enlace
+      ? `
+        <div class="btn-group">
+          <a href="${entrada.enlace}" target="_blank" class="btn-mini">
+            <i class="fa-solid fa-camera"></i>
+          </a>
+
           ${
-            entrada.enlace
-              ? `<a href="${entrada.enlace}" target="_blank" class="btn btn-sm btn-gray"><i class="fa-solid fa-camera"></i> Ver foto</a>`
-              : `<button class="btn btn-sm btn-gray" disabled>Sin foto</button>`
+            entrada.lat && entrada.lng
+              ? `<a href="https://www.google.com/maps?q=${entrada.lat},${entrada.lng}" 
+                   target="_blank" 
+                   class="btn-mini">
+                   <i class="fa-solid fa-location-dot"></i>
+                 </a>`
+              : ""
           }
-        </td>
+        </div>`
+      : `<button class="btn btn-sm btn-gray" disabled>Sin foto</button>`
+  }
+</td>
         <td rowspan="2" class="text-center align-middle">
           <button class="btn btn-sm btn-audit"
             onclick='abrirModalAuditoria(${registroJSON})'>
@@ -165,13 +181,29 @@ function renderizarTabla(registros) {
         <!-- Salida -->
         <td>Salida</td>
         <td>${salida.hora || "-"}</td>
-        <td>
+<td>
+  ${
+    salida.enlace
+      ? `
+        <div class="btn-group">
+          <a href="${salida.enlace}" target="_blank" class="btn-mini">
+            <i class="fa-solid fa-camera"></i>
+          </a>
+
           ${
-            salida.enlace
-              ? `<a href="${salida.enlace}" target="_blank" class="btn btn-sm btn-gray"><i class="fa-solid fa-camera"></i> Ver foto</a>`
-              : `<button class="btn btn-sm btn-gray" disabled>Sin foto</button>`
+            salida.lat && salida.lng
+              ? `<a href="https://www.google.com/maps?q=${salida.lat},${salida.lng}" 
+                   target="_blank" 
+                   class="btn-mini">
+                   <i class="fa-solid fa-location-dot"></i>
+                 </a>`
+              : ""
           }
-        </td>
+        </div>`
+      : `<button class="btn btn-sm btn-gray" disabled>Sin foto</button>`
+  }
+</td>
+
       </tr>
     `;
     tbody.insertAdjacentHTML("beforeend", filaHTML);
@@ -722,7 +754,7 @@ async function confirmarAuditoriaFrontend() {
     const res = await fetch(url);
     const data = await res.json();
 
-        if (data.success) {
+    if (data.success) {
       alert("✔ Registro marcado como AUDITADO");
 
       // Recargar tabla de HOY
@@ -733,7 +765,6 @@ async function confirmarAuditoriaFrontend() {
 
       // Cerrar modal
       cerrarModalAuditoria();
-    
     } else {
       alert(data.mensaje || "⚠ No se pudo auditar");
     }

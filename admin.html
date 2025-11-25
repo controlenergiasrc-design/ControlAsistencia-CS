@@ -728,6 +728,7 @@ textarea {
 /* ================================
    COLUMNAS GRANDES
 ================================ */
+
 .historial-table th:nth-child(18),
 .historial-table td:nth-child(18),
 .historial-table th:nth-child(19),
@@ -771,24 +772,34 @@ textarea {
   display: none !important;
 }
 
+/* Botones mini en la tabla (Ver foto y Ver ubicación) */
 .btn-mini {
+  background: #eaeaea;
+  border: 1px solid #ccc;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 4px;
+  transition: 0.2s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: #eee;
-  border: 1px solid #ccc;
-  margin-right: 4px;
-  font-size: 16px;
-  color: #444;
-  cursor: pointer;
-  text-decoration: none;
+  width: 32px;
+  height: 32px;
+}
+
+.btn-mini i {
+  font-size: 15px;
+  color: #333;
 }
 
 .btn-mini:hover {
-  background: #ddd;
+  background: #ff8800;
+  border-color: #ff8800;
+}
+
+.btn-mini:hover i {
+  color: white;
 }
 
     </style>

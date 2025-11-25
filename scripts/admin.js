@@ -239,7 +239,7 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-historial").classList.remove("d-none");
     configurarRangoFechaHistorial(); // para el input date
     cargarHistorial(); // ← AQUÍ SE CARGA AUTOMÁTICAMENTE EL HISTORIAL
-    if (link.innerText.includes("Configuración"))
+    if (link.innerText.includes("Contraseña"))
       document.getElementById("mod-config").classList.remove("d-none");
   });
 });

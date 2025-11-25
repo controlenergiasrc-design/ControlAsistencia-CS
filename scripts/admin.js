@@ -228,13 +228,10 @@ function filtrarPorSector(sectorSeleccionado) {
 document.querySelectorAll(".nav-link").forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
-    // Evitar conflicto con "Cerrar sesión"
+    // para el modal de "Cerrar sesión"
     if (link.innerText.includes("Cerrar")) {
-      const confirmar = confirm("¿Seguro que deseas cerrar sesión?");
-      if (!confirmar) return;
-      localStorage.clear();
-      window.location.href = "index.html"; // tu login
-      return; // detiene el resto del código
+      abrirModalCerrarSesion();
+      return;
     }
     // Quitar activo del resto
     document
@@ -258,6 +255,37 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-config").classList.remove("d-none");
   });
 });
+//=====================================
+//Acciones del modal cerra sesion
+//=====================================
+
+// ABRIR modal cerrar sesion
+function abrirModalCerrarSesion() {
+  document.getElementById("modalCerrarSesion").classList.remove("d-none");
+}
+// CERRAR modal
+function cerrarModalCerrarSesion() {
+  document.getElementById("modalCerrarSesion").classList.add("d-none");
+}
+// Asignar acciones a botones
+document.addEventListener("DOMContentLoaded", () => {
+  const btnCancelar = document.getElementById("btnCancelarLogout");
+  const btnConfirmar = document.getElementById("btnConfirmarLogout");
+
+  if (btnCancelar) {
+    btnCancelar.addEventListener("click", () => {
+      cerrarModalCerrarSesion();
+    });
+  }
+
+  if (btnConfirmar) {
+    btnConfirmar.addEventListener("click", () => {
+      localStorage.clear();
+      window.location.href = "index.html";
+    });
+  }
+});
+
 // =======================================
 // MODAL DE AUDITORÍA
 // =======================================

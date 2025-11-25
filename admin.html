@@ -762,8 +762,15 @@ textarea {
   top: 0;
   z-index: 3;
 }
-
-
+/* Ocultar columnas: Actividades (18), Novedades (19), Observaciones (20) */
+#tablaHistorialFront th:nth-child(18),
+#tablaHistorialFront td:nth-child(18),
+#tablaHistorialFront th:nth-child(19),
+#tablaHistorialFront td:nth-child(19),
+#tablaHistorialFront th:nth-child(20),
+#tablaHistorialFront td:nth-child(20) {
+  display: none !important;
+}
     </style>
   </head>
   <body>

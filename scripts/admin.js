@@ -7,6 +7,9 @@ const API_URL = "https://proxy-asistencia.control-energiasrc.workers.dev";
 // VARIABLES GLOBALES
 // =======================================
 let registrosHoyGlobal = []; // aquí guardaremos los registros válidos de hoy
+let fotoTemporalEntrada = null; // guardar foto temporal entrda (foto editada desde auditoria)
+let fotoTemporalSalida = null; // guardar foto temporal entrda (foto editada desde auditoria)
+
 // =======================================
 // AL CARGAR LA PÁGINA
 // =======================================
@@ -746,6 +749,56 @@ async function guardarCambiosAuditoria() {
       obtenerRegistrosHoy(); // refresca el panel del día
       cargarHistorial(); // refresca historial automáticamente
       cerrarModalAuditoria(); // cierra modal
+
+      // -----------------------------------------
+      // SI HAY FOTO DE ENTRADA → SUBIRLA POR POST
+      // -----------------------------------------
+      if (fotoTemporalEntrada) {
+        const bodyEntrada = {
+          accion: "actualizarFoto",
+          numero_cs,
+          tipo: "entrada",
+          sector,
+          fecha: fechaRegistro,
+          fotoBase64: fotoTemporalEntrada
+        };
+        const respuestaEntrada = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(bodyEntrada)
+        });
+        const dataEntrada = await respuestaEntrada.json();
+        console.log("Foto entrada actualizada:", dataEntrada);
+        // Reseteamos la temporal
+        fotoTemporalEntrada = null;
+      }
+      // -----------------------------------------
+      // SI HAY FOTO DE SALIDA → SUBIRLA POR POST
+      // -----------------------------------------
+      if (fotoTemporalSalida) {
+        const bodySalida = {
+          accion: "actualizarFoto",
+          numero_cs,
+          tipo: "salida",
+          sector,
+          fecha: fechaRegistro,
+          fotoBase64: fotoTemporalSalida
+        };
+        const respuestaSalida = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(bodySalida)
+        });
+        const dataSalida = await respuestaSalida.json();
+        console.log("Foto salida actualizada:", dataSalida);
+
+        // Reseteamos la temporal
+        fotoTemporalSalida = null;
+      }
+      // -----------------------------------------
+      // REFRESCAR TODO
+      // -----------------------------------------
+      obtenerRegistrosHoy();
+      cargarHistorial();
+      cerrarModalAuditoria();
     } else {
       alert("⚠ No se pudieron guardar los cambios");
     }
@@ -754,6 +807,7 @@ async function guardarCambiosAuditoria() {
     alert("Error al guardar los cambios.");
   }
 }
+
 
 // =======================================
 // CONFIRMAR AUDITORÍA (BOTÓN ROJO)
@@ -797,57 +851,24 @@ async function subirFotoEditada(event, tipo) {
   const archivo = event.target.files[0];
   if (!archivo) return;
 
-  // Convertir archivo a Base64
-  const base64 = await new Promise((resolve) => {
-    const lector = new FileReader();
-    lector.onloadend = () => resolve(lector.result);
-    lector.readAsDataURL(archivo);
-  });
+  const lector = new FileReader();
+  lector.onload = () => {
+    const base64 = lector.result;
 
-  // Número CS desde el título del modal
-  const numero_cs = document
-    .getElementById("tituloModalAuditoria")
-    .textContent.match(/\d+/)[0];
-
-  // Sector REAL del registro
-  const sector = document.getElementById("hiddenSector").value.trim();
-
-  // FECHA REAL del registro (entrada o salida)
-  const fecha = document.getElementById("hiddenFechaRegistro").value.trim();
-
-  // Enviar al API
-  const body = {
-    accion: "actualizarFoto",
-    numero_cs,
-    tipo,
-    sector,
-    fecha,
-    fotoBase64: base64,
-  };
-
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
-
-  const data = await res.json();
-
-  if (data.ok) {
-    alert("✔ Foto actualizada correctamente");
-
-    // Actualizar imagen en pantalla
     if (tipo === "entrada") {
-      document.querySelector(".foto-box.entrada .foto-img").src = data.link;
-    } else {
-      document.querySelector(".foto-box.salida .foto-img").src = data.link;
+      fotoTemporalEntrada = base64;
+      document.querySelector(".foto-box.entrada .foto-img").src = base64;
     }
 
-    // Recargar tabla del dashboard
-    obtenerRegistrosHoy();
-  } else {
-    alert("❌ Error al actualizar la foto");
-  }
+    if (tipo === "salida") {
+      fotoTemporalSalida = base64;
+      document.querySelector(".foto-box.salida .foto-img").src = base64;
+    }
+  };
+
+  lector.readAsDataURL(archivo);
 }
+
 
 //==========================================
 //funcion configurar rango de fecha
@@ -862,7 +883,7 @@ function configurarRangoFechaHistorial() {
   const fechaFin = new Date(hoy);
   fechaFin.setDate(fechaFin.getDate() - 1);
 
-  // 8 días en total (ayer + 7 hacia atrás)
+  // 7 días en total (ayer + 6 hacia atrás)
   const fechaInicio = new Date(fechaFin);
   fechaInicio.setDate(fechaFin.getDate() - 7);
 

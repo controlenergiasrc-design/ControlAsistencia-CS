@@ -291,6 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // =======================================
 const actividades = [
   "Revision - Normalizacion",
+  "Laboro medio tiempo",
   "Gestion logistica de materiales",
   "Gestion de entrega de materiales en el sector",
   "Inspecciones de sumistros nuevos y existentes",

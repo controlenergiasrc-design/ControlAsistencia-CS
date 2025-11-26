@@ -10,6 +10,10 @@ let registrosHoyGlobal = []; // aquí guardaremos los registros válidos de hoy
 let fotoTemporalEntrada = null; // guardar foto temporal entrda (foto editada desde auditoria)
 let fotoTemporalSalida = null; // guardar foto temporal entrda (foto editada desde auditoria)
 
+// Imagen vacía (base64 válida)
+const EMPTY_IMG =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AArEBxY8oJFoAAAAASUVORK5CYII=";
+
 // =======================================
 // AL CARGAR LA PÁGINA
 // =======================================
@@ -526,13 +530,8 @@ function abrirModalAuditoria(registro) {
     : "";
 
   // Asignar al <img>
-  imgEntrada.src = urlConvertidaEntrada
-    ? urlConvertidaEntrada
-    : "https://placehold.co/120x120?text=Sin+foto";
-
-  imgSalida.src = urlConvertidaSalida
-    ? urlConvertidaSalida
-    : "https://placehold.co/120x120?text=Sin+foto";
+  imgEntrada.src = urlConvertidaEntrada ? urlConvertidaEntrada : EMPTY_IMG;
+  imgSalida.src = urlConvertidaSalida ? urlConvertidaSalida : EMPTY_IMG;
 
   // -----------------------------
   // 10. BOTONES EDITAR FOTO
@@ -760,11 +759,11 @@ async function guardarCambiosAuditoria() {
           tipo: "entrada",
           sector,
           fecha: fechaRegistro,
-          fotoBase64: fotoTemporalEntrada
+          fotoBase64: fotoTemporalEntrada,
         };
         const respuestaEntrada = await fetch(API_URL, {
           method: "POST",
-          body: JSON.stringify(bodyEntrada)
+          body: JSON.stringify(bodyEntrada),
         });
         const dataEntrada = await respuestaEntrada.json();
         console.log("Foto entrada actualizada:", dataEntrada);
@@ -781,11 +780,11 @@ async function guardarCambiosAuditoria() {
           tipo: "salida",
           sector,
           fecha: fechaRegistro,
-          fotoBase64: fotoTemporalSalida
+          fotoBase64: fotoTemporalSalida,
         };
         const respuestaSalida = await fetch(API_URL, {
           method: "POST",
-          body: JSON.stringify(bodySalida)
+          body: JSON.stringify(bodySalida),
         });
         const dataSalida = await respuestaSalida.json();
         console.log("Foto salida actualizada:", dataSalida);
@@ -807,7 +806,6 @@ async function guardarCambiosAuditoria() {
     alert("Error al guardar los cambios.");
   }
 }
-
 
 // =======================================
 // CONFIRMAR AUDITORÍA (BOTÓN ROJO)
@@ -868,7 +866,6 @@ async function subirFotoEditada(event, tipo) {
 
   lector.readAsDataURL(archivo);
 }
-
 
 //==========================================
 //funcion configurar rango de fecha

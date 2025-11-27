@@ -27,8 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // MOSTRAR NOMBRE DEL USUARIO ACTUAL
 // =======================================
 function mostrarNombreUsuario() {
-  const nombre = localStorage.getItem("nombreUsuario");
-  const rol = localStorage.getItem("rolUsuario");
+  const nombre = localStorage.getItem("admin_nombre");
+  const rol = localStorage.getItem("admin_rol");
+
   const saludo = document.getElementById("saludoAdmin");
 
   if (saludo && nombre && rol) {
@@ -651,7 +652,7 @@ function llenarFiltroSectores(registros) {
   // -------------------------------
   // FILTRO POR ROL
   // -------------------------------
-  const rol = localStorage.getItem("rolUsuario");
+  const rol = localStorage.getItem("admin_rol");
   const sectorUsuario = localStorage.getItem("sectorUsuario");
 
   if (rol?.toLowerCase() === "admin") {
@@ -728,7 +729,6 @@ async function guardarCambiosAuditoria() {
 
     textoGuardadoOK = true;
     console.log("✔ Texto guardado correctamente");
-
   } catch (error) {
     console.error("❌ Error guardando texto:", error);
     alert("Error al guardar los datos.");
@@ -739,7 +739,6 @@ async function guardarCambiosAuditoria() {
   // 2. SI EL TEXTO SE GUARDÓ → AHORA SUBIR FOTOS
   // ==========================================================
   if (textoGuardadoOK) {
-
     // FOTO DE ENTRADA
     if (fotoTemporalEntrada) {
       console.log("Subiendo foto de ENTRADA...");

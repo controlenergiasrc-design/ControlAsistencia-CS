@@ -667,53 +667,71 @@ function llenarFiltroSectores(registros) {
   });
 }
 // =======================================
-// GUARDAR CAMBIOS DE AUDITORÍA
+// GUARDAR CAMBIOS DE AUDITORÍA (FINAL)
 // =======================================
 async function guardarCambiosAuditoria() {
+
   const numero_cs = document
     .getElementById("tituloModalAuditoria")
     .textContent.match(/\d+/)[0];
 
-  // AGREGADO: obtener sector
   const sector = document.getElementById("hiddenSector").value.trim();
+  const fechaRegistro = document.getElementById("hiddenFechaRegistro").value.trim();
 
-  // -------------------------
-  // 1. OBTENER HORAS y fecha EDITADAS
-  // -------------------------
   const horaEntrada = document.getElementById("inputHoraEntrada").value.trim();
   const horaSalida = document.getElementById("inputHoraSalida").value.trim();
-  const fechaRegistro = document
-    .getElementById("hiddenFechaRegistro")
-    .value.trim();
 
-  // -------------------------
-  // 2. OBTENER ACTIVIDADES
-  // -------------------------
-  const actividadesTags = Array.from(
+  const actividades = Array.from(
     document.querySelectorAll("#listaActividades .tag")
-  ).map((t) => t.dataset.texto);
+  ).map(t => t.dataset.texto).join(", ");
 
-  const actividades = actividadesTags.join(", ");
-
-  // -------------------------
-  // 3. OBTENER NOVEDADES
-  // -------------------------
-  const novedadesTags = Array.from(
+  const novedades = Array.from(
     document.querySelectorAll("#listaNovedades .tag")
-  ).map((t) => t.dataset.texto);
+  ).map(t => t.dataset.texto).join(", ");
 
-  const novedades = novedadesTags.join(", ");
+  const observaciones = document.getElementById("inputObservaciones").value.trim();
 
-  // -------------------------
-  // 4. OBTENER OBSERVACIONES
-  // -------------------------
-  const observaciones = document
-    .getElementById("inputObservaciones")
-    .value.trim();
 
-  // -------------------------
-  // 5. URL COMPLETA (con sector)
-  // -------------------------
+  // ==========================================================
+  // 0. SUBIR FOTOS SI HAY TEMPORALES (ANTES DE TODO)
+  // ==========================================================
+
+  // ENTRADA
+  if (fotoTemporalEntrada) {
+    await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        accion: "actualizarFoto",
+        numero_cs,
+        tipo: "entrada",
+        sector,
+        fecha: fechaRegistro,
+        fotoBase64: fotoTemporalEntrada,
+      }),
+    });
+    fotoTemporalEntrada = null;
+  }
+
+  // SALIDA
+  if (fotoTemporalSalida) {
+    await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        accion: "actualizarFoto",
+        numero_cs,
+        tipo: "salida",
+        sector,
+        fecha: fechaRegistro,
+        fotoBase64: fotoTemporalSalida,
+      }),
+    });
+    fotoTemporalSalida = null;
+  }
+
+
+  // ==========================================================
+  // 1. GUARDAR TEXTO (GET)
+  // ==========================================================
   const url = `${API_URL}?accion=guardarAuditoria&numero_cs=${numero_cs}&sector=${encodeURIComponent(
     sector
   )}&fecha_registro=${encodeURIComponent(
@@ -732,75 +750,33 @@ async function guardarCambiosAuditoria() {
     const res = await fetch(url);
     const data = await res.json();
 
-    if (data.success) {
-      alert("✔ Cambios guardados correctamente");
+    if (!data.success) {
+      alert("⚠ No se pudieron guardar los cambios");
+      return;
+    }
 
-      const clave = `auditoria_${numero_cs}`;
-      const objetoLocal = {
+    alert("✔ Cambios guardados correctamente");
+
+    // Guardar en Local Storage
+    const clave = `auditoria_${numero_cs}`;
+    localStorage.setItem(
+      clave,
+      JSON.stringify({
         horaEntrada,
         horaSalida,
         actividades,
         novedades,
         observaciones,
-      };
+      })
+    );
 
-      localStorage.setItem(clave, JSON.stringify(objetoLocal));
-      obtenerRegistrosHoy(); // refresca el panel del día
-      cargarHistorial(); // refresca historial automáticamente
-      cerrarModalAuditoria(); // cierra modal
+    // ==========================================================
+    // 2. REFRESCAR Y CERRAR MODAL (DESPUÉS DE TODO)
+    // ==========================================================
+    await obtenerRegistrosHoy();
+    await cargarHistorial();
+    cerrarModalAuditoria();
 
-      // -----------------------------------------
-      // SI HAY FOTO DE ENTRADA → SUBIRLA POR POST
-      // -----------------------------------------
-      if (fotoTemporalEntrada) {
-        const bodyEntrada = {
-          accion: "actualizarFoto",
-          numero_cs,
-          tipo: "entrada",
-          sector,
-          fecha: fechaRegistro,
-          fotoBase64: fotoTemporalEntrada,
-        };
-        const respuestaEntrada = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify(bodyEntrada),
-        });
-        const dataEntrada = await respuestaEntrada.json();
-        console.log("Foto entrada actualizada:", dataEntrada);
-        // Reseteamos la temporal
-        fotoTemporalEntrada = null;
-      }
-      // -----------------------------------------
-      // SI HAY FOTO DE SALIDA → SUBIRLA POR POST
-      // -----------------------------------------
-      if (fotoTemporalSalida) {
-        const bodySalida = {
-          accion: "actualizarFoto",
-          numero_cs,
-          tipo: "salida",
-          sector,
-          fecha: fechaRegistro,
-          fotoBase64: fotoTemporalSalida,
-        };
-        const respuestaSalida = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify(bodySalida),
-        });
-        const dataSalida = await respuestaSalida.json();
-        console.log("Foto salida actualizada:", dataSalida);
-
-        // Reseteamos la temporal
-        fotoTemporalSalida = null;
-      }
-      // -----------------------------------------
-      // REFRESCAR TODO
-      // -----------------------------------------
-      obtenerRegistrosHoy();
-      cargarHistorial();
-      cerrarModalAuditoria();
-    } else {
-      alert("⚠ No se pudieron guardar los cambios");
-    }
   } catch (error) {
     console.error("❌ Error guardando auditoría:", error);
     alert("Error al guardar los cambios.");

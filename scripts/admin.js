@@ -667,7 +667,7 @@ function llenarFiltroSectores(registros) {
   });
 }
 // =======================================
-// GUARDAR CAMBIOS DE AUDITORÍA (FINAL)
+// GUARDAR CAMBIOS DE AUDITORÍA (FINAL DEBUG)
 // =======================================
 async function guardarCambiosAuditoria() {
   const numero_cs = document
@@ -702,9 +702,11 @@ async function guardarCambiosAuditoria() {
   // 0. SUBIR FOTOS SI HAY TEMPORALES (ANTES DE TODO)
   // ==========================================================
 
-  // ENTRADA
+  // --------- FOTO ENTRADA ---------
   if (fotoTemporalEntrada) {
-    await fetch(API_URL, {
+    console.log("Subiendo foto de ENTRADA...");
+
+    const respEntrada = await fetch(API_URL, {
       method: "POST",
       body: JSON.stringify({
         accion: "actualizarFoto",
@@ -715,12 +717,18 @@ async function guardarCambiosAuditoria() {
         fotoBase64: fotoTemporalEntrada,
       }),
     });
+
+    const textoEntrada = await respEntrada.text();
+    console.log("RESPUESTA SERVIDOR (entrada):", textoEntrada);
+
     fotoTemporalEntrada = null;
   }
 
-  // SALIDA
+  // --------- FOTO SALIDA ---------
   if (fotoTemporalSalida) {
-    await fetch(API_URL, {
+    console.log("Subiendo foto de SALIDA...");
+
+    const respSalida = await fetch(API_URL, {
       method: "POST",
       body: JSON.stringify({
         accion: "actualizarFoto",
@@ -731,6 +739,10 @@ async function guardarCambiosAuditoria() {
         fotoBase64: fotoTemporalSalida,
       }),
     });
+
+    const textoSalida = await respSalida.text();
+    console.log("RESPUESTA SERVIDOR (salida):", textoSalida);
+
     fotoTemporalSalida = null;
   }
 
@@ -756,11 +768,11 @@ async function guardarCambiosAuditoria() {
     const data = await res.json();
 
     if (!data.success) {
-      alert("⚠ No se pudieron guardar los cambios");
+      alert("No se pudieron guardar los cambios");
       return;
     }
 
-    alert("✔ Cambios guardados correctamente");
+    alert("Cambios guardados correctamente");
 
     // Guardar en Local Storage
     const clave = `auditoria_${numero_cs}`;
@@ -776,7 +788,7 @@ async function guardarCambiosAuditoria() {
     );
 
     // ==========================================================
-    // 2. REFRESCAR Y CERRAR MODAL (DESPUÉS DE TODO)
+    // 2. REFRESCAR TABLAS Y CERRAR MODAL
     // ==========================================================
     await obtenerRegistrosHoy();
     await cargarHistorial();
@@ -786,6 +798,7 @@ async function guardarCambiosAuditoria() {
     alert("Error al guardar los cambios.");
   }
 }
+
 
 // =======================================
 // CONFIRMAR AUDITORÍA (BOTÓN ROJO)

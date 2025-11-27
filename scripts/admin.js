@@ -65,38 +65,42 @@ function mostrarTituloHoy() {
 // =======================================
 async function obtenerRegistrosHoy() {
   try {
-    const res = await fetch(`${API_URL}?accion=registrosHoy`);
+
+    const rol = localStorage.getItem("admin_rol") || "";
+    const sectorUsuario = localStorage.getItem("sectorUsuario") || "";
+
+    const url = `${API_URL}?accion=registrosHoy&rol=${encodeURIComponent(rol)}&sector=${encodeURIComponent(sectorUsuario)}`;
+
+    const res = await fetch(url);
     const data = await res.json();
+
     console.log("Datos recibidos:", data);
+
     if (data && data.registros) {
-      //  GUARDAMOS TODOS LOS REGISTROS EN UNA VARIABLE GLOBAL
       registrosHoyGlobal = data.registros;
-      // Filtrar solo registros con foto (enlace existente)
+
       const entradas = data.registros.filter(
-        (r) =>
-          r.tipo?.toLowerCase() === "entrada" &&
-          r.enlace &&
-          r.enlace.trim() !== ""
+        r => r.tipo?.toLowerCase() === "entrada" && r.enlace?.trim() !== ""
       ).length;
+
       const salidas = data.registros.filter(
-        (r) =>
-          r.tipo?.toLowerCase() === "salida" &&
-          r.enlace &&
-          r.enlace.trim() !== ""
+        r => r.tipo?.toLowerCase() === "salida" && r.enlace?.trim() !== ""
       ).length;
-      // Mostrar los valores en las tarjetas
+
       document.getElementById("metricEntradas").textContent = entradas;
       document.getElementById("metricSalidas").textContent = salidas;
-      // Renderizar tabla normalmente
+
       renderizarTabla(data.registros);
       llenarFiltroSectores(data.registros);
     } else {
       renderizarTabla([]);
     }
+    
   } catch (err) {
     console.error("❌ Error al obtener registros:", err);
   }
 }
+
 // =======================================
 // RENDERIZAR TABLA COMPLETA (ENTRADA/SALIDA)
 // =======================================

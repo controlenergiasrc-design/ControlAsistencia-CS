@@ -670,27 +670,33 @@ function llenarFiltroSectores(registros) {
 // GUARDAR CAMBIOS DE AUDITORÍA (FINAL)
 // =======================================
 async function guardarCambiosAuditoria() {
-
   const numero_cs = document
     .getElementById("tituloModalAuditoria")
     .textContent.match(/\d+/)[0];
 
   const sector = document.getElementById("hiddenSector").value.trim();
-  const fechaRegistro = document.getElementById("hiddenFechaRegistro").value.trim();
+  const fechaRegistro = document
+    .getElementById("hiddenFechaRegistro")
+    .value.trim();
 
   const horaEntrada = document.getElementById("inputHoraEntrada").value.trim();
   const horaSalida = document.getElementById("inputHoraSalida").value.trim();
 
   const actividades = Array.from(
     document.querySelectorAll("#listaActividades .tag")
-  ).map(t => t.dataset.texto).join(", ");
+  )
+    .map((t) => t.dataset.texto)
+    .join(", ");
 
   const novedades = Array.from(
     document.querySelectorAll("#listaNovedades .tag")
-  ).map(t => t.dataset.texto).join(", ");
+  )
+    .map((t) => t.dataset.texto)
+    .join(", ");
 
-  const observaciones = document.getElementById("inputObservaciones").value.trim();
-
+  const observaciones = document
+    .getElementById("inputObservaciones")
+    .value.trim();
 
   // ==========================================================
   // 0. SUBIR FOTOS SI HAY TEMPORALES (ANTES DE TODO)
@@ -727,7 +733,6 @@ async function guardarCambiosAuditoria() {
     });
     fotoTemporalSalida = null;
   }
-
 
   // ==========================================================
   // 1. GUARDAR TEXTO (GET)
@@ -776,7 +781,6 @@ async function guardarCambiosAuditoria() {
     await obtenerRegistrosHoy();
     await cargarHistorial();
     cerrarModalAuditoria();
-
   } catch (error) {
     console.error("❌ Error guardando auditoría:", error);
     alert("Error al guardar los cambios.");
@@ -787,6 +791,9 @@ async function guardarCambiosAuditoria() {
 // CONFIRMAR AUDITORÍA (BOTÓN ROJO)
 // =======================================
 async function confirmarAuditoriaFrontend() {
+  console.log("TEMP ENTRADA:", fotoTemporalEntrada);
+  console.log("TEMP SALIDA:", fotoTemporalSalida);
+
   // Sacar el número CS del título del modal
   const numero_cs = document
     .getElementById("tituloModalAuditoria")

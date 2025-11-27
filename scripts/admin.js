@@ -794,12 +794,10 @@ async function guardarCambiosAuditoria() {
       observaciones,
     })
   );
-
   await obtenerRegistrosHoy();
   await cargarHistorial();
   cerrarModalAuditoria();
 }
-
 
 // =======================================
 // CONFIRMAR AUDITORÍA (BOTÓN ROJO)

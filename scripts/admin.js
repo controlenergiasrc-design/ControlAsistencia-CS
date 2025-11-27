@@ -667,7 +667,7 @@ function llenarFiltroSectores(registros) {
   });
 }
 // =======================================
-// GUARDAR CAMBIOS DE AUDITORÍA (FINAL DEBUG)
+// GUARDAR CAMBIOS DE AUDITORÍA (ORDEN CORRECTO)
 // =======================================
 async function guardarCambiosAuditoria() {
   const numero_cs = document
@@ -699,55 +699,7 @@ async function guardarCambiosAuditoria() {
     .value.trim();
 
   // ==========================================================
-  // 0. SUBIR FOTOS SI HAY TEMPORALES (ANTES DE TODO)
-  // ==========================================================
-
-  // --------- FOTO ENTRADA ---------
-  if (fotoTemporalEntrada) {
-    console.log("Subiendo foto de ENTRADA...");
-
-    const respEntrada = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        accion: "actualizarFoto",
-        numero_cs,
-        tipo: "entrada",
-        sector,
-        fecha: fechaRegistro,
-        fotoBase64: fotoTemporalEntrada,
-      }),
-    });
-
-    const textoEntrada = await respEntrada.text();
-    console.log("RESPUESTA SERVIDOR (entrada):", textoEntrada);
-
-    fotoTemporalEntrada = null;
-  }
-
-  // --------- FOTO SALIDA ---------
-  if (fotoTemporalSalida) {
-    console.log("Subiendo foto de SALIDA...");
-
-    const respSalida = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        accion: "actualizarFoto",
-        numero_cs,
-        tipo: "salida",
-        sector,
-        fecha: fechaRegistro,
-        fotoBase64: fotoTemporalSalida,
-      }),
-    });
-
-    const textoSalida = await respSalida.text();
-    console.log("RESPUESTA SERVIDOR (salida):", textoSalida);
-
-    fotoTemporalSalida = null;
-  }
-
-  // ==========================================================
-  // 1. GUARDAR TEXTO (GET)
+  // 1. PRIMERO GUARDAR TEXTO (GET)
   // ==========================================================
   const url = `${API_URL}?accion=guardarAuditoria&numero_cs=${numero_cs}&sector=${encodeURIComponent(
     sector
@@ -763,6 +715,8 @@ async function guardarCambiosAuditoria() {
     novedades
   )}&observaciones=${encodeURIComponent(observaciones)}`;
 
+  let textoGuardadoOK = false;
+
   try {
     const res = await fetch(url);
     const data = await res.json();
@@ -772,31 +726,78 @@ async function guardarCambiosAuditoria() {
       return;
     }
 
-    alert("Cambios guardados correctamente");
+    textoGuardadoOK = true;
+    console.log("✔ Texto guardado correctamente");
 
-    // Guardar en Local Storage
-    const clave = `auditoria_${numero_cs}`;
-    localStorage.setItem(
-      clave,
-      JSON.stringify({
-        horaEntrada,
-        horaSalida,
-        actividades,
-        novedades,
-        observaciones,
-      })
-    );
-
-    // ==========================================================
-    // 2. REFRESCAR TABLAS Y CERRAR MODAL
-    // ==========================================================
-    await obtenerRegistrosHoy();
-    await cargarHistorial();
-    cerrarModalAuditoria();
   } catch (error) {
-    console.error("❌ Error guardando auditoría:", error);
-    alert("Error al guardar los cambios.");
+    console.error("❌ Error guardando texto:", error);
+    alert("Error al guardar los datos.");
+    return;
   }
+
+  // ==========================================================
+  // 2. SI EL TEXTO SE GUARDÓ → AHORA SUBIR FOTOS
+  // ==========================================================
+  if (textoGuardadoOK) {
+
+    // FOTO DE ENTRADA
+    if (fotoTemporalEntrada) {
+      console.log("Subiendo foto de ENTRADA...");
+      const respEntrada = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          accion: "actualizarFoto",
+          numero_cs,
+          tipo: "entrada",
+          sector,
+          fecha: fechaRegistro,
+          fotoBase64: fotoTemporalEntrada,
+        }),
+      });
+
+      console.log("Respuesta ENTRADA:", await respEntrada.text());
+      fotoTemporalEntrada = null;
+    }
+
+    // FOTO DE SALIDA
+    if (fotoTemporalSalida) {
+      console.log("Subiendo foto de SALIDA...");
+      const respSalida = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          accion: "actualizarFoto",
+          numero_cs,
+          tipo: "salida",
+          sector,
+          fecha: fechaRegistro,
+          fotoBase64: fotoTemporalSalida,
+        }),
+      });
+
+      console.log("Respuesta SALIDA:", await respSalida.text());
+      fotoTemporalSalida = null;
+    }
+  }
+
+  // ==========================================================
+  // 3. REFRESCAR Y CERRAR MODAL
+  // ==========================================================
+  alert("Cambios guardados correctamente");
+
+  localStorage.setItem(
+    `auditoria_${numero_cs}`,
+    JSON.stringify({
+      horaEntrada,
+      horaSalida,
+      actividades,
+      novedades,
+      observaciones,
+    })
+  );
+
+  await obtenerRegistrosHoy();
+  await cargarHistorial();
+  cerrarModalAuditoria();
 }
 
 

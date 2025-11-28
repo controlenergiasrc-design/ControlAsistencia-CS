@@ -987,10 +987,89 @@ async function cargarHistorial() {
       contador.textContent = registros.length;
     }
     renderizarHistorial(registros);
+    llenarFiltroSectoresHistorial(registros);
   } catch (error) {
     console.error("❌ Error al cargar pendientes:", error);
     alert("Error cargando pendientes");
   }
+}
+//filtro por sector tambien para historial
+function llenarFiltroSectoresHistorial(registros) {
+  let filtro = document.getElementById("filtroSectorHistorial");
+  if (!filtro) return;
+
+  // Obtener sectores únicos
+  const sectores = [...new Set(registros.map(r => r.sector).filter(Boolean))];
+
+  // Limpiar
+  filtro.innerHTML = `<option value="">Todos</option">`;
+
+  sectores.forEach(sector => {
+    const opt = document.createElement("option");
+    opt.value = sector;
+    opt.textContent = sector;
+    filtro.appendChild(opt);
+  });
+
+  // Evitar eventos duplicados
+  const nuevo = filtro.cloneNode(true);
+  filtro.parentNode.replaceChild(nuevo, filtro);
+  filtro = nuevo;
+
+  const rol = localStorage.getItem("admin_rol");
+  const sectorUsuario = localStorage.getItem("sectorUsuario");
+
+  // SI ES ADMIN → esconder filtro + mostrar texto fijo
+  if (rol?.toLowerCase() === "admin") {
+    filtro.style.display = "none";
+
+    const textoFiltro = document.querySelector(".texto-filtro-historial");
+    if (textoFiltro) textoFiltro.style.display = "none";
+
+    let label = document.getElementById("labelSectorHistorial");
+    if (!label) {
+      label = document.createElement("div");
+      label.id = "labelSectorHistorial";
+      label.style.fontWeight = "600";
+      label.style.color = "#7d7d7d";
+      label.style.fontSize = "14px";
+      label.style.marginLeft = "10px";
+      filtro.insertAdjacentElement("afterend", label);
+    }
+
+    label.textContent = `Sector ${sectorUsuario}`;
+  }
+
+  // SI ES SUPER ADMIN → activar filtrado
+  filtro.addEventListener("change", () => {
+    filtrarHistorialPorSector(filtro.value);
+  });
+}
+
+function filtrarHistorialPorSector(sector) {
+  const rol = localStorage.getItem("admin_rol") || "";
+  const sectorUsuario = localStorage.getItem("sectorUsuario") || "";
+
+  fetch(`${API_URL}?accion=historial&rol=${encodeURIComponent(rol)}&sector=${encodeURIComponent(sectorUsuario)}`)
+    .then(res => res.json())
+    .then(data => {
+      let registros = data.registros || [];
+
+      const hoy = new Date().toISOString().slice(0, 10);
+
+      // Solo días anteriores
+      registros = registros.filter(r => (r.fecha_entrada || "").split("T")[0] !== hoy);
+
+      // Solo los no auditados
+      registros = registros.filter(r => (r.estado || "").toUpperCase() !== "AUDITADO");
+
+      // Ahora filtrar por sector
+      if (sector) {
+        registros = registros.filter(r => r.sector === sector);
+      }
+
+      renderizarHistorial(registros);
+    });
 }
 
 // ======================================================

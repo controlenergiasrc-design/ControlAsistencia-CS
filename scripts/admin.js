@@ -65,11 +65,12 @@ function mostrarTituloHoy() {
 // =======================================
 async function obtenerRegistrosHoy() {
   try {
-
     const rol = localStorage.getItem("admin_rol") || "";
     const sectorUsuario = localStorage.getItem("sectorUsuario") || "";
 
-    const url = `${API_URL}?accion=registrosHoy&rol=${encodeURIComponent(rol)}&sector=${encodeURIComponent(sectorUsuario)}`;
+    const url = `${API_URL}?accion=registrosHoy&rol=${encodeURIComponent(
+      rol
+    )}&sector=${encodeURIComponent(sectorUsuario)}`;
 
     const res = await fetch(url);
     const data = await res.json();
@@ -80,11 +81,11 @@ async function obtenerRegistrosHoy() {
       registrosHoyGlobal = data.registros;
 
       const entradas = data.registros.filter(
-        r => r.tipo?.toLowerCase() === "entrada" && r.enlace?.trim() !== ""
+        (r) => r.tipo?.toLowerCase() === "entrada" && r.enlace?.trim() !== ""
       ).length;
 
       const salidas = data.registros.filter(
-        r => r.tipo?.toLowerCase() === "salida" && r.enlace?.trim() !== ""
+        (r) => r.tipo?.toLowerCase() === "salida" && r.enlace?.trim() !== ""
       ).length;
 
       document.getElementById("metricEntradas").textContent = entradas;
@@ -95,7 +96,6 @@ async function obtenerRegistrosHoy() {
     } else {
       renderizarTabla([]);
     }
-    
   } catch (err) {
     console.error("❌ Error al obtener registros:", err);
   }
@@ -910,14 +910,18 @@ document.addEventListener("change", (e) => {
 // Módulo: Auditoría Pendiente
 // ======================================================
 async function cargarHistorial() {
-  const url = `${API_URL}?accion=historial`;
+  //Leer rol y sector desde locastorage
+  const rol = localStorage.getItem("admin_rol");
+  const sectorUsuario = localStorage.getItem("sectorUsuario");
+  //nuevo fetch que trae el rol y secotr
+  const url = `${API_URL}?accion=historial&rol=${encodeURIComponent(
+    rol
+  )}&sector=${encodeURIComponent(sectorUsuario)}`;
 
   try {
     const res = await fetch(url);
     const data = await res.json();
-
     console.log("Historial-Pendientes data:", data);
-
     const hoy = new Date().toISOString().slice(0, 10);
     let registros = data.registros || [];
 
@@ -925,7 +929,6 @@ async function cargarHistorial() {
     registros = registros.filter(
       (r) => (r.fecha_entrada || "").split("T")[0] !== hoy
     );
-
     // 2. Quitar registros AUDITADOS (solo queremos pendientes)
     registros = registros.filter(
       (r) => (r.estado || "").toUpperCase() !== "AUDITADO"
@@ -938,7 +941,6 @@ async function cargarHistorial() {
     if (contador) {
       contador.textContent = registros.length;
     }
-
     renderizarHistorial(registros);
   } catch (error) {
     console.error("❌ Error al cargar pendientes:", error);
@@ -966,7 +968,6 @@ function renderizarHistorial(registros) {
   registros.forEach((fila) => {
     const obj = construirObjetoHistorial(fila);
     const objJSON = JSON.stringify(obj).replace(/"/g, "&quot;");
-
     const estado = (fila.estado || "").toUpperCase();
 
     const html = `

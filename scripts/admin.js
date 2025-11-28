@@ -706,7 +706,7 @@ function llenarFiltroSectores(registros) {
       filtro.insertAdjacentElement("afterend", labelSector);
     }
 
-    labelSector.textContent = `${sectorUsuario}`;
+    labelSector.textContent =`${sectorUsuario}`;
   }
 
   // -------------------------------
@@ -1037,7 +1037,7 @@ function llenarFiltroSectoresHistorial(registros) {
       filtro.insertAdjacentElement("afterend", label);
     }
 
-    label.textContent = `${sectorUsuario}`;
+    label.textContent = `Sector: ${sectorUsuario}`;
   }
 
   // SI ES SUPER ADMIN → activar filtrado

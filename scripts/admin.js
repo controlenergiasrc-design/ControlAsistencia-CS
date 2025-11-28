@@ -209,7 +209,14 @@ function renderizarTabla(registros) {
 // =======================================
 function filtrarPorSector(sectorSeleccionado) {
   // 1. Volvemos a pedir los registros del día
-  fetch(`${API_URL}?accion=registrosHoy`)
+  const rol = localStorage.getItem("admin_rol") || "";
+  const sectorUsuario = localStorage.getItem("sectorUsuario") || "";
+
+  fetch(
+    `${API_URL}?accion=registrosHoy&rol=${encodeURIComponent(
+      rol
+    )}&sector=${encodeURIComponent(sectorUsuario)}`
+  )
     .then((res) => res.json())
     .then((data) => {
       // 2. Verificamos que existan registros válidos
@@ -661,7 +668,22 @@ function llenarFiltroSectores(registros) {
 
   if (rol?.toLowerCase() === "admin") {
     filtro.value = sectorUsuario || "";
-    filtro.disabled = true;
+    filtro.style.display = "none";
+
+    // Crear label si no existe
+    let labelSector = document.getElementById("labelSectorFijo");
+    if (!labelSector) {
+      labelSector = document.createElement("div");
+      labelSector.id = "labelSectorFijo";
+      labelSector.style.fontWeight = "600";
+      labelSector.style.marginTop = "8px";
+      labelSector.style.color = "#333";
+      labelSector.style.fontSize = "15px";
+      // Insertarlo justo después del filtro
+      filtro.insertAdjacentElement("afterend", labelSector);
+    }
+    // Mostrar sector
+    labelSector.textContent = `Sector ${sectorUsuario}`;
   }
 
   // -------------------------------

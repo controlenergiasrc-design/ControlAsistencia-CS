@@ -899,23 +899,18 @@ textarea {
   font-weight: 600 !important;
   color: #6c757d !important; /* mismo gris */
 }
-/*
-//LIMITAR ALTURA DE LAS TABLa
-//Para la tarjeta de Asistencia Diaria */
-.card-panel {
-  max-height: 480px;        /* límite para no crecer infinito */
-  overflow-y: auto;         /* si crece → scroll vertical dentro */
+.table-wrap {
+  max-height: 420px; /* límite de altura */
+  overflow-y: auto;  /* scroll solo para el contenido */
+  margin-top: 10px;
 }
-/* Para la tarjeta del Historial Pendiente */
-.historial-card {
-  max-height: 520px;        /* puedes ajustar */
-  overflow-y: auto;         /* scroll interno */
-  padding-bottom: 10px;     /* se ve más bonito */
-}
-/* La tabla interna siempre ocupa 100% */
-.card-panel .table,
-.historial-table-container {
-  width: 100%;
+
+/* Fijar encabezado */
+.table thead th {
+  position: sticky;
+  top: 0;
+  background: #fafafa; /* color encabezado */
+  z-index: 5;           /* que no quede debajo */
 }
 
     </style>

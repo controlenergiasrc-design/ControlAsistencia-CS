@@ -683,8 +683,8 @@ function llenarFiltroSectores(registros) {
       labelSector.id = "labelSectorFijo";
       labelSector.style.fontWeight = "600";
       labelSector.style.marginTop = "8px";
-      labelSector.style.color = "#545454ff";
-      labelSector.style.fontSize = "13px";
+      labelSector.style.color = "#676666ff";
+      labelSector.style.fontSize = "14px";
       // Insertarlo justo después del filtro
       filtro.insertAdjacentElement("afterend", labelSector);
     }

@@ -671,12 +671,6 @@ function llenarFiltroSectores(registros) {
     filtro.value = sectorUsuario || "";
     filtro.style.display = "none";
 
-    // Ocultar el texto "Filtrar por sector"
-    const textoFiltro = document.querySelector(".texto-filtro-sector");
-    if (textoFiltro) {
-      textoFiltro.style.display = "none";
-    }
-
     // Crear un label bonito con el sector del admin
     let labelSector = document.getElementById("labelSectorFijo");
     if (!labelSector) {
@@ -685,14 +679,14 @@ function llenarFiltroSectores(registros) {
 
       labelSector.style.fontWeight = "600";
       labelSector.style.marginLeft = "10px";
-      labelSector.style.color = "#7d7d7d";
+      labelSector.style.color = "#777777ff";
       labelSector.style.fontSize = "14px";
 
       // Insertarlo justo después del select oculto
       filtro.insertAdjacentElement("afterend", labelSector);
     }
 
-    labelSector.textContent = `Sector ${sectorUsuario}`;
+    labelSector.textContent = `${sectorUsuario}`;
   }
 
   // -------------------------------

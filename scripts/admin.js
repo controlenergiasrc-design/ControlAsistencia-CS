@@ -667,28 +667,31 @@ function llenarFiltroSectores(registros) {
   const sectorUsuario = localStorage.getItem("sectorUsuario");
 
   if (rol?.toLowerCase() === "admin") {
+    // Ocultar el input <select>
     filtro.value = sectorUsuario || "";
     filtro.style.display = "none";
 
-    // OCULTAR también el texto "Filtrar por sector"
-    let textoFiltro = document.querySelector(".texto-filtro-sector");
+    // Ocultar el texto "Filtrar por sector"
+    const textoFiltro = document.querySelector(".texto-filtro-sector");
     if (textoFiltro) {
       textoFiltro.style.display = "none";
     }
 
-    // Crear label si no existe
+    // Crear un label bonito con el sector del admin
     let labelSector = document.getElementById("labelSectorFijo");
     if (!labelSector) {
       labelSector = document.createElement("div");
       labelSector.id = "labelSectorFijo";
+
       labelSector.style.fontWeight = "600";
-      labelSector.style.marginTop = "8px";
-      labelSector.style.color = "#676666ff";
+      labelSector.style.marginLeft = "10px";
+      labelSector.style.color = "#7d7d7d";
       labelSector.style.fontSize = "14px";
-      // Insertarlo justo después del filtro
+
+      // Insertarlo justo después del select oculto
       filtro.insertAdjacentElement("afterend", labelSector);
     }
-    // Mostrar sector
+
     labelSector.textContent = `Sector ${sectorUsuario}`;
   }
 

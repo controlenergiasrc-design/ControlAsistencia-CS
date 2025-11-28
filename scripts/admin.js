@@ -286,7 +286,7 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-asistencia").classList.remove("d-none");
     if (link.innerText.includes("Usuarios"))
       document.getElementById("mod-usuarios").classList.remove("d-none");
-    cargarUsuarios();// cargamos los usuarios del sheets
+    cargarUsuarios(); // cargamos los usuarios del sheets
     if (link.innerText.includes("Pendientes"))
       document.getElementById("mod-historial").classList.remove("d-none");
     configurarRangoFechaHistorial(); // para el input date
@@ -1288,6 +1288,22 @@ function construirObjetoHistorial(fila) {
   };
 }
 //====================================================================================================================================================================================
+async function cargarUsuarios() {
+  try {
+    const res = await fetch(`${API_URL}?accion=listarUsuarios`);
+    const data = await res.json();
+
+    if (data.ok) {
+      renderizarUsuarios(data.usuarios);
+    } else {
+      alert("Error cargando usuarios");
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    alert("Error conectando con el servidor");
+  }
+}
+
 //====================MODULO USUARIOSSSSSSSSSSSSSSSSSSSSS===================================
 function renderizarUsuarios(registros) {
   const tbody = document.getElementById("tablaUsuarios");
@@ -1296,7 +1312,7 @@ function renderizarUsuarios(registros) {
   const rol = localStorage.getItem("rol");
   const esSuperAdmin = rol === "SuperAdmin";
 
-  registros.forEach(u => {
+  registros.forEach((u) => {
     const disabled = esSuperAdmin ? "" : "disabled";
 
     const fila = document.createElement("tr");
@@ -1329,7 +1345,7 @@ function renderizarUsuarios(registros) {
 
       <td>
         ${
-          esSuperAdmin 
+          esSuperAdmin
             ? `<button class="btn btn-warning btn-sm" onclick="editarUsuario('${u.numero_cs}')">
                  <i class="fa-solid fa-pen"></i>
                </button>`
@@ -1361,10 +1377,8 @@ document.addEventListener("change", (e) => {
   const otros = document.querySelectorAll(
     `.chk-estado[data-cs="${cs}"]:not([data-estado="${nuevoEstado}"])`
   );
-  otros.forEach(chk => chk.checked = false);
+  otros.forEach((chk) => (chk.checked = false));
 
   // Y después conectamos API
   // actualizarEstadoUsuario(cs, nuevoEstado);
 });
-
-

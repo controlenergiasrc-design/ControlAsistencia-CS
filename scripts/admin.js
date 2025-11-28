@@ -204,14 +204,15 @@ function renderizarTabla(registros) {
     tbody.insertAdjacentHTML("beforeend", filaHTML);
   });
 }
+
 // =======================================
-// FILTRAR TABLA POR SECTOR (CORREGIDO)
+// FILTRAR TABLA POR SECTOR — VERSIÓN FINAL
 // =======================================
 function filtrarPorSector(sectorSeleccionado) {
-  // 1. Volvemos a pedir los registros del día
   const rol = localStorage.getItem("admin_rol") || "";
   const sectorUsuario = localStorage.getItem("sectorUsuario") || "";
 
+  // Traer registros según rol
   fetch(
     `${API_URL}?accion=registrosHoy&rol=${encodeURIComponent(
       rol
@@ -219,20 +220,39 @@ function filtrarPorSector(sectorSeleccionado) {
   )
     .then((res) => res.json())
     .then((data) => {
-      // 2. Verificamos que existan registros válidos
       if (!data || !data.registros) {
         renderizarTabla([]);
+        document.getElementById("metricEntradas").textContent = 0;
+        document.getElementById("metricSalidas").textContent = 0;
         return;
       }
+
+      // Lista original
       let registros = data.registros;
-      // 3. Aplicamos filtro REAL por sector
-      //    Aquí filtramos los datos ANTES de enviarlos a la tabla,
-      //    evitando ocultar <tr> por separado y romper rowspan.
+
+      // Aplicar filtro si selecciona un sector
       if (sectorSeleccionado) {
         registros = registros.filter((r) => r.sector === sectorSeleccionado);
       }
-      // 4. Renderizamos SOLO los registros filtrados
-      //    Esto mantiene Entrada + Salida juntas.
+      // ACTUALIZAR TARJETAS DE MÉTRICAS
+      const entradas = registros.filter(
+        (r) =>
+          r.tipo?.toLowerCase() === "entrada" &&
+          r.enlace &&
+          r.enlace.trim() !== ""
+      ).length;
+
+      const salidas = registros.filter(
+        (r) =>
+          r.tipo?.toLowerCase() === "salida" &&
+          r.enlace &&
+          r.enlace.trim() !== ""
+      ).length;
+
+      document.getElementById("metricEntradas").textContent = entradas;
+      document.getElementById("metricSalidas").textContent = salidas;
+
+      // Renderizar tabla filtrada
       renderizarTabla(registros);
     })
     .catch((err) => {
@@ -274,10 +294,10 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-config").classList.remove("d-none");
   });
 });
+
 //=====================================
 //Acciones del modal cerra sesion
 //=====================================
-
 // ABRIR modal cerrar sesion
 function abrirModalCerrarSesion() {
   document.getElementById("modalCerrarSesion").classList.remove("d-none");

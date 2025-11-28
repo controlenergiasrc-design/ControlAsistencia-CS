@@ -670,6 +670,12 @@ function llenarFiltroSectores(registros) {
     filtro.value = sectorUsuario || "";
     filtro.style.display = "none";
 
+    // OCULTAR también el texto "Filtrar por sector"
+    let textoFiltro = document.querySelector(".texto-filtro-sector");
+    if (textoFiltro) {
+      textoFiltro.style.display = "none";
+    }
+
     // Crear label si no existe
     let labelSector = document.getElementById("labelSectorFijo");
     if (!labelSector) {
@@ -677,8 +683,8 @@ function llenarFiltroSectores(registros) {
       labelSector.id = "labelSectorFijo";
       labelSector.style.fontWeight = "600";
       labelSector.style.marginTop = "8px";
-      labelSector.style.color = "#333";
-      labelSector.style.fontSize = "15px";
+      labelSector.style.color = "#545454ff";
+      labelSector.style.fontSize = "13px";
       // Insertarlo justo después del filtro
       filtro.insertAdjacentElement("afterend", labelSector);
     }

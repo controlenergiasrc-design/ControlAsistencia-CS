@@ -286,6 +286,7 @@ document.querySelectorAll(".nav-link").forEach((link) => {
       document.getElementById("mod-asistencia").classList.remove("d-none");
     if (link.innerText.includes("Usuarios"))
       document.getElementById("mod-usuarios").classList.remove("d-none");
+    cargarUsuarios();// cargamos los usuarios del sheets
     if (link.innerText.includes("Pendientes"))
       document.getElementById("mod-historial").classList.remove("d-none");
     configurarRangoFechaHistorial(); // para el input date
@@ -994,7 +995,6 @@ async function cargarHistorial() {
       .addEventListener("change", function () {
         filtrarHistorialPorSector(this.value);
       });
-      
   } catch (error) {
     console.error("❌ Error al cargar pendientes:", error);
     alert("Error cargando pendientes");
@@ -1287,5 +1287,84 @@ function construirObjetoHistorial(fila) {
     estado_auditoria: fila.estado || "",
   };
 }
+//====================================================================================================================================================================================
+//====================MODULO USUARIOSSSSSSSSSSSSSSSSSSSSS===================================
+function renderizarUsuarios(registros) {
+  const tbody = document.getElementById("tablaUsuarios");
+  tbody.innerHTML = "";
 
-//HOLAAAAAAAAAAAAAAAAAAAAAAA
+  const rol = localStorage.getItem("rol");
+  const esSuperAdmin = rol === "SuperAdmin";
+
+  registros.forEach(u => {
+    const disabled = esSuperAdmin ? "" : "disabled";
+
+    const fila = document.createElement("tr");
+
+    fila.innerHTML = `
+      <td>${u.numero_cs}</td>
+      <td>${u.nombre}</td>
+      <td>${u.tipo}</td>
+      <td>${u.sector}</td>
+
+      <td>
+        <label>
+          <input type="checkbox" class="chk-estado"
+                 data-cs="${u.numero_cs}"
+                 data-estado="ACTIVO"
+                 ${u.estado === "ACTIVO" ? "checked" : ""}
+                 ${disabled}>
+          Activo
+        </label>
+        <br>
+        <label>
+          <input type="checkbox" class="chk-estado"
+                 data-cs="${u.numero_cs}"
+                 data-estado="INACTIVO"
+                 ${u.estado === "INACTIVO" ? "checked" : ""}
+                 ${disabled}>
+          Inactivo
+        </label>
+      </td>
+
+      <td>
+        ${
+          esSuperAdmin 
+            ? `<button class="btn btn-warning btn-sm" onclick="editarUsuario('${u.numero_cs}')">
+                 <i class="fa-solid fa-pen"></i>
+               </button>`
+            : `<span class="text-muted">—</span>`
+        }
+      </td>
+    `;
+
+    tbody.appendChild(fila);
+  });
+}
+
+//evento solo selecionar un chech
+document.addEventListener("change", (e) => {
+  if (!e.target.classList.contains("chk-estado")) return;
+
+  const rol = localStorage.getItem("rol");
+  const esSuperAdmin = rol === "SuperAdmin";
+
+  if (!esSuperAdmin) {
+    e.preventDefault();
+    e.target.checked = !e.target.checked;
+    return;
+  }
+
+  const cs = e.target.dataset.cs;
+  const nuevoEstado = e.target.dataset.estado;
+
+  const otros = document.querySelectorAll(
+    `.chk-estado[data-cs="${cs}"]:not([data-estado="${nuevoEstado}"])`
+  );
+  otros.forEach(chk => chk.checked = false);
+
+  // Y después conectamos API
+  // actualizarEstadoUsuario(cs, nuevoEstado);
+});
+
+

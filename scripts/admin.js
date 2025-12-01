@@ -1373,3 +1373,33 @@ document.addEventListener("change", (e) => {
   // Y después conectamos API
   // actualizarEstadoUsuario(cs, nuevoEstado);
 });
+
+//abrr modal en modod agregr
+document.getElementById("btnAgregarUsuario").addEventListener("click", () => {
+  document.getElementById("tituloModalUsuario").textContent = "Nuevo usuario";
+  document.getElementById("formUsuario").reset();
+  document.getElementById("id_editar").value = "";
+  mostrarModalUsuario();
+});
+
+//abrir moal el modo editar
+function editarUsuario(numeroCS) {
+  const usuario = listaUsuariosGlobal.find(u => u.numero_cs == numeroCS);
+
+  document.getElementById("tituloModalUsuario").textContent = "Editar usuario";
+
+  document.getElementById("id_editar").value = numeroCS;
+  document.getElementById("numero_cs").value = usuario.numero_cs;
+  document.getElementById("nombre_usuario").value = usuario.nombre;
+  document.getElementById("tipo_usuario").value = usuario.tipo;
+  document.getElementById("sector_usuario").value = usuario.sector;
+  document.getElementById("estado_usuario").value = usuario.estado;
+
+  mostrarModalUsuario();
+}
+//mostrar modal bootstrap
+function mostrarModalUsuario() {
+  const modal = new bootstrap.Modal(document.getElementById("modalUsuario"));
+  modal.show();
+}
+

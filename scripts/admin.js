@@ -1309,7 +1309,7 @@ function renderizarUsuarios(registros) {
   const tbody = document.getElementById("tablaUsuarios");
   tbody.innerHTML = "";
 
-  const rol = localStorage.getItem("rol");
+  const rol = localStorage.getItem("admin_rol");
   const esSuperAdmin = rol === "SuperAdmin";
 
   registros.forEach((u) => {

@@ -1130,10 +1130,69 @@ textarea {
             </div>
           </div>
         </div>
+        
+        <!-- ===== MODAL USUARIO ===== -->
+<div class="modal fade" id="modalUsuario" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="tituloModalUsuario">Nuevo usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="formUsuario">
+
+          <input type="hidden" id="id_editar">
+
+          <div class="mb-3">
+            <label class="form-label">Número C/S</label>
+            <input type="number" class="form-control" id="numero_cs" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Nombre completo</label>
+            <input type="text" class="form-control" id="nombre_usuario" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Tipo usuario</label>
+            <select id="tipo_usuario" class="form-select" required>
+              <option value="CUADRILLA">CUADRILLA</option>
+              <option value="SUPERVISOR">SUPERVISOR</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Sector</label>
+            <input type="text" class="form-control" id="sector_usuario" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Estado</label>
+            <select id="estado_usuario" class="form-select">
+              <option value="ACTIVO">ACTIVO</option>
+              <option value="INACTIVO">INACTIVO</option>
+            </select>
+          </div>
+
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary" id="btnGuardarUsuario">Guardar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 <!--========== MODULO DE AUDITORIA PENDIENTE O HISTORIAL ==========-->
 <div id="mod-historial" class="page d-none">
-
+ xz
   <div class="page-title">
     <h1>Auditoria Pendiente</h1>
     <div class="page-sub">

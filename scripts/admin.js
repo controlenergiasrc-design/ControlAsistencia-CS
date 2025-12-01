@@ -1362,7 +1362,7 @@ function renderizarUsuarios(registros) {
 document.addEventListener("change", (e) => {
   if (!e.target.classList.contains("chk-estado")) return;
 
-  const rol = localStorage.getItem("rol");
+  const rol = localStorage.getItem("admin_rol");
   const esSuperAdmin = rol === "SuperAdmin";
 
   if (!esSuperAdmin) {

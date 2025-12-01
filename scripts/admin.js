@@ -1330,16 +1330,7 @@ function renderizarUsuarios(registros) {
                  data-estado="ACTIVO"
                  ${u.estado === "ACTIVO" ? "checked" : ""}
                  ${disabled}>
-          Activo
-        </label>
-        <br>
-        <label>
-          <input type="checkbox" class="chk-estado"
-                 data-cs="${u.numero_cs}"
-                 data-estado="INACTIVO"
-                 ${u.estado === "INACTIVO" ? "checked" : ""}
-                 ${disabled}>
-          Inactivo
+          ACTIVO
         </label>
       </td>
 

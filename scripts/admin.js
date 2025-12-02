@@ -849,33 +849,36 @@ async function guardarCambiosAuditoria() {
 }
 
 // =======================================
-// CONFIRMAR AUDITORÍA (BOTÓN ROJO)
+// AUDITORÍA FINALIZADA (BOTÓN ROJO)
 // =======================================
 async function confirmarAuditoriaFrontend() {
   console.log("TEMP ENTRADA:", fotoTemporalEntrada);
   console.log("TEMP SALIDA:", fotoTemporalSalida);
 
-  // Sacar el número CS del título del modal
   const numero_cs = document
     .getElementById("tituloModalAuditoria")
     .textContent.match(/\d+/)[0];
 
-  const url = `${API_URL}?accion=confirmarAuditoria&numero_cs=${numero_cs}`;
+  // Enviar correctamente rol y sector
+  const url = `${API_URL}?accion=confirmarAuditoria`;
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        numero_cs: numero_cs,
+        rol: user.rol, // <-- LO MÁS IMPORTANTE
+        sector: user.sector, // <-- NECESARIO EN BACKEND
+      }),
+    });
+
     const data = await res.json();
 
     if (data.success) {
       alert("✔ Registro marcado como AUDITADO");
 
-      // Recargar tabla de HOY
       obtenerRegistrosHoy();
-
-      // Recargar tabla de PENDIENTES (para que desaparezca de ahí)
       cargarHistorial();
-
-      // Cerrar modal
       cerrarModalAuditoria();
     } else {
       alert(data.mensaje || "⚠ No se pudo auditar");

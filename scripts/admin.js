@@ -1288,6 +1288,7 @@ function construirObjetoHistorial(fila) {
   };
 }
 //====================================================================================================================================================================================
+//MODULO USUASRIOS
 async function cargarUsuarios() {
   try {
     const res = await fetch(`${API_URL}?accion=listarUsuarios`);
@@ -1370,8 +1371,7 @@ document.addEventListener("change", (e) => {
   );
   otros.forEach((chk) => (chk.checked = false));
 
-  // Y después conectamos API
-  // actualizarEstadoUsuario(cs, nuevoEstado);
+  actualizarEstadoUsuario(cs, nuevoEstado);
 });
 
 //abrr modal en modod agregr
@@ -1384,7 +1384,7 @@ document.getElementById("btnAgregarUsuario").addEventListener("click", () => {
 
 //abrir moal el modo editar
 function editarUsuario(numeroCS) {
-  const usuario = listaUsuariosGlobal.find(u => u.numero_cs == numeroCS);
+  const usuario = listaUsuariosGlobal.find((u) => u.numero_cs == numeroCS);
 
   document.getElementById("tituloModalUsuario").textContent = "Editar usuario";
 
@@ -1403,3 +1403,23 @@ function mostrarModalUsuario() {
   modal.show();
 }
 
+async function actualizarEstadoUsuario(cs, estado) {
+  try {
+    const res = await fetch(`${API_URL}?accion=actualizarEstadoUsuario`, {
+      method: "POST",
+      body: new URLSearchParams({
+        numero_cs: cs,
+        estado: estado,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert("Error al actualizar estado");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error de conexión");
+  }
+}

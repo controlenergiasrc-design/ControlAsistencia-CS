@@ -1403,12 +1403,12 @@ function mostrarModalUsuario() {
   modal.show();
 }
 
-async function actualizarEstadoUsuario(cs, estado) {
+async function actualizarEstadoUsuario(numero_cs, estado) {
   try {
     const res = await fetch(`${API_URL}?accion=actualizarEstadoUsuario`, {
       method: "POST",
       body: new URLSearchParams({
-        numero_cs: cs,
+        numero_cs: numero_cs,
         estado: estado,
       }),
     });

@@ -1131,54 +1131,58 @@ textarea {
           </div>
         </div>
         
-        <!-- ===== MODAL USUARIO ===== -->
-<div class="modal fade" id="modalUsuario" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+<!-- ======== MODAL AGREGAR / EDITAR USUARIO ======== -->
+<div id="modalUsuario" class="d-none">
+  <div class="modal-usuario-box">
+    
+    <div class="modal-usuario-header">
+      <h2 id="tituloModalUsuario">Nuevo usuario</h2>
+      <button class="btn-cerrar" onclick="cerrarModalUsuario()">✕</button>
+    </div>
 
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="tituloModalUsuario">Nuevo usuario</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-usuario-body">
+
+      <div class="form-group">
+        <label>Número C/S</label>
+        <input id="inputNumeroCS" type="text" class="form-control" />
       </div>
 
-      <div class="modal-body">
-        <form id="formUsuario">
-
-          <input type="hidden" id="id_editar">
-
-          <div class="mb-3">
-            <label class="form-label">Número C/S</label>
-            <input type="number" class="form-control" id="numero_cs" required>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Nombre completo</label>
-            <input type="text" class="form-control" id="nombre_usuario" required>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Tipo usuario</label>
-            <select id="tipo_usuario" class="form-select" required>
-              <option value="CUADRILLA">CUADRILLA</option>
-              <option value="SUPERVISOR">SUPERVISOR</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Sector</label>
-            <input type="text" class="form-control" id="sector_usuario" required>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Estado</label>
-            <select id="estado_usuario" class="form-select">
-              <option value="ACTIVO">ACTIVO</option>
-              <option value="INACTIVO">INACTIVO</option>
-            </select>
-          </div>
-
-        </form>
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input id="inputNombreUsuario" type="text" class="form-control" />
       </div>
+
+      <div class="form-group">
+        <label>Tipo usuario</label>
+        <select id="inputTipoUsuario" class="form-control">
+          <option value="CUADRILLA">CUADRILLA</option>
+          <option value="SUPERVISOR">SUPERVISOR</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Sector</label>
+        <input id="inputSectorUsuario" type="text" class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label>Estado</label>
+        <select id="inputEstadoUsuario" class="form-control">
+          <option value="ACTIVO">ACTIVO</option>
+          <option value="INACTIVO">INACTIVO</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="modal-usuario-footer">
+      <button class="btn-cancelar" onclick="cerrarModalUsuario()">Cancelar</button>
+      <button class="btn-guardar" onclick="guardarUsuario()">Guardar</button>
+    </div>
+
+  </div>
+</div>
+
 
       <div class="modal-footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

@@ -1405,18 +1405,24 @@ function mostrarModalUsuario() {
 
 async function actualizarEstadoUsuario(cs, estado) {
   try {
-    const res = await fetch(`${API_URL}?accion=actualizarEstadoUsuario`, {
+    const res = await fetch(API_URL, {
       method: "POST",
-      body: new URLSearchParams({
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        accion: "actualizarEstadoUsuario",
         numero_cs: cs,
         estado: estado,
       }),
     });
 
     const data = await res.json();
+    console.log("RESPUESTA BACKEND:", data);
 
-    if (!data.ok) {
-      alert("Error al actualizar estado");
+    if (data.ok) {
+      // Recargar usuarios automáticamente
+      cargarUsuarios();
+    } else {
+      alert(data.msg || "Error al actualizar estado");
     }
   } catch (err) {
     console.error(err);

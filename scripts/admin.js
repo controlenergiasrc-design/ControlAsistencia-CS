@@ -1364,7 +1364,7 @@ document.addEventListener("change", (e) => {
   }
 
   const cs = e.target.dataset.cs;
-  const nuevoEstado = e.target.dataset.estado;
+  const nuevoEstado = e.target.checked ? "ACTIVO" : "INACTIVO";
 
   const otros = document.querySelectorAll(
     `.chk-estado[data-cs="${cs}"]:not([data-estado="${nuevoEstado}"])`

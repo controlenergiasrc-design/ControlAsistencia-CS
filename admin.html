@@ -24,6 +24,19 @@
     <!-- Icono de pestaña -->
     <link rel="icon" type="image/jpeg" href="images/logoweb.jpeg" />
 
+    <script>
+    (function() {
+      const nombre = localStorage.getItem("nombreUsuario");
+      const rol = localStorage.getItem("rolUsuario");
+
+      // Si NO existe sesión → enviar al login antes de cargar admin
+      if (!nombre || !rol) {
+        window.location.replace("/login.html");
+      }
+    })();
+    </script>
+
+
     <style>
       :root {
         --isse-blue: #41b6e6;

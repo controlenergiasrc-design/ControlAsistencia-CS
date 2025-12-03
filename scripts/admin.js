@@ -907,6 +907,7 @@ async function guardarCambiosAuditoria() {
   // ==========================================================
   alert("Cambios guardados correctamente");
 
+  // Guardar temporal
   localStorage.setItem(
     `auditoria_${numero_cs}`,
     JSON.stringify({
@@ -917,9 +918,15 @@ async function guardarCambiosAuditoria() {
       observaciones,
     })
   );
+
+  // Refrescar tablas ANTES de cerrar
   await obtenerRegistrosHoy();
   await cargarHistorial();
-  cerrarModalAuditoria();
+
+  // Cerrar modal DESPUÉS del alert (cuando el usuario presiona Aceptar)
+  setTimeout(() => {
+    cerrarModalAuditoria();
+  }, 200);
 }
 
 // =======================================

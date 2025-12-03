@@ -224,12 +224,19 @@ function renderizarTabla(registros) {
                 let claseColor = "btn-audit-red"; // por defecto ROJO
 
                 // 1) Si está AUDITADO → verde
-                if (registroCompleto.estado_auditoria?.toUpperCase() === "AUDITADO") {
+                if (
+                  registroCompleto.estado_auditoria?.toUpperCase() ===
+                  "AUDITADO"
+                ) {
                   claseColor = "btn-audit-green";
                 }
 
                 // 2) Si ya guardó cambios → amarillo
-                else if (localStorage.getItem(`auditoria_${registroCompleto.numero_cs}`)) {
+                else if (
+                  localStorage.getItem(
+                    `auditoria_${registroCompleto.numero_cs}`
+                  )
+                ) {
                   claseColor = "btn-audit-yellow";
                 }
 
@@ -381,7 +388,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnConfirmar) {
     btnConfirmar.addEventListener("click", () => {
-      localStorage.clear();
+      // SOLO borrar datos de sesión
+      localStorage.removeItem("admin_nombre");
+      localStorage.removeItem("admin_rol");
+      localStorage.removeItem("sectorUsuario");
       window.location.href = "index.html";
     });
   }

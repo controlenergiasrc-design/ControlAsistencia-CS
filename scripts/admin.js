@@ -419,7 +419,7 @@ function abrirModalAuditoria(registro) {
   document.getElementById("overlay").classList.remove("d-none");
   console.log("Abriendo auditoría para:", registro);
   // -----------------------------
-  // 1. GUARDAR EN INPUTS OCULTOS
+  // 0. GUARDAR EN INPUTS OCULTOS
   // -----------------------------
   document.getElementById("hiddenNumeroCS").value = registro.numero_cs;
   document.getElementById("hiddenFechaRegistro").value = registro.fecha;
@@ -428,13 +428,41 @@ function abrirModalAuditoria(registro) {
   const entrada = registro.entrada || {};
   const salida = registro.salida || {};
   // -----------------------------
-  // 2. TITULO DEL MODAL
+  // 1. TITULO DEL MODAL
   // -----------------------------
   const titulo = document.getElementById("tituloModalAuditoria");
   titulo.textContent = `AUDITORÍA – ${registro.tipo_usuario} ${registro.numero_cs}`;
   // FECHA DEL REGISTRO (entrada o salida)
   const fechaLabel = document.getElementById("fechaAuditoria");
   fechaLabel.textContent = registro.fecha ? registro.fecha : "Sin fecha";
+
+  // --------------------------------------
+  // 2. BOTONES SEGÚN SI ES HOY O PENDIENTE
+  // --------------------------------------
+
+  // Obtener fecha de hoy
+  const hoy = new Date().toISOString().slice(0, 10);
+
+  // Botones existentes
+  const btnGuardar = document.getElementById("btnGuardarCambios");
+  const btnFinalizar = document.getElementById("btnConfirmarAuditoria");
+
+  // Nuevo botón fusionado
+  const btnEnviar = document.getElementById("btnEnviarAuditoria");
+
+  // Caso 1 → REGISTRO DE HOY  = mostrar 2 botones normales
+  if (registro.fecha === hoy) {
+    if (btnGuardar) btnGuardar.classList.remove("d-none");
+    if (btnFinalizar) btnFinalizar.classList.remove("d-none");
+    if (btnEnviar) btnEnviar.classList.add("d-none");
+  }
+
+  // Caso 2 → PENDIENTE (fechas anteriores) = mostrar botón único
+  else {
+    if (btnGuardar) btnGuardar.classList.add("d-none");
+    if (btnFinalizar) btnFinalizar.classList.add("d-none");
+    if (btnEnviar) btnEnviar.classList.remove("d-none");
+  }
 
   // -----------------------------
   // 3. HORAS
@@ -588,6 +616,24 @@ function abrirModalAuditoria(registro) {
   } else {
     btnEditarSalida.disabled = false;
     btnEditarSalida.classList.remove("disabled");
+  }
+}
+//---------------------------------------------------
+//Enviar auditoria desde pendientes con un solo boton
+//---------------------------------------------------
+async function enviarAuditoriaPendiente() {
+  try {
+    await guardarCambiosAuditoria();
+    await confirmarAuditoriaFrontend();
+
+    alert("✔ Auditoría enviada correctamente");
+
+    cerrarModalAuditoria();
+    obtenerRegistrosHoy();
+    cargarHistorial();
+  } catch (err) {
+    console.error("❌ Error en Enviar Auditoría:", err);
+    alert("Error enviando la auditoría");
   }
 }
 
@@ -870,7 +916,11 @@ async function confirmarAuditoriaFrontend() {
     .textContent.match(/\d+/)[0];
 
   // Construir URL con permisos incluidos
-  const url = `${API_URL}?accion=confirmarAuditoria&numero_cs=${encodeURIComponent(numero_cs)}&rol=${encodeURIComponent(rol)}&sector=${encodeURIComponent(sectorUsuario)}`;
+  const url = `${API_URL}?accion=confirmarAuditoria&numero_cs=${encodeURIComponent(
+    numero_cs
+  )}&rol=${encodeURIComponent(rol)}&sector=${encodeURIComponent(
+    sectorUsuario
+  )}`;
 
   try {
     const res = await fetch(url);
@@ -895,7 +945,6 @@ async function confirmarAuditoriaFrontend() {
     alert("Error al auditar el registro.");
   }
 }
-
 
 //========================================
 // SUBIR FOTO EDITADA (VERSIÓN PRO)

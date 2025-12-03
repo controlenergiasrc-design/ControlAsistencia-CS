@@ -105,6 +105,8 @@ async function obtenerRegistrosHoy() {
 // RENDERIZAR TABLA COMPLETA (ENTRADA/SALIDA)
 // =======================================
 function renderizarTabla(registros) {
+  //input para saber donde mostrar un solo boton
+  document.getElementById("hiddenOrigenAuditoria").value = "hoy";
   const tbody = document.getElementById("tablaRegistros");
   tbody.innerHTML = "";
   if (!registros.length) {
@@ -1176,6 +1178,8 @@ function renderizarHistorial(registros) {
     const obj = construirObjetoHistorial(fila);
     const objJSON = JSON.stringify(obj).replace(/"/g, "&quot;");
     const estado = (fila.estado || "").toUpperCase();
+
+    document.getElementById("hiddenOrigenAuditoria").value = "pendientes";
 
     const html = `
       <tr>

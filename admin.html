@@ -36,6 +36,41 @@
       }
     })();
     </script>
+    <script>
+    (function() {
+      // Tiempo máximo sin actividad (en minutos)
+      const MAX_MINUTOS = 15;
+
+      // Guardar la última actividad
+      let ultimaActividad = Date.now();
+
+      // Cada movimiento del usuario actualiza actividad
+      function refrescarActividad() {
+        ultimaActividad = Date.now();
+      }
+
+      // Escuchar actividad del usuario
+      window.addEventListener("mousemove", refrescarActividad);
+      window.addEventListener("keydown", refrescarActividad);
+      window.addEventListener("click", refrescarActividad);
+      window.addEventListener("touchstart", refrescarActividad);
+
+      // Comprobación constante
+      setInterval(() => {
+        const ahora = Date.now();
+        const minutosInactivos = (ahora - ultimaActividad) / 1000 / 60;
+
+        if (minutosInactivos >= MAX_MINUTOS) {
+          // Limpiar sesión
+          localStorage.clear();
+
+          // Redirigir al login
+          window.location.replace("/login.html");
+        }
+      }, 10000); // se revisa cada 10 segundos
+    })();
+    </script>
+
 
     <style>
       :root {

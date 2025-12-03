@@ -923,10 +923,8 @@ async function guardarCambiosAuditoria() {
   await obtenerRegistrosHoy();
   await cargarHistorial();
 
-  // Cerrar modal DESPUÉS del alert (cuando el usuario presiona Aceptar)
-  setTimeout(() => {
-    cerrarModalAuditoria();
-  }, 200);
+  // Cerrar modal justo después del alert
+  cerrarModalAuditoria();
 }
 
 // =======================================

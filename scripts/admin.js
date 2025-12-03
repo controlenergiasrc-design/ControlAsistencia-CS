@@ -10,6 +10,29 @@ let registrosHoyGlobal = []; // aquí guardaremos los registros válidos de hoy
 let fotoTemporalEntrada = null; // guardar foto temporal entrda (foto editada desde auditoria)
 let fotoTemporalSalida = null; // guardar foto temporal entrda (foto editada desde auditoria)
 
+// === Colores de botones de auditoría ===
+const estilosBtnAudit = `
+  .btn-audit-red {
+    background-color: #d93025 !important;
+    color: white !important;
+  }
+
+  .btn-audit-yellow {
+    background-color: #ffcc00 !important;
+    color: #333 !important;
+    border: 1px solid #bfa100 !important;
+  }
+
+  .btn-audit-green {
+    background-color: #28a745 !important;
+    color: white !important;
+  }
+`;
+
+const tagStyle = document.createElement("style");
+tagStyle.textContent = estilosBtnAudit;
+document.head.appendChild(tagStyle);
+
 function resetearModalAuditoria() {
   // Ocultar/mostrar botones por defecto
   document.getElementById("btnGuardarCambios").classList.remove("d-none");
@@ -199,12 +222,28 @@ function renderizarTabla(registros) {
                 : `Sin foto`
             }
         </td>
-        <td rowspan="2" class="text-center align-middle">
-          <button class="btn btn-sm btn-audit"
-            onclick='abrirModalAuditoria(${registroJSON})'>
-            <i class="fa-solid fa-file-shield"></i> Auditar
-          </button>
-        </td>
+            <td rowspan="2" class="text-center align-middle">
+              ${(() => {
+                let claseColor = "btn-audit-red"; // por defecto ROJO
+
+                // 1) Si está AUDITADO → verde
+                if (registroCompleto.estado_auditoria?.toUpperCase() === "AUDITADO") {
+                  claseColor = "btn-audit-green";
+                }
+
+                // 2) Si ya guardó cambios → amarillo
+                else if (localStorage.getItem(`auditoria_${registroCompleto.numero_cs}`)) {
+                  claseColor = "btn-audit-yellow";
+                }
+
+                return `
+                    <button class="btn btn-sm btn-audit ${claseColor}"
+                      onclick='abrirModalAuditoria(${registroJSON})'>
+                      <i class="fa-solid fa-file-shield"></i> Auditar
+                    </button>
+                  `;
+              })()}
+          </td>
       </tr>
       <tr>
         <!-- Salida -->
@@ -383,7 +422,9 @@ const novedades = [
   "Tiempo de capacitacion previa",
   "Otro incidente",
 ];
+//===================================================
 // Normalizar hora para <input type="time"> → "HH:MM"
+//===================================================
 function normalizarHora(hora) {
   if (!hora) return "";
   // Convertir a string y eliminar espacios
@@ -397,7 +438,7 @@ function normalizarHora(hora) {
   return `${h}:${m}`;
 }
 //====================================================
-//Convertir a drive con formato thumbnail (miniaatura)
+//Convertir FOTO a drive con formato thumbnail (miniaatura)
 //====================================================
 function convertirDriveDirecto(url) {
   if (!url) return "";

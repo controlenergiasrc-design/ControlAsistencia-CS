@@ -721,6 +721,9 @@ function llenarFiltroSectores(registros) {
 // GUARDAR CAMBIOS DE AUDITORÍA (ORDEN CORRECTO)
 // =======================================
 async function guardarCambiosAuditoria() {
+  const rol = localStorage.getItem("admin_rol");
+  const sectorUsuario = localStorage.getItem("sectorUsuario");
+
   const numero_cs = document
     .getElementById("tituloModalAuditoria")
     .textContent.match(/\d+/)[0];
@@ -801,9 +804,10 @@ async function guardarCambiosAuditoria() {
           sector,
           fecha: fechaRegistro,
           fotoBase64: fotoTemporalEntrada,
+          rol: rol,
+          sectorUsuario: sectorUsuario,
         }),
       });
-
       console.log("Respuesta ENTRADA:", await respEntrada.text());
       fotoTemporalEntrada = null;
     }
@@ -820,9 +824,10 @@ async function guardarCambiosAuditoria() {
           sector,
           fecha: fechaRegistro,
           fotoBase64: fotoTemporalSalida,
+          rol: rol,
+          sectorUsuario: sectorUsuario,
         }),
       });
-
       console.log("Respuesta SALIDA:", await respSalida.text());
       fotoTemporalSalida = null;
     }
@@ -855,39 +860,42 @@ async function confirmarAuditoriaFrontend() {
   console.log("TEMP ENTRADA:", fotoTemporalEntrada);
   console.log("TEMP SALIDA:", fotoTemporalSalida);
 
+  // Obtener rol y sector del admin desde localStorage
+  const rol = localStorage.getItem("admin_rol");
+  const sectorUsuario = localStorage.getItem("sectorUsuario");
+
+  // Sacar el número CS del título del modal
   const numero_cs = document
     .getElementById("tituloModalAuditoria")
     .textContent.match(/\d+/)[0];
 
-  // Enviar correctamente rol y sector
-  const url = `${API_URL}?accion=confirmarAuditoria`;
+  // Construir URL con permisos incluidos
+  const url = `${API_URL}?accion=confirmarAuditoria&numero_cs=${encodeURIComponent(numero_cs)}&rol=${encodeURIComponent(rol)}&sector=${encodeURIComponent(sectorUsuario)}`;
 
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        numero_cs: numero_cs,
-        rol: user.rol, // <-- LO MÁS IMPORTANTE
-        sector: user.sector, // <-- NECESARIO EN BACKEND
-      }),
-    });
-
+    const res = await fetch(url);
     const data = await res.json();
 
     if (data.success) {
       alert("✔ Registro marcado como AUDITADO");
 
-      obtenerRegistrosHoy();
-      cargarHistorial();
+      // Recargar tabla de HOY
+      await obtenerRegistrosHoy();
+
+      // Recargar tabla de PENDIENTES (para que desaparezca de ahí)
+      await cargarHistorial();
+
+      // Cerrar modal
       cerrarModalAuditoria();
     } else {
-      alert(data.mensaje || "⚠ No se pudo auditar");
+      alert(data.mensaje || "⚠️ No se pudo auditar");
     }
   } catch (err) {
     console.error("❌ Error al auditar:", err);
     alert("Error al auditar el registro.");
   }
 }
+
 
 //========================================
 // SUBIR FOTO EDITADA (VERSIÓN PRO)

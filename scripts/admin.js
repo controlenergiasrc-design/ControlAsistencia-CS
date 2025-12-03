@@ -10,6 +10,29 @@ let registrosHoyGlobal = []; // aquí guardaremos los registros válidos de hoy
 let fotoTemporalEntrada = null; // guardar foto temporal entrda (foto editada desde auditoria)
 let fotoTemporalSalida = null; // guardar foto temporal entrda (foto editada desde auditoria)
 
+function resetearModalAuditoria() {
+  // Ocultar/mostrar botones por defecto
+  document.getElementById("btnGuardarCambios").classList.remove("d-none");
+  document.getElementById("btnConfirmarAuditoria").classList.remove("d-none");
+  document.getElementById("btnEnviarAuditoria").classList.add("d-none");
+
+  // Quitar disabled
+  document.getElementById("btnGuardarCambios").disabled = false;
+  document.getElementById("btnConfirmarAuditoria").disabled = false;
+  document.getElementById("btnEnviarAuditoria").disabled = false;
+
+  // Limpiar listas
+  document.getElementById("listaActividades").innerHTML = "";
+  document.getElementById("listaNovedades").innerHTML = "";
+
+  // Limpiar observaciones
+  document.getElementById("inputObservaciones").value = "";
+
+  // Limpiar fotos temporales
+  fotoTemporalEntrada = null;
+  fotoTemporalSalida = null;
+}
+
 // Imagen vacía (base64 válida)
 const EMPTY_IMG =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AArEBxY8oJFoAAAAASUVORK5CYII=";
@@ -416,6 +439,7 @@ function puedeAuditarRegistro(registro) {
 // ABRIR MODAL DE AUDITORÍA (NUEVA LÓGICA)
 // =======================================
 function abrirModalAuditoria(registro) {
+  resetearModalAuditoria();
   // Mostrar modal
   document.getElementById("modalAuditoria").classList.remove("d-none");
   document.getElementById("overlay").classList.remove("d-none");
@@ -439,29 +463,25 @@ function abrirModalAuditoria(registro) {
   fechaLabel.textContent = registro.fecha ? registro.fecha : "Sin fecha";
 
   // --------------------------------------
-  // 2. BOTONES SEGÚN SI ES HOY O PENDIENTE
-  // --------------------------------------
-
-  // --------------------------------------
   // 2. BOTONES SEGÚN ORIGEN (HOY / PENDIENTES)
   // --------------------------------------
 
   const origen = document.getElementById("hiddenOrigenAuditoria").value;
 
+  // DETECTAR HOY O PENDIENTE
+  const hoy = new Date().toISOString().slice(0, 10);
   // Botones
   const btnGuardar = document.getElementById("btnGuardarCambios");
   const btnFinalizar = document.getElementById("btnConfirmarAuditoria");
   const btnEnviar = document.getElementById("btnEnviarAuditoria");
 
-  // Si viene de HOY → mostrar 2 botones
-  if (origen === "hoy") {
+  if (registro.fecha === hoy) {
+    // ES HOY → 2 BOTONES
     btnGuardar.classList.remove("d-none");
     btnFinalizar.classList.remove("d-none");
     btnEnviar.classList.add("d-none");
-  }
-
-  // Si viene de PENDIENTES → mostrar botón único
-  else if (origen === "pendientes") {
+  } else {
+    // ES PENDIENTE → 1 BOTÓN
     btnGuardar.classList.add("d-none");
     btnFinalizar.classList.add("d-none");
     btnEnviar.classList.remove("d-none");
@@ -903,49 +923,79 @@ async function guardarCambiosAuditoria() {
 }
 
 // =======================================
-// AUDITORÍA FINALIZADA (BOTÓN ROJO)
+// confirmar AUDITORÍA FINALIZADA (BOTÓN ROJO)
 // =======================================
 async function confirmarAuditoriaFrontend() {
-  console.log("TEMP ENTRADA:", fotoTemporalEntrada);
-  console.log("TEMP SALIDA:", fotoTemporalSalida);
+  const numero_cs = document.getElementById("hiddenNumeroCS").value;
+  const fecha = document.getElementById("hiddenFechaRegistro").value;
+  const sector = document.getElementById("hiddenSector").value;
 
-  // Obtener rol y sector del admin desde localStorage
   const rol = localStorage.getItem("admin_rol");
   const sectorUsuario = localStorage.getItem("sectorUsuario");
 
-  // Sacar el número CS del título del modal
-  const numero_cs = document
-    .getElementById("tituloModalAuditoria")
-    .textContent.match(/\d+/)[0];
-
-  // Construir URL con permisos incluidos
-  const url = `${API_URL}?accion=confirmarAuditoria&numero_cs=${encodeURIComponent(
-    numero_cs
-  )}&rol=${encodeURIComponent(rol)}&sector=${encodeURIComponent(
-    sectorUsuario
-  )}`;
+  const url =
+    `${API_URL}?accion=confirmarAuditoria` +
+    `&numero_cs=${encodeURIComponent(numero_cs)}` +
+    `&fecha=${encodeURIComponent(fecha)}` +
+    `&sector=${encodeURIComponent(sector)}` +
+    `&rol=${encodeURIComponent(rol)}` +
+    `&sectorUsuario=${encodeURIComponent(sectorUsuario)}`;
 
   try {
     const res = await fetch(url);
     const data = await res.json();
 
     if (data.success) {
-      alert("✔ Registro marcado como AUDITADO");
-
-      // Recargar tabla de HOY
-      await obtenerRegistrosHoy();
-
-      // Recargar tabla de PENDIENTES (para que desaparezca de ahí)
-      await cargarHistorial();
-
-      // Cerrar modal
+      alert("✔ Auditoría finalizada");
+      obtenerRegistrosHoy();
+      cargarHistorial();
       cerrarModalAuditoria();
     } else {
-      alert(data.mensaje || "⚠️ No se pudo auditar");
+      alert(data.mensaje || "⚠ No se pudo auditar");
     }
   } catch (err) {
-    console.error("❌ Error al auditar:", err);
-    alert("Error al auditar el registro.");
+    console.error("❌ Error auditando:", err);
+    alert("Error al auditar");
+  }
+}
+//===========================
+//ENVIAR AUDITORIA PENDIENTE
+//===========================
+async function enviarAuditoriaPendiente() {
+  const numero_cs = document.getElementById("hiddenNumeroCS").value;
+  const fecha = document.getElementById("hiddenFechaRegistro").value;
+  const sector = document.getElementById("hiddenSector").value;
+
+  const rol = localStorage.getItem("admin_rol");
+  const sectorUsuario = localStorage.getItem("sectorUsuario");
+
+  // HACER TODO IGUAL QUE GUARDAR CAMBIOS
+  await guardarCambiosAuditoria();
+
+  // LUEGO MARCAR AUDITADO
+  const url =
+    `${API_URL}?accion=confirmarAuditoriaPendiente` +
+    `&numero_cs=${encodeURIComponent(numero_cs)}` +
+    `&fecha=${encodeURIComponent(fecha)}` +
+    `&sector=${encodeURIComponent(sector)}` +
+    `&rol=${encodeURIComponent(rol)}` +
+    `&sectorUsuario=${encodeURIComponent(sectorUsuario)}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.success) {
+      alert("⚠ No se pudo finalizar la auditoría");
+      return;
+    }
+
+    alert("✔ Auditoría enviada y finalizada");
+    await cargarHistorial();
+    cerrarModalAuditoria();
+  } catch (err) {
+    console.error("Error auditoría pendiente:", err);
+    alert("Error enviando auditoría");
   }
 }
 

@@ -26,16 +26,16 @@
 
     <script>
     (function() {
-      const nombre = localStorage.getItem("nombreUsuario");
-      const rol = localStorage.getItem("rolUsuario");
+      const nombre = localStorage.getItem("admin_nombre");
+      const rol = localStorage.getItem("admin_rol");
+      const sector = localStorage.getItem("sectorUsuario");
 
-      // Si NO existe sesión → enviar al login antes de cargar admin
-      if (!nombre || !rol) {
+      // Si falta alguno → no hay sesión válida
+      if (!nombre || !rol || !sector) {
         window.location.replace("/login.html");
       }
     })();
     </script>
-
 
     <style>
       :root {

@@ -919,12 +919,11 @@ async function guardarCambiosAuditoria() {
     })
   );
 
+  // Cerrar modal justo después del alert
+  cerrarModalAuditoria();
   // Refrescar tablas ANTES de cerrar
   await obtenerRegistrosHoy();
   await cargarHistorial();
-
-  // Cerrar modal justo después del alert
-  cerrarModalAuditoria();
 }
 
 // =======================================

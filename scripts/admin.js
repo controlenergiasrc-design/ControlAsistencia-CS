@@ -442,28 +442,29 @@ function abrirModalAuditoria(registro) {
   // 2. BOTONES SEGÚN SI ES HOY O PENDIENTE
   // --------------------------------------
 
-  // Obtener fecha de hoy
-  const hoy = new Date().toISOString().slice(0, 10);
+  // --------------------------------------
+  // 2. BOTONES SEGÚN ORIGEN (HOY / PENDIENTES)
+  // --------------------------------------
 
-  // Botones existentes
+  const origen = document.getElementById("hiddenOrigenAuditoria").value;
+
+  // Botones
   const btnGuardar = document.getElementById("btnGuardarCambios");
   const btnFinalizar = document.getElementById("btnConfirmarAuditoria");
-
-  // Nuevo botón fusionado
   const btnEnviar = document.getElementById("btnEnviarAuditoria");
 
-  // Caso 1 → REGISTRO DE HOY  = mostrar 2 botones normales
-  if (registro.fecha === hoy) {
-    if (btnGuardar) btnGuardar.classList.remove("d-none");
-    if (btnFinalizar) btnFinalizar.classList.remove("d-none");
-    if (btnEnviar) btnEnviar.classList.add("d-none");
+  // Si viene de HOY → mostrar 2 botones
+  if (origen === "hoy") {
+    btnGuardar.classList.remove("d-none");
+    btnFinalizar.classList.remove("d-none");
+    btnEnviar.classList.add("d-none");
   }
 
-  // Caso 2 → PENDIENTE (fechas anteriores) = mostrar botón único
-  else {
-    if (btnGuardar) btnGuardar.classList.add("d-none");
-    if (btnFinalizar) btnFinalizar.classList.add("d-none");
-    if (btnEnviar) btnEnviar.classList.remove("d-none");
+  // Si viene de PENDIENTES → mostrar botón único
+  else if (origen === "pendientes") {
+    btnGuardar.classList.add("d-none");
+    btnFinalizar.classList.add("d-none");
+    btnEnviar.classList.remove("d-none");
   }
 
   // -----------------------------

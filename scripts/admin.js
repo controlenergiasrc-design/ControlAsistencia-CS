@@ -12,10 +12,7 @@ let fotoTemporalSalida = null; // guardar foto temporal entrda (foto editada des
 
 // === Colores de botones de auditoría ===
 const estilosBtnAudit = `
-  .btn-audit-red {
-    background-color: #d93025 !important;
-    color: white !important;
-  }
+
 
   .btn-audit-yellow {
     background-color: #ffcc00 !important;

@@ -974,7 +974,7 @@ async function enviarAuditoriaPendiente() {
 
   // LUEGO MARCAR AUDITADO
   const url =
-    `${API_URL}?accion=confirmarAuditoriaPendiente` +
+    `${API_URL}?accion=confirmarAuditoria` +
     `&numero_cs=${encodeURIComponent(numero_cs)}` +
     `&fecha=${encodeURIComponent(fecha)}` +
     `&sector=${encodeURIComponent(sector)}` +

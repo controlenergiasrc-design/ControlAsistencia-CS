@@ -1461,6 +1461,16 @@ function construirObjetoHistorial(fila) {
 let listaUsuariosGlobal = [];
 let listaSectoresGlobal = [];
 
+// OCULTAR BOTÓN "Nuevo usuario" SI NO ES SUPERADMIN
+document.addEventListener("DOMContentLoaded", () => {
+  const rol = localStorage.getItem("admin_rol");
+
+  if (rol !== "SuperAdmin") {
+    const btn = document.getElementById("btnAgregarUsuario");
+    if (btn) btn.style.display = "none";
+  }
+});
+
 // =====================================================
 // CARGAR USUARIOS
 // =====================================================
@@ -1471,7 +1481,20 @@ async function cargarUsuarios() {
 
     if (data.ok) {
       listaUsuariosGlobal = data.usuarios || [];
-      renderizarUsuarios(listaUsuariosGlobal);
+
+      const rol = localStorage.getItem("admin_rol");
+      const sectorAdmin = localStorage.getItem("sectorUsuario");
+
+      let listaFinal = listaUsuariosGlobal;
+
+      // Si NO es SuperAdmin → mostrar solo su sector
+      if (rol !== "SuperAdmin") {
+        listaFinal = listaUsuariosGlobal.filter(
+          (u) => u.sector === sectorAdmin
+        );
+      }
+
+      renderizarUsuarios(listaFinal);
     } else {
       alert("Error cargando usuarios");
     }

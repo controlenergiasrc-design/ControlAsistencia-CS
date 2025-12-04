@@ -1456,23 +1456,21 @@ function construirObjetoHistorial(fila) {
 }
 //====================================================================================================================================================================================
 //MODULO USUASRIOS
-// =======================
-// MÓDULO USUARIOS
-// =======================
 
-// Variable global donde guardamos la lista actual de usuarios
+// VARIABLES GLOBALES
 let listaUsuariosGlobal = [];
+let listaSectoresGlobal = [];
 
-// Cargar usuarios desde el backend
+// =====================================================
+// CARGAR USUARIOS
+// =====================================================
 async function cargarUsuarios() {
   try {
     const res = await fetch(`${API_URL}?accion=listarUsuarios`);
     const data = await res.json();
 
     if (data.ok) {
-      // Guardar en la variable global
       listaUsuariosGlobal = data.usuarios || [];
-      // Pintar la tabla
       renderizarUsuarios(listaUsuariosGlobal);
     } else {
       alert("Error cargando usuarios");
@@ -1483,7 +1481,41 @@ async function cargarUsuarios() {
   }
 }
 
-// Renderizar tabla de usuarios
+// =====================================================
+// CARGAR SECTORES DESDE EL BACKEND
+// =====================================================
+async function cargarSectores() {
+  try {
+    const res = await fetch(`${API_URL}?accion=listarSectores`);
+    const data = await res.json();
+
+    if (data.ok) {
+      listaSectoresGlobal = data.sectores || [];
+      llenarSelectSectores();
+    } else {
+      alert("Error cargando sectores");
+    }
+  } catch (err) {
+    console.error("Error:", err);
+  }
+}
+
+// LLENAR SELECT CON LA LISTA DE SECTORES
+function llenarSelectSectores() {
+  const select = document.getElementById("sector_usuario");
+  select.innerHTML = "";
+
+  listaSectoresGlobal.forEach((sec) => {
+    const opt = document.createElement("option");
+    opt.value = sec;
+    opt.textContent = sec;
+    select.appendChild(opt);
+  });
+}
+
+// =====================================================
+// RENDERIZAR TABLA DE USUARIOS
+// =====================================================
 function renderizarUsuarios(registros) {
   const tbody = document.getElementById("tablaUsuarios");
   tbody.innerHTML = "";
@@ -1499,11 +1531,7 @@ function renderizarUsuarios(registros) {
       <td>${u.nombre}</td>
       <td>${u.tipo}</td>
       <td>${u.sector}</td>
-
-      <!-- Columna ESTADO: solo texto -->
       <td>${u.estado}</td>
-
-      <!-- Columna ACCIONES -->
       <td>
         ${
           esSuperAdmin
@@ -1519,65 +1547,73 @@ function renderizarUsuarios(registros) {
   });
 }
 
-// =======================
+// =====================================================
 // NUEVO USUARIO
-// =======================
-document.getElementById("btnAgregarUsuario").addEventListener("click", () => {
-  document.getElementById("tituloModalUsuario").textContent = "Nuevo usuario";
+// =====================================================
+document
+  .getElementById("btnAgregarUsuario")
+  .addEventListener("click", async () => {
+    document.getElementById("tituloModalUsuario").textContent = "Nuevo usuario";
 
-  // Limpiar formulario
-  document.getElementById("formUsuario").reset();
-  document.getElementById("id_editar").value = "";
+    // Limpiar formulario
+    document.getElementById("formUsuario").reset();
+    document.getElementById("id_editar").value = "";
 
-  // Por defecto, todo usuario nuevo es ACTIVO
-  const selectEstado = document.getElementById("estado_usuario");
-  if (selectEstado) {
-    selectEstado.value = "ACTIVO";
-  }
+    // Cargar sectores antes de abrir modal
+    await cargarSectores();
 
-  mostrarModalUsuario();
-});
+    // Tipo usuario por defecto
+    document.getElementById("tipo_usuario").value = "CUADRILLA";
 
-// =======================
+    // Estado por defecto = ACTIVO
+    document.getElementById("estado_usuario").value = "ACTIVO";
+
+    mostrarModalUsuario();
+  });
+
+// =====================================================
 // EDITAR USUARIO
-// =======================
-function editarUsuario(numeroCS) {
-  // Buscar en la lista global
+// =====================================================
+async function editarUsuario(numeroCS) {
   const usuario = listaUsuariosGlobal.find((u) => u.numero_cs == numeroCS);
 
   if (!usuario) {
-    console.error("Usuario no encontrado en listaUsuariosGlobal:", numeroCS);
     alert("No se encontró la información del usuario.");
     return;
   }
 
   document.getElementById("tituloModalUsuario").textContent = "Editar usuario";
 
-  // ID oculto para saber que estamos editando
+  // Cargar sectores antes de rellenar
+  await cargarSectores();
+
+  // Identificador para modo edición
   document.getElementById("id_editar").value = numeroCS;
 
-  // Llenar campos del formulario
+  // Llenar formulario
   document.getElementById("numero_cs").value = usuario.numero_cs;
   document.getElementById("nombre_usuario").value = usuario.nombre;
   document.getElementById("tipo_usuario").value = usuario.tipo;
-  document.getElementById("sector_usuario").value = usuario.sector;
 
-  // Select de estado (ACTIVO / INACTIVO)
-  const selectEstado = document.getElementById("estado_usuario");
-  if (selectEstado) {
-    selectEstado.value = usuario.estado || "ACTIVO";
-  }
+  const selectSector = document.getElementById("sector_usuario");
+  selectSector.value = usuario.sector;
+
+  document.getElementById("estado_usuario").value = usuario.estado || "ACTIVO";
 
   mostrarModalUsuario();
 }
 
-// MOSTRAR MODAL BOOTSTRAP
+// =====================================================
+// MOSTRAR MODAL
+// =====================================================
 function mostrarModalUsuario() {
   const modal = new bootstrap.Modal(document.getElementById("modalUsuario"));
   modal.show();
 }
 
-// ACTUALIZAR ESTADO (si lo ocupas desde el form)
+// =====================================================
+// ACTUALIZAR ESTADO DESDE FORM SI LO USAS A PARTE
+// =====================================================
 async function actualizarEstadoUsuario(cs, estado) {
   try {
     const res = await fetch(API_URL, {
@@ -1594,7 +1630,6 @@ async function actualizarEstadoUsuario(cs, estado) {
     console.log("RESPUESTA BACKEND:", data);
 
     if (data.ok) {
-      // Recargar usuarios automáticamente
       cargarUsuarios();
     } else {
       alert(data.msg || "Error al actualizar estado");

@@ -1602,6 +1602,10 @@ async function editarUsuario(numeroCS) {
 
   mostrarModalUsuario();
 }
+//===========================================================================================
+document
+  .getElementById("btnGuardarUsuario")
+  .addEventListener("click", guardarUsuarioFrontend);
 
 // =====================================================
 // MOSTRAR MODAL
@@ -1637,5 +1641,59 @@ async function actualizarEstadoUsuario(cs, estado) {
   } catch (err) {
     console.error(err);
     alert("Error de conexión");
+  }
+}
+
+// GUARDAR CAMBIOS HECHOS EN EL MODAL
+async function guardarUsuarioFrontend() {
+  const numero_cs = document.getElementById("numero_cs").value.trim();
+  const nombre = document.getElementById("nombre_usuario").value.trim();
+  const tipo = document.getElementById("tipo_usuario").value.trim();
+  const sector = document.getElementById("sector_usuario").value.trim();
+  const estado = document.getElementById("estado_usuario").value.trim();
+
+  const id_editar = document.getElementById("id_editar").value.trim();
+  // si tiene valor → estamos editando
+  // si está vacío → es nuevo
+
+  if (!numero_cs || !nombre || !tipo || !sector) {
+    alert("Todos los campos son obligatorios.");
+    return;
+  }
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        accion: "guardarUsuario",
+        numero_cs,
+        nombre,
+        tipo,
+        sector,
+        estado,
+        id_editar,
+      }),
+    });
+
+    const data = await res.json();
+    console.log("RESPUESTA GUARDAR:", data);
+
+    if (data.ok) {
+      alert(data.msg);
+
+      // Recargar lista
+      cargarUsuarios();
+
+      // Cerrar modal
+      bootstrap.Modal.getInstance(
+        document.getElementById("modalUsuario")
+      ).hide();
+    } else {
+      alert(data.msg || "No se pudo guardar");
+    }
+  } catch (err) {
+    console.error("Error guardando usuario:", err);
+    alert("Error de conexión con el servidor.");
   }
 }

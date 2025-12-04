@@ -1697,3 +1697,73 @@ async function guardarUsuarioFrontend() {
     alert("Error de conexión con el servidor.");
   }
 }
+
+//------------------------MODULO CONTRASEÑAAAAAA------------------------------------------------------------------------------------------------------
+// CAMBIO DE CONTRASEÑA
+// =============================================
+
+document.addEventListener("DOMContentLoaded", () => {
+  const formPass = document.getElementById("formPassword");
+  if (!formPass) return;
+
+  formPass.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const passActual = document.getElementById("passActual").value.trim();
+    const passNueva = document.getElementById("passNueva").value.trim();
+    const passConfirm = document.getElementById("passConfirm").value.trim();
+
+    const id_admin = localStorage.getItem("admin_id");
+
+    if (!id_admin) {
+      alert("Error: sesión inválida. Vuelve a iniciar sesión.");
+      return;
+    }
+
+    // Validaciones básicas
+    if (!passActual || !passNueva || !passConfirm) {
+      alert("⚠️ Todos los campos son obligatorios.");
+      return;
+    }
+
+    if (passNueva !== passConfirm) {
+      alert("⚠️ Las nuevas contraseñas no coinciden.");
+      return;
+    }
+
+    if (passNueva === passActual) {
+      alert("⚠️ La nueva contraseña no puede ser igual a la actual.");
+      return;
+    }
+
+    // Crear cuerpo del POST
+    const body = {
+      accion: "cambiarContrasena",
+      id_admin,
+      passActual,
+      passNueva,
+    };
+
+    try {
+      const res = await fetch(
+        "https://proxy-asistencia.control-energiasrc.workers.dev",
+        {
+          method: "POST",
+          body: JSON.stringify(body),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert("Contraseña actualizada correctamente.");
+        formPass.reset(); // limpiar formulario
+      } else {
+        alert(data.mensaje || "❌ No se pudo actualizar la contraseña.");
+      }
+    } catch (error) {
+      console.error("Error al cambiar contraseña:", error);
+      alert("❌ Error de conexión con el servidor.");
+    }
+  });
+});

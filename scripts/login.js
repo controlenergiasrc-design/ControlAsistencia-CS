@@ -54,6 +54,7 @@ if (form) {
         localStorage.setItem("admin_nombre", nombre);
         localStorage.setItem("admin_rol", rol);
         localStorage.setItem("sectorUsuario", sector_admin); // IMPORTANTE
+        localStorage.setItem("admin_id", data.admin.admin_usuario);
 
         // Redirigir al panel
         setTimeout(() => {

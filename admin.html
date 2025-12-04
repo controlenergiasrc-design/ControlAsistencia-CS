@@ -1219,8 +1219,10 @@ textarea {
                   <!-- FILA 3: Sector y Estado -->
                   <div class="row">
                   <div class="col-md-6 mb-3">
-                      <label class="form-label">Sector</label>
-                      <select type="text" class="form-control" id="sector_usuario" required>
+                    <label class="form-label">Sector</label>
+                        <select id="sector_usuario" class="form-select" required>
+                      <!-- JS llenará las opciones automáticamente -->
+                        </select>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -1231,9 +1233,7 @@ textarea {
                       </select>
                       </div>
                   </div>
-
                 </form>
-
               </div>
 
       <div class="modal-footer">

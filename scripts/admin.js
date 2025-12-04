@@ -1456,13 +1456,24 @@ function construirObjetoHistorial(fila) {
 }
 //====================================================================================================================================================================================
 //MODULO USUASRIOS
+// =======================
+// MÓDULO USUARIOS
+// =======================
+
+// Variable global donde guardamos la lista actual de usuarios
+let listaUsuariosGlobal = [];
+
+// Cargar usuarios desde el backend
 async function cargarUsuarios() {
   try {
     const res = await fetch(`${API_URL}?accion=listarUsuarios`);
     const data = await res.json();
 
     if (data.ok) {
-      renderizarUsuarios(data.usuarios);
+      // Guardar en la variable global
+      listaUsuariosGlobal = data.usuarios || [];
+      // Pintar la tabla
+      renderizarUsuarios(listaUsuariosGlobal);
     } else {
       alert("Error cargando usuarios");
     }
@@ -1472,7 +1483,7 @@ async function cargarUsuarios() {
   }
 }
 
-//====================MODULO USUARIOSSSSSSSSSSSSSSSSSSSSS===================================
+// Renderizar tabla de usuarios
 function renderizarUsuarios(registros) {
   const tbody = document.getElementById("tablaUsuarios");
   tbody.innerHTML = "";
@@ -1481,8 +1492,6 @@ function renderizarUsuarios(registros) {
   const esSuperAdmin = rol === "SuperAdmin";
 
   registros.forEach((u) => {
-    const disabled = esSuperAdmin ? "" : "disabled";
-
     const fila = document.createElement("tr");
 
     fila.innerHTML = `
@@ -1491,17 +1500,10 @@ function renderizarUsuarios(registros) {
       <td>${u.tipo}</td>
       <td>${u.sector}</td>
 
-      <td>
-        <label>
-          <input type="checkbox" class="chk-estado"
-                 data-cs="${u.numero_cs}"
-                 data-estado="ACTIVO"
-                 ${u.estado === "ACTIVO" ? "checked" : ""}
-                 ${disabled}>
-          ACTIVO
-        </label>
-      </td>
+      <!-- Columna ESTADO: solo texto -->
+      <td>${u.estado}</td>
 
+      <!-- Columna ACCIONES -->
       <td>
         ${
           esSuperAdmin
@@ -1517,59 +1519,65 @@ function renderizarUsuarios(registros) {
   });
 }
 
-//evento solo selecionar un chech
-document.addEventListener("change", (e) => {
-  if (!e.target.classList.contains("chk-estado")) return;
-
-  const rol = localStorage.getItem("admin_rol");
-  const esSuperAdmin = rol === "SuperAdmin";
-
-  if (!esSuperAdmin) {
-    e.preventDefault();
-    e.target.checked = !e.target.checked;
-    return;
-  }
-
-  const cs = e.target.dataset.cs;
-  const nuevoEstado = e.target.checked ? "ACTIVO" : "INACTIVO";
-
-  const otros = document.querySelectorAll(
-    `.chk-estado[data-cs="${cs}"]:not([data-estado="${nuevoEstado}"])`
-  );
-  otros.forEach((chk) => (chk.checked = false));
-
-  actualizarEstadoUsuario(cs, nuevoEstado);
-});
-
-//abrr modal en modod agregr
+// =======================
+// NUEVO USUARIO
+// =======================
 document.getElementById("btnAgregarUsuario").addEventListener("click", () => {
   document.getElementById("tituloModalUsuario").textContent = "Nuevo usuario";
+
+  // Limpiar formulario
   document.getElementById("formUsuario").reset();
   document.getElementById("id_editar").value = "";
+
+  // Por defecto, todo usuario nuevo es ACTIVO
+  const selectEstado = document.getElementById("estado_usuario");
+  if (selectEstado) {
+    selectEstado.value = "ACTIVO";
+  }
+
   mostrarModalUsuario();
 });
 
-//abrir moal el modo editar
+// =======================
+// EDITAR USUARIO
+// =======================
 function editarUsuario(numeroCS) {
+  // Buscar en la lista global
   const usuario = listaUsuariosGlobal.find((u) => u.numero_cs == numeroCS);
+
+  if (!usuario) {
+    console.error("Usuario no encontrado en listaUsuariosGlobal:", numeroCS);
+    alert("No se encontró la información del usuario.");
+    return;
+  }
 
   document.getElementById("tituloModalUsuario").textContent = "Editar usuario";
 
+  // ID oculto para saber que estamos editando
   document.getElementById("id_editar").value = numeroCS;
+
+  // Llenar campos del formulario
   document.getElementById("numero_cs").value = usuario.numero_cs;
   document.getElementById("nombre_usuario").value = usuario.nombre;
   document.getElementById("tipo_usuario").value = usuario.tipo;
   document.getElementById("sector_usuario").value = usuario.sector;
-  document.getElementById("estado_usuario").value = usuario.estado;
+
+  // Select de estado (ACTIVO / INACTIVO)
+  const selectEstado = document.getElementById("estado_usuario");
+  if (selectEstado) {
+    selectEstado.value = usuario.estado || "ACTIVO";
+  }
 
   mostrarModalUsuario();
 }
-//mostrar modal bootstrap
+
+// MOSTRAR MODAL BOOTSTRAP
 function mostrarModalUsuario() {
   const modal = new bootstrap.Modal(document.getElementById("modalUsuario"));
   modal.show();
 }
 
+// ACTUALIZAR ESTADO (si lo ocupas desde el form)
 async function actualizarEstadoUsuario(cs, estado) {
   try {
     const res = await fetch(API_URL, {

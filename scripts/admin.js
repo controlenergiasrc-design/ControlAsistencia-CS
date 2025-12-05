@@ -853,6 +853,9 @@ async function guardarCambiosAuditoria() {
   const horaEntrada = document.getElementById("inputHoraEntrada").value.trim();
   const horaSalida = document.getElementById("inputHoraSalida").value.trim();
 
+  // Capturar horas faltantes
+  const horasFaltantes = document.getElementById("horasFaltantes").value.trim();
+
   const actividades = Array.from(
     document.querySelectorAll("#listaActividades .tag")
   )
@@ -870,21 +873,18 @@ async function guardarCambiosAuditoria() {
     .value.trim();
 
   // ==========================================================
-  // 1. PRIMERO GUARDAR TEXTO (GET)
+  // 1. GUARDAR TEXTO (GET)
   // ==========================================================
-  const url = `${API_URL}?accion=guardarAuditoria&numero_cs=${numero_cs}&sector=${encodeURIComponent(
-    sector
-  )}&fecha_registro=${encodeURIComponent(
-    fechaRegistro
-  )}&hora_entrada=${encodeURIComponent(
-    horaEntrada
-  )}&hora_salida=${encodeURIComponent(
-    horaSalida
-  )}&actividades=${encodeURIComponent(
-    actividades
-  )}&novedades=${encodeURIComponent(
-    novedades
-  )}&observaciones=${encodeURIComponent(observaciones)}`;
+  const url = `${API_URL}?accion=guardarAuditoria
+  &numero_cs=${numero_cs}
+  &sector=${encodeURIComponent(sector)}
+  &fecha_registro=${encodeURIComponent(fechaRegistro)}
+  &hora_entrada=${encodeURIComponent(horaEntrada)}
+  &hora_salida=${encodeURIComponent(horaSalida)}
+  &actividades=${encodeURIComponent(actividades)}
+  &novedades=${encodeURIComponent(novedades)}
+  &observaciones=${encodeURIComponent(observaciones)}
+  &horas_faltantes=${encodeURIComponent(horasFaltantes)}`.replace(/\s+/g, "");
 
   let textoGuardadoOK = false;
 
@@ -906,12 +906,10 @@ async function guardarCambiosAuditoria() {
   }
 
   // ==========================================================
-  // 2. SI EL TEXTO SE GUARDÓ → AHORA SUBIR FOTOS
+  // 2. SUBIR FOTOS
   // ==========================================================
   if (textoGuardadoOK) {
-    // FOTO DE ENTRADA
     if (fotoTemporalEntrada) {
-      console.log("Subiendo foto de ENTRADA...");
       const respEntrada = await fetch(API_URL, {
         method: "POST",
         body: JSON.stringify({
@@ -929,9 +927,7 @@ async function guardarCambiosAuditoria() {
       fotoTemporalEntrada = null;
     }
 
-    // FOTO DE SALIDA
     if (fotoTemporalSalida) {
-      console.log("Subiendo foto de SALIDA...");
       const respSalida = await fetch(API_URL, {
         method: "POST",
         body: JSON.stringify({
@@ -951,11 +947,10 @@ async function guardarCambiosAuditoria() {
   }
 
   // ==========================================================
-  // 3. REFRESCAR Y CERRAR MODAL
+  // 3. FINALIZAR
   // ==========================================================
   alert("Cambios guardados correctamente");
 
-  // Guardar temporal
   localStorage.setItem(
     `auditoria_${numero_cs}`,
     JSON.stringify({
@@ -964,12 +959,11 @@ async function guardarCambiosAuditoria() {
       actividades,
       novedades,
       observaciones,
+      horasFaltantes, //También lo guardamos localmente
     })
   );
 
-  // Cerrar modal justo después del alert
   cerrarModalAuditoria();
-  // Refrescar tablas ANTES de cerrar
   await obtenerRegistrosHoy();
   await cargarHistorial();
 }
@@ -982,6 +976,9 @@ async function confirmarAuditoriaFrontend() {
   const fecha = document.getElementById("hiddenFechaRegistro").value;
   const sector = document.getElementById("hiddenSector").value;
 
+  // Capturar horas faltantes
+  const horasFaltantes = document.getElementById("horasFaltantes").value.trim();
+
   const rol = localStorage.getItem("admin_rol");
   const sectorUsuario = localStorage.getItem("sectorUsuario");
 
@@ -991,7 +988,8 @@ async function confirmarAuditoriaFrontend() {
     `&fecha=${encodeURIComponent(fecha)}` +
     `&sector=${encodeURIComponent(sector)}` +
     `&rol=${encodeURIComponent(rol)}` +
-    `&sectorUsuario=${encodeURIComponent(sectorUsuario)}`;
+    `&sectorUsuario=${encodeURIComponent(sectorUsuario)}` +
+    `&horas_faltantes=${encodeURIComponent(horasFaltantes)}`; // NUEVO
 
   try {
     const res = await fetch(url);
@@ -1010,28 +1008,33 @@ async function confirmarAuditoriaFrontend() {
     alert("Error al auditar");
   }
 }
+
 //===========================
-//ENVIAR AUDITORIA PENDIENTE
+// ENVIAR AUDITORIA PENDIENTE
 //===========================
 async function enviarAuditoriaPendiente() {
   const numero_cs = document.getElementById("hiddenNumeroCS").value;
   const fecha = document.getElementById("hiddenFechaRegistro").value;
   const sector = document.getElementById("hiddenSector").value;
 
+  // Capturar horas faltantes
+  const horasFaltantes = document.getElementById("horasFaltantes").value.trim();
+
   const rol = localStorage.getItem("admin_rol");
   const sectorUsuario = localStorage.getItem("sectorUsuario");
 
-  // HACER TODO IGUAL QUE GUARDAR CAMBIOS
+  // 1) PRIMERO guardar TODOS los cambios (texto + fotos)
   await guardarCambiosAuditoria();
 
-  // LUEGO MARCAR AUDITADO
+  // 2) Luego marcar como AUDITADO
   const url =
     `${API_URL}?accion=confirmarAuditoria` +
     `&numero_cs=${encodeURIComponent(numero_cs)}` +
     `&fecha=${encodeURIComponent(fecha)}` +
     `&sector=${encodeURIComponent(sector)}` +
     `&rol=${encodeURIComponent(rol)}` +
-    `&sectorUsuario=${encodeURIComponent(sectorUsuario)}`;
+    `&sectorUsuario=${encodeURIComponent(sectorUsuario)}` +
+    `&horas_faltantes=${encodeURIComponent(horasFaltantes)}`; // NUEVO
 
   try {
     const res = await fetch(url);

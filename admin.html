@@ -1481,12 +1481,26 @@ textarea {
                 </div>
               </div>
 
-              <div class="section">
-                <label>Observaciones generales</label>
-                <textarea id="inputObservaciones"
-                  placeholder="Escribe aquí tus observaciones..."
-                ></textarea>
-              </div>
+              <div class="section observaciones-row">
+
+                  <div class="observaciones-box">
+                      <label>Observaciones generales</label>
+                      <textarea id="inputObservaciones"
+                        placeholder="Escribe aquí tus observaciones..."></textarea>
+                  </div>
+
+                  <div class="horas-box">
+                      <label class="form-label">Horas faltantes</label>
+                  <input 
+                      type="number" 
+                      id="horasFaltantes" 
+                      class="form-control"
+                      min="0"
+                      step="any"
+                      placeholder="0.0"
+                      />
+                    </div>
+                  </div>
               <div class="botones">
                 <button id="btnGuardarCambios" onclick="guardarCambiosAuditoria()" class=" btn btn-guardar">Guardar</button>
                 <button id="btnConfirmarAuditoria" onclick="confirmarAuditoriaFrontend()" class="btn btn-auditar">Finalizar Auditoría</button><!--Boton rojo-->
